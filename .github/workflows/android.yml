@@ -1,12 +1,16 @@
 name: Android CI
 
 on:
+  workflow_dispatch:
+    branches: [main]
   push:
     branches: [main]
-    paths: src/**
+    paths:
+      - "app/src/**"
   pull_request:
     branches: [main]
-    paths: src/**
+    paths:
+      - "app/src/**"
 
 jobs:
   build:
