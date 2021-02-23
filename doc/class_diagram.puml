@@ -1,13 +1,102 @@
-@startuml Class
-abstract        abstract
-abstract class  "abstract class"
-annotation      annotation
-circle          circle
-()              circle_short_form
-class           class
-diamond         diamond
-<>              diamond_short_form
-entity          entity
-enum            enum
-interface       interface
+' Comments up here like who worked on it?
+@startuml Kotlout
+Title: Kotlout
+
+' + Public
+' - Private
+' # Protected
+
+class GeoLocation {
+    - latitude: Double
+    - longitude: Double
+}
+
+interface QrEncodable {
+    + getQrCode(): QrCode
+}
+
+interface BarcodeEncodable {
+    + registerBarcode()
+    + scanBarcode() : String
+}
+
+class ExperimentStatistics {
+    - mean : Double
+    - standardDeviation : Double
+    - quartiles: Double[3]
+}
+
+abstract class Experiment implements QrEncodable {
+    - owner : User
+    - description : String
+    - region : String
+    - minimumTrials : Integer
+    + publish()
+    + {abstract} calculateStats() : ExperimentStatistics
+}
+
+class CountExperiment extends Experiment {
+    - trials : List<CountTrial>
+    + addTrial(newTrial : CountTrial)
+    + calculateStats() : ExperimentStatistics
+}
+
+class BinomialExperiment extends Experiment {
+    - trials : List<BinomialTrial>
+    + addTrial(newTrial : BinomialTrial)
+    + calculateStats() : ExperimentStatistics
+}
+
+class NonNegativeExperiment extends Experiment {
+    - trials : List<NonNegativeTrial>
+    + addTrial(newTrial : NonNegativeTrial)
+    + calculateStats() : ExperimentStatistics
+}
+
+class MeasurmentExperiment extends Experiment {
+    - trials : List<MeasurementTrial>
+    + addTrial(newTrial : MeasurementTrial)
+    + calculateStats() : ExperimentStatistics
+}
+
+abstract class Trial implements QrEncodable{
+    - trialId : Integer
+    - experimenter : User
+    - experiment : Experiment
+    - location : GeoLocation
+    - state : TrialState
+}
+
+class CountTrial extends Trial {
+    'Weird, TODO: What actually is a CountExperiment
+    - result : Integer
+}
+
+class BinomialTrial extends Trial {
+    - result : Boolean
+}
+
+class NonNegativeTrial extends Trial {
+    - result : Unsigned Integer
+}
+
+class MeasurementTrial extends Trial {
+    - result : Double
+}
+
+enum TrialState {
+    STARTED
+    COMPLETED
+    UPLOADED
+}
+
+class User {
+    - uuid : UUID
+    - email📧 : String
+    - phoneNumber : String
+}
+
+TrialState -- Trial
+GeoLocation -- Trial
+User "*" *-- "0" ExperimentStatistics
 @enduml
