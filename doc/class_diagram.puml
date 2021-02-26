@@ -2,152 +2,269 @@
 @startuml Kotlout
 Title: Kotlout
 ' skinparam linetype ortho
-' + Public
-' - Private
-' # Protected
 
-class Geolocation {
-    - latitude: Double
-    - longitude: Double
-}
-
-interface QrEncodable {
-    + getQrCode(): QrCode
-}
-
-interface BarcodeRegisterable {
-    + registerBarcode(barcode: Barcode, preset: Trial)
-    + scanBarcode()
-}
-
-
-package Experiments {
-    class ExperimentStatistics {
-        - mean: Double
-        - standardDeviation: Double
-        - quartiles: Double[3]
-        + histogramValues : Map<Integer, Double>
-        + timePlot: List<Pair<Date, Number>>
+package Controller {
+    interface Searchable {
+        + search(SearchString: String) : List<Experiment>
     }
-    
-    abstract class Experiment <<abstract>> implements QrEncodable, BarcodeRegisterable {
-        - owner: User
-        - description: String
-        - region: String
-        - minimumTrials: Integer
-        - isOngoing: Boolean
-        - geolocationRequired: Boolean
-        - ignoredUsers: List<User>
-        - posts: List<Post>
+
+    class ExperimentListController implements Searchable {
+        - experimentList: List<Experiment>
+        + ExperimentListController(user: User)
+        + getExperiment(id: UUID) : Experiment
+        + getAllExperiments() : List<Experiment>
+        + getOwnedExperiments() : List<Experiment>
+        + getSubscribedExperiments() : List<Experiment>
+        + addExperiment(experiment: Experiment)
+    }
+
+    class ExperimentController implements Registerable {
+        - experimentContext: Experiment
+
         + publish()
         + unpublish()
+
         + resume()
         + end()
+
         + ignore(user: User)
-        + addQuestion(newQuestion: Post)
-        + {abstract} calculateStats(): ExperimentStatistics
+
+        + addTrial(newTrial: T)
+        + getTrials() : List<Trial>
+
+        + getQuestions() : List<Post>
+
+        + calculateStats(): ExperimentStatistics
     }
 
-    class CountExperiment extends Experiment {
-        - trials: List<CountTrial>
-        + addTrial(newTrial: CountTrial)
-
-        ' HashMap<Barcode, Double> presets;
-
-        ' void registerBarcode(Barcode barcode, Double preset) {
-        '     presets.add(barcode, preset);
-        ' }
-
-        ' void scanBarcode() {
-        '     // Launch barcode scanning library and get return value
-        '     this.addTrial(presets.get(barcode));
-        ' }
+    class TrialController implements QrEncodable {
+        - trial: Trial
+        + upload()
+        + getQrCode(): QrCode
+        + getTrialData(): Trial
     }
 
-    class BinomialExperiment extends Experiment {
-        - trials: List<BinomialTrial>
-        + addTrial(newTrial: BinomialTrial)
-    }
-
-    class NonNegativeExperiment extends Experiment {
-        - trials: List<NonNegativeTrial>
-        + addTrial(newTrial: NonNegativeTrial)
-    }
-
-    class MeasurmentExperiment extends Experiment {
-        - trials: List<MeasurementTrial>
-        + addTrial(newTrial: MeasurementTrial)
-    }
-
-    class Post {
-        - poster: User
-        - children: List<Post>
-        - parent: Post
-        - text: String
-        - timestamp: Date
-
+    class PostController {
+        - post: Post
         + addReply(reply : Post)
     }
 
-    package Trials {
-        abstract class Trial implements QrEncodable {
-            - trialId: Integer
-            - experimenter: User
-            - experiment: Experiment
+    class UserController {
+        - currentUser: User
+        - offlineTrials: List<Trial>
+        + addSubscription(newExperiment: Experiment)
+        + removeSubscription(removedExperiment: Experiment)
+        + fetchSubscriptions() : List<Experiment>
+    }
+
+    interface QrEncodable {
+        + getQrCode(): QrCode
+    }
+
+
+    interface Registerable {
+        + registerScannable(barcode: Barcode, preset: Trial)
+        + scan()
+    }
+
+}
+
+package Model {
+    package Experiments {
+        class Geolocation {
+            - latitude: Double
+            - longitude: Double
+        }
+
+        class ExperimentStatistics {
+            - mean: Double
+            - standardDeviation: Double
+            - quartiles: Double[3]
+            + histogramValues : Map<Integer, Double>
+            + timePlot: List<Pair<Date, Number>>
+        }
+
+        abstract class Experiment <<abstract>> {
+            - owner: User
+            - description: String
+            - region: String
+            - minimumTrials: Integer
+            - isOngoing: Boolean
+            - geolocationRequired: Boolean
+            - ignoredUsers: List<User>
+            - posts: List<Post>
+        }
+
+        class Scannable {
+            - experimentId : Integer
+            - geolocation : Geolocation
+            - outcome : Object
+        }
+
+        class Barcode extends Scannable {
+            - value : Integer
+        }
+
+        class CountExperiment extends Experiment {
+            - trials: List<CountTrial>
+        }
+
+        class BinomialExperiment extends Experiment {
+            - trials: List<BinomialTrial>
+        }
+
+        class NonNegativeExperiment extends Experiment {
+            - trials: List<NonNegativeTrial>
+        }
+
+        class MeasurementExperiment extends Experiment {
+            - trials: List<MeasurementTrial>
+        }
+
+        class Post {
+            - poster: User
+            - children: List<Post>
+            - parent: Post
+            - text: String
             - timestamp: Date
-            - location: Geolocation
-            - isUploaded: Boolean
-            + upload()
         }
 
-        class CountTrial extends Trial {
-            'Weird, TODO: What actually is a CountExperiment
-            - result: Integer
+        class User {
+            - uuid: UUID
+            - email: String
+            - phoneNumber: String
+            - subscriptions: List<Experiment>
         }
 
-        class BinomialTrial extends Trial {
-            - result: Boolean
-        }
+        package Trials {
+            abstract class Trial <<abstract>> {
+                - trialId: Integer
+                - experimenter: User
+                - experiment: Experiment
+                - timestamp: Date
+                - location: Geolocation
+                - isUploaded: Boolean
+            }
 
-        class NonNegativeTrial extends Trial {
-            - result: Unsigned Integer
-        }
+            class CountTrial extends Trial {
+                'Weird, TODO: What actually is a CountExperiment
+                - result: Integer
+            }
 
-        class MeasurementTrial extends Trial {
-            - result: Double
+            class BinomialTrial extends Trial {
+                - result: Boolean
+            }
+
+            class NonNegativeTrial extends Trial {
+                - result: Unsigned Integer
+            }
+
+            class MeasurementTrial extends Trial {
+                - result: Double
+            }
         }
     }
 }
 
-class User {
-    - uuid: UUID
-    - email: String
-    - phoneNumber: String
-    - subscriptions: List<Experiment>
-    - unUploadedTrials: List<Trial>
+package View {
+    class MainActivity {
 
-    + addSubscription(newExperiment: Experiment)
-    + removeSubscription(removedExperiment: Experiment)
+    }
+
+    class ExperimentSearchFragment {
+
+    }
+
+    class SubscribedExperimentListFragment extends ExperimentListFragment{
+
+    }
+
+    class UserExperimentListFragment extends ExperimentListFragment{
+
+    }
+
+    class PublicExperimentListFragment extends ExperimentListFragment{
+
+    }
+
+    class ProfileActivity {
+
+    }
+
+    class NewExperimentActivity {
+
+    }
+
+    class ExperimentViewActivity {
+
+    }
+
+    class ExperimentInfoFragment {
+
+    }
+
+    class ExperimentMapFragment {
+
+    }
+
+    class ExperimentTrialsFragment {
+
+    }
+
+    class ExperimentForumFragment {
+
+    }
+
+    class QrCodeFragment {
+
+    }
+
+    class TrialNewActivity {
+
+    }
+
+    class BarcodeScanActivity {
+
+    }
 }
 
-class ExperimentSearch <<static>> {
-    - {static} keywords : List<String>
-
-    + {static} parseKeywords(searchString : String)
-    + {static} submitSearch() : List<Experiment>
-}
+ExperimentListController "1" *-- "0..*" Experiment
+ExperimentController "1" o-- "0..1" Experiment : Manages
+TrialController "1" *-- "0..1" Trial : Manages
+UserController "1" *-- "0..1" User : Manages
 
 
+Geolocation -- Trial : Performed at
+Experiment "1" *-- "0..*" Post : Has questions
+BinomialExperiment "1" *-- "0..*" BinomialTrial : Has
+NonNegativeExperiment "1" *-- "0..*" NonNegativeTrial : Has
+CountExperiment "1" *-- "0..*" CountTrial : Has
+MeasurementExperiment "1" *-- "0..*" MeasurementTrial : Has
 
-
-Geolocation -- Trial
-Experiment "1" *-- "0..*" Post
-Experiment "1" *-- "0..*" Trial
-Experiment "1" *-- "1" ExperimentStatistics
+Experiment "1" *-- "1" ExperimentStatistics : Calculates
 User "0..1" o-- "0..*" Experiment: Owns
 Experiment "1" -- "0..*" User: Participated
 Post "1" *-- "0..*" Post: Replies
-ExperimentSearch --> Experiment : Searches for
+
+
+MainActivity *-- ExperimentListController : Instantiates
+MainActivity *-- ExperimentListFragment : Instantiates
+MainActivity *-- ExperimentSearchFragment : Instantiates
+MainActivity --> NewExperimentActivity : Launches
+MainActivity --> ExperimentViewActivity : Launches
+
+ExperimentViewActivity *-- ExperimentController : Instantiates
+ExperimentViewActivity *-- ExperimentMapFragment : Instantiates
+ExperimentViewActivity *-- ExperimentInfoFragment : Instantiates
+ExperimentViewActivity *-- ExperimentForumFragment : Instantiates
+ExperimentViewActivity *-- ExperimentTrialsFragment : Instantiates
+
+ProfileActivity *-- UserController : Instantiates
+
+ExperimentViewActivity --> TrialNewActivity : Launches
+ExperimentViewActivity -- QrCodeFragment : Instantiates
+
+TrialNewActivity --> BarcodeScanActivity : Launches
 
 ' User "*" *-- "0" ExperimentStatistics : Text
 
