@@ -1,12 +1,12 @@
 ' Comments up here like who worked on it?
 @startuml Kotlout
 Title: Kotlout
-
+' skinparam linetype ortho
 ' + Public
 ' - Private
 ' # Protected
 
-class GeoLocation {
+class Geolocation {
     - latitude: Double
     - longitude: Double
 }
@@ -15,88 +15,140 @@ interface QrEncodable {
     + getQrCode(): QrCode
 }
 
-interface BarcodeEncodable {
-    + registerBarcode()
-    + scanBarcode() : String
+interface BarcodeRegisterable {
+    + registerBarcode(barcode: Barcode, preset: Trial)
+    + scanBarcode()
 }
 
-class ExperimentStatistics {
-    - mean : Double
-    - standardDeviation : Double
-    - quartiles: Double[3]
-}
 
-abstract class Experiment implements QrEncodable {
-    - owner : User
-    - description : String
-    - region : String
-    - minimumTrials : Integer
-    + publish()
-    + {abstract} calculateStats() : ExperimentStatistics
-}
+package Experiments {
+    class ExperimentStatistics {
+        - mean: Double
+        - standardDeviation: Double
+        - quartiles: Double[3]
+        + histogramValues : Map<Integer, Double>
+        + timePlot: List<Pair<Date, Number>>
+    }
+    
+    abstract class Experiment <<abstract>> implements QrEncodable, BarcodeRegisterable {
+        - owner: User
+        - description: String
+        - region: String
+        - minimumTrials: Integer
+        - isOngoing: Boolean
+        - geolocationRequired: Boolean
+        - ignoredUsers: List<User>
+        - posts: List<Post>
+        + publish()
+        + unpublish()
+        + resume()
+        + end()
+        + ignore(user: User)
+        + addQuestion(newQuestion: Post)
+        + {abstract} calculateStats(): ExperimentStatistics
+    }
 
-class CountExperiment extends Experiment {
-    - trials : List<CountTrial>
-    + addTrial(newTrial : CountTrial)
-    + calculateStats() : ExperimentStatistics
-}
+    class CountExperiment extends Experiment {
+        - trials: List<CountTrial>
+        + addTrial(newTrial: CountTrial)
 
-class BinomialExperiment extends Experiment {
-    - trials : List<BinomialTrial>
-    + addTrial(newTrial : BinomialTrial)
-    + calculateStats() : ExperimentStatistics
-}
+        ' HashMap<Barcode, Double> presets;
 
-class NonNegativeExperiment extends Experiment {
-    - trials : List<NonNegativeTrial>
-    + addTrial(newTrial : NonNegativeTrial)
-    + calculateStats() : ExperimentStatistics
-}
+        ' void registerBarcode(Barcode barcode, Double preset) {
+        '     presets.add(barcode, preset);
+        ' }
 
-class MeasurmentExperiment extends Experiment {
-    - trials : List<MeasurementTrial>
-    + addTrial(newTrial : MeasurementTrial)
-    + calculateStats() : ExperimentStatistics
-}
+        ' void scanBarcode() {
+        '     // Launch barcode scanning library and get return value
+        '     this.addTrial(presets.get(barcode));
+        ' }
+    }
 
-abstract class Trial implements QrEncodable{
-    - trialId : Integer
-    - experimenter : User
-    - experiment : Experiment
-    - location : GeoLocation
-    - state : TrialState
-}
+    class BinomialExperiment extends Experiment {
+        - trials: List<BinomialTrial>
+        + addTrial(newTrial: BinomialTrial)
+    }
 
-class CountTrial extends Trial {
-    'Weird, TODO: What actually is a CountExperiment
-    - result : Integer
-}
+    class NonNegativeExperiment extends Experiment {
+        - trials: List<NonNegativeTrial>
+        + addTrial(newTrial: NonNegativeTrial)
+    }
 
-class BinomialTrial extends Trial {
-    - result : Boolean
-}
+    class MeasurmentExperiment extends Experiment {
+        - trials: List<MeasurementTrial>
+        + addTrial(newTrial: MeasurementTrial)
+    }
 
-class NonNegativeTrial extends Trial {
-    - result : Unsigned Integer
-}
+    class Post {
+        - poster: User
+        - children: List<Post>
+        - parent: Post
+        - text: String
+        - timestamp: Date
 
-class MeasurementTrial extends Trial {
-    - result : Double
-}
+        + addReply(reply : Post)
+    }
 
-enum TrialState {
-    STARTED
-    COMPLETED
-    UPLOADED
+    package Trials {
+        abstract class Trial implements QrEncodable {
+            - trialId: Integer
+            - experimenter: User
+            - experiment: Experiment
+            - timestamp: Date
+            - location: Geolocation
+            - isUploaded: Boolean
+            + upload()
+        }
+
+        class CountTrial extends Trial {
+            'Weird, TODO: What actually is a CountExperiment
+            - result: Integer
+        }
+
+        class BinomialTrial extends Trial {
+            - result: Boolean
+        }
+
+        class NonNegativeTrial extends Trial {
+            - result: Unsigned Integer
+        }
+
+        class MeasurementTrial extends Trial {
+            - result: Double
+        }
+    }
 }
 
 class User {
-    - uuid : UUID
-    - email📧 : String
-    - phoneNumber : String
+    - uuid: UUID
+    - email: String
+    - phoneNumber: String
+    - subscriptions: List<Experiment>
+    - unUploadedTrials: List<Trial>
+
+    + addSubscription(newExperiment: Experiment)
+    + removeSubscription(removedExperiment: Experiment)
 }
 
-TrialState -- Trial
-GeoLocation -- Trial
-User "*" *-- "0" ExperimentStatistics
+class ExperimentSearch <<static>> {
+    - {static} keywords : List<String>
+
+    + {static} parseKeywords(searchString : String)
+    + {static} submitSearch() : List<Experiment>
+}
+
+
+
+
+Geolocation -- Trial
+Experiment "1" *-- "0..*" Post
+Experiment "1" *-- "0..*" Trial
+Experiment "1" *-- "1" ExperimentStatistics
+User "0..1" o-- "0..*" Experiment: Owns
+Experiment "1" -- "0..*" User: Participated
+Post "1" *-- "0..*" Post: Replies
+ExperimentSearch --> Experiment : Searches for
+
+' User "*" *-- "0" ExperimentStatistics : Text
+
 @enduml
