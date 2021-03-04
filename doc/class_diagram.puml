@@ -219,11 +219,11 @@ package View {
 
     }
 
-    class TrialNewActivity {
+    class NewTrialActivity {
 
     }
 
-    class BarcodeScanActivity {
+    class ScanBarcodeActivity {
 
     }
 }
@@ -261,10 +261,10 @@ ExperimentViewActivity *-- ExperimentTrialsFragment : Instantiates
 
 ProfileActivity *-- UserController : Instantiates
 
-ExperimentViewActivity --> TrialNewActivity : Launches
+ExperimentViewActivity --> NewTrialActivity : Launches
 ExperimentViewActivity -- QrCodeFragment : Instantiates
 
-TrialNewActivity --> BarcodeScanActivity : Launches
+NewTrialActivity --> ScanBarcodeActivity : Launches
 
 ' User "*" *-- "0" ExperimentStatistics : Text
 
