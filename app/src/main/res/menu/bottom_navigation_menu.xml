@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/my_experiment_view"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_home"
+        android:title="@string/my_experiments"/>
+    <item
+        android:id="@+id/all_experiments_view"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_explore"
+        android:title="@string/explore_experiments"/>
+    <item
+        android:id="@+id/subscribed_experiments_view"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_favourite"
+        android:title="@string/subscribed_experiments"/>
+</menu>
