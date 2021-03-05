@@ -23,6 +23,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
 
+    android:animateLayoutChanges="true"
     app:layout_constraintTop_toTopOf="parent" />
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -43,8 +44,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-
-    android:onClick="onNavigationBarTapped"
 
     app:layout_constraintBottom_toBottomOf="parent"
 

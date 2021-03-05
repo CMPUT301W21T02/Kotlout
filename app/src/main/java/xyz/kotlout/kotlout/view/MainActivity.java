@@ -3,20 +3,32 @@ package xyz.kotlout.kotlout.view;
 import android.os.Bundle;
 
 import android.view.Menu;
-import android.view.View;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import androidx.appcompat.widget.Toolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.view.ExperimentListFragment.ListType;
 
 public class MainActivity extends AppCompatActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
     setContentView(R.layout.activity_main);
+
+    if (savedInstanceState == null) {
+      ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.MINE);
+      getSupportFragmentManager()
+          .beginTransaction()
+          .add(R.id.fragment_frame, fragment)
+          .commit();
+    }
+
+    BottomNavigationView bnv = findViewById(R.id.bottom_navigation);
+    bnv.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
   }
 
   @Override
@@ -25,15 +37,35 @@ public class MainActivity extends AppCompatActivity {
     return true;
   }
 
-  public void onNavigationBarTapped(@NonNull View item) {
-    int id = item.getId();
+  public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    int id = item.getItemId();
 
     if (id == R.id.my_experiments_view) {
-
+      ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.MINE);
+      getSupportFragmentManager()
+          .beginTransaction()
+          .replace(R.id.fragment_frame, fragment)
+          .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+          .commit();
+      return true;
     } else if (id == R.id.all_experiments_view) {
-
+      ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.ALL);
+      getSupportFragmentManager()
+          .beginTransaction()
+          .replace(R.id.fragment_frame, fragment)
+          .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+          .commit();
+      return true;
     } else if (id == R.id.subscribed_experiments_view) {
-
+      ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.SUBSCRIBED);
+      getSupportFragmentManager()
+          .beginTransaction()
+          .replace(R.id.fragment_frame, fragment)
+          .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+          .commit();
+      return true;
     }
+
+    return false;
   }
 }
