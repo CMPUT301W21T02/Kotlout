@@ -3,7 +3,7 @@
 Title: Kotlout
 ' skinparam linetype ortho
 
-package Controller {
+package controller {
     interface Searchable {
         + search(SearchString: String) : List<Experiment>
     }
@@ -69,13 +69,17 @@ package Controller {
 
 }
 
-package Model {
-    package Experiments {
-        class Geolocation {
-            - latitude: Double
-            - longitude: Double
-        }
+package model {
+    package user {
+        class User {
+                    - uuid: UUID
+                    - email: String
+                    - phoneNumber: String
+                    - subscriptions: List<Experiment>
+                }
+    }   
 
+    package experiment {
         class ExperimentStatistics {
             - mean: Double
             - standardDeviation: Double
@@ -93,16 +97,6 @@ package Model {
             - geolocationRequired: Boolean
             - ignoredUsers: List<User>
             - posts: List<Post>
-        }
-
-        class Scannable {
-            - experimentId : Integer
-            - geolocation : Geolocation
-            - outcome : Object
-        }
-
-        class Barcode extends Scannable {
-            - value : Integer
         }
 
         class CountExperiment extends Experiment {
@@ -129,14 +123,7 @@ package Model {
             - timestamp: Date
         }
 
-        class User {
-            - uuid: UUID
-            - email: String
-            - phoneNumber: String
-            - subscriptions: List<Experiment>
-        }
-
-        package Trials {
+        package trial {
             abstract class Trial <<abstract>> {
                 - trialId: Integer
                 - experimenter: User
@@ -163,10 +150,29 @@ package Model {
                 - result: Double
             }
         }
+
+        package scannable {
+            class Scannable {
+                - experimentId : Integer
+                - geolocation : Geolocation
+                - outcome : Object
+            }
+
+            class Barcode extends Scannable {
+                - value : Integer
+            }
+        }
+    }
+
+    package geolocation {
+        class Geolocation {
+            - latitude: Double
+            - longitude: Double
+        }
     }
 }
 
-package View {
+package view {
     class MainActivity {
 
     }
@@ -219,11 +225,11 @@ package View {
 
     }
 
-    class NewTrialActivity {
+    class TrialNewActivity {
 
     }
 
-    class ScanBarcodeActivity {
+    class BarcodeScanActivity {
 
     }
 }
@@ -261,10 +267,10 @@ ExperimentViewActivity *-- ExperimentTrialsFragment : Instantiates
 
 ProfileActivity *-- UserController : Instantiates
 
-ExperimentViewActivity --> NewTrialActivity : Launches
+ExperimentViewActivity --> TrialNewActivity : Launches
 ExperimentViewActivity -- QrCodeFragment : Instantiates
 
-NewTrialActivity --> ScanBarcodeActivity : Launches
+TrialNewActivity --> BarcodeScanActivity : Launches
 
 ' User "*" *-- "0" ExperimentStatistics : Text
 
