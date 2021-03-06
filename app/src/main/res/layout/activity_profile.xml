@@ -1,23 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/box_inset_layout_padding"
-    tools:context=".view.ProfileActivity"
-    tools:deviceIds="wear">
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="@dimen/inner_frame_layout_padding">
+
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+    <com.google.android.material.appbar.AppBarLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+        <com.google.android.material.appbar.MaterialToolbar
+          android:id="@+id/topAppBar"
+          android:layout_width="match_parent"
+          android:layout_height="?attr/actionBarSize"
+          app:title="User Profile"
+          app:menu="@menu/user_profile_menu"
+          app:navigationIcon="@drawable/ic_baseline_arrow_back"
+          style="@style/Widget.MaterialComponents.Toolbar.Primary"
+          />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/constraintLayout"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <EditText
+          android:id="@+id/profileFirstNameEditText"
+          android:layout_width="@dimen/profile_input_text_width"
+          android:layout_height="@dimen/profile_input_text_height"
+          android:layout_marginTop="100dp"
+          android:ems="10"
+          android:inputType="textPersonName"
+          android:autofillHints="personGivenName"
+          android:text="@string/profile_first_name_text"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintHorizontal_bias="0.495"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/hello_world" />
+          android:id="@+id/profileFirstNameLabel"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/profile_first_name_text"
+          android:visibility="visible"
+          app:layout_constraintBottom_toTopOf="@+id/profileFirstNameEditText"
+          app:layout_constraintStart_toStartOf="@+id/profileFirstNameEditText" />
 
-    </FrameLayout>
-</androidx.wear.widget.BoxInsetLayout>
+        <EditText
+          android:id="@+id/profileLastNameEditText"
+          android:layout_width="@dimen/profile_input_text_width"
+          android:layout_height="@dimen/profile_input_text_height"
+          android:layout_marginTop="@dimen/profile_input_spacing"
+          android:ems="10"
+          android:inputType="textPersonName"
+          android:autofillHints="personFamilyName"
+          android:text="@string/profile_last_name_text"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintHorizontal_bias="0.495"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/profileFirstNameEditText" />
+
+        <TextView
+          android:id="@+id/profileLastNameLabel"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/profile_email_text"
+          android:visibility="visible"
+          app:layout_constraintBottom_toTopOf="@+id/profileLastNameEditText"
+          app:layout_constraintStart_toStartOf="@+id/profileLastNameEditText" />
+
+        <EditText
+          android:id="@+id/profileEmailEditText"
+          android:layout_width="@dimen/profile_input_text_width"
+          android:layout_height="@dimen/profile_input_text_height"
+          android:layout_marginTop="@dimen/profile_input_spacing"
+          android:ems="10"
+          android:inputType="textEmailAddress"
+          android:autofillHints="emailAddress"
+          android:text="@string/profile_email_text"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintHorizontal_bias="0.495"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/profileLastNameEditText" />
+
+        <TextView
+          android:id="@+id/profileEmailLabel"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/profile_email_text"
+          android:visibility="visible"
+          app:layout_constraintBottom_toTopOf="@+id/profileEmailEditText"
+          app:layout_constraintStart_toStartOf="@+id/profileEmailEditText" />
+
+        <EditText
+          android:id="@+id/profilePhoneEditText"
+          android:layout_width="@dimen/profile_input_text_width"
+          android:layout_height="@dimen/profile_input_text_height"
+          android:layout_marginTop="@dimen/profile_input_spacing"
+          android:ems="10"
+          android:inputType="phone"
+          android:autofillHints="phone"
+          android:text="@string/profile_phone_text"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintHorizontal_bias="0.495"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toBottomOf="@+id/profileEmailEditText" />
+
+        <TextView
+          android:id="@+id/profilePhoneLabel"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/profile_phone_text"
+          android:visibility="visible"
+          app:layout_constraintBottom_toTopOf="@+id/profilePhoneEditText"
+          app:layout_constraintStart_toStartOf="@+id/profilePhoneEditText" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
