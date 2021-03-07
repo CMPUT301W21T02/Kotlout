@@ -1,8 +1,6 @@
-
 package xyz.kotlout.kotlout.view;
 
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -10,9 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams;
 import androidx.constraintlayout.widget.ConstraintSet;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -25,10 +21,11 @@ import xyz.kotlout.kotlout.controller.LocalStorageController;
 import xyz.kotlout.kotlout.model.user.User;
 
 /**
- * Test activity that fetches the user from storage, or generates it if one exists
- * Used to test users in firebase until the main activity UI is done
+ * Test activity that fetches the user from storage, or generates it if one exists Used to test
+ * users in firebase until the main activity UI is done
  */
 public class TestUserActivity extends AppCompatActivity {
+
   private EditText firstNameText, lastNameText, emailText, phoneText, uuidText;
   private Button updateButton, createButton, storeButton, loadButton;
   private FirebaseFirestore firestore;
@@ -75,28 +72,50 @@ public class TestUserActivity extends AppCompatActivity {
     profileLayout.addView(loadButton);
     profileLayoutConstraints.clone(profileLayout);
 
-    profileLayoutConstraints.connect(uuidText.getId(), ConstraintSet.TOP, phoneText.getId(), ConstraintSet.BOTTOM, 20);
-    profileLayoutConstraints.connect(uuidText.getId(), ConstraintSet.LEFT, profileLayout.getId(), ConstraintSet.LEFT, 100);
-    profileLayoutConstraints.connect(updateButton.getId(), ConstraintSet.LEFT, profileLayout.getId(), ConstraintSet.LEFT, 100 );
-    profileLayoutConstraints.connect(updateButton.getId(), ConstraintSet.TOP, uuidText.getId(), ConstraintSet.BOTTOM, 30);
-    profileLayoutConstraints.connect(createButton.getId(), ConstraintSet.LEFT, updateButton.getId(), ConstraintSet.RIGHT, 100);
-    profileLayoutConstraints.connect(createButton.getId(), ConstraintSet.TOP, updateButton.getId(), ConstraintSet.TOP, 0);
-    profileLayoutConstraints.connect(storeButton.getId(), ConstraintSet.LEFT, createButton.getId(), ConstraintSet.RIGHT, 100);
-    profileLayoutConstraints.connect(storeButton.getId(), ConstraintSet.TOP, updateButton.getId(), ConstraintSet.TOP, 0);
-    profileLayoutConstraints.connect(loadButton.getId(), ConstraintSet.LEFT, updateButton.getId(), ConstraintSet.RIGHT, 100);
-    profileLayoutConstraints.connect(loadButton.getId(), ConstraintSet.TOP, updateButton.getId(), ConstraintSet.BOTTOM, 100);
+    profileLayoutConstraints
+        .connect(uuidText.getId(), ConstraintSet.TOP, phoneText.getId(), ConstraintSet.BOTTOM, 20);
+    profileLayoutConstraints
+        .connect(uuidText.getId(), ConstraintSet.LEFT, profileLayout.getId(), ConstraintSet.LEFT,
+            100);
+    profileLayoutConstraints
+        .connect(updateButton.getId(), ConstraintSet.LEFT, profileLayout.getId(),
+            ConstraintSet.LEFT, 100);
+    profileLayoutConstraints
+        .connect(updateButton.getId(), ConstraintSet.TOP, uuidText.getId(), ConstraintSet.BOTTOM,
+            30);
+    profileLayoutConstraints.connect(createButton.getId(), ConstraintSet.LEFT, updateButton.getId(),
+        ConstraintSet.RIGHT, 100);
+    profileLayoutConstraints
+        .connect(createButton.getId(), ConstraintSet.TOP, updateButton.getId(), ConstraintSet.TOP,
+            0);
+    profileLayoutConstraints
+        .connect(storeButton.getId(), ConstraintSet.LEFT, createButton.getId(), ConstraintSet.RIGHT,
+            100);
+    profileLayoutConstraints
+        .connect(storeButton.getId(), ConstraintSet.TOP, updateButton.getId(), ConstraintSet.TOP,
+            0);
+    profileLayoutConstraints
+        .connect(loadButton.getId(), ConstraintSet.LEFT, updateButton.getId(), ConstraintSet.RIGHT,
+            100);
+    profileLayoutConstraints
+        .connect(loadButton.getId(), ConstraintSet.TOP, updateButton.getId(), ConstraintSet.BOTTOM,
+            100);
 
     profileLayoutConstraints.applyTo(profileLayout);
 
+    // Store UUID in uuidText to local storage
     storeButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         UUID currentUUID = UUID.fromString(uuidText.getText().toString());
-        Log.d("ACTIVITY", "Current UUID " + uuidText.getText().toString() + " New UUID " + currentUUID.toString());
+        Log.d("ACTIVITY",
+            "Current UUID " + uuidText.getText().toString() + " New UUID " + currentUUID
+                .toString());
         LocalStorageController.storeUUID(UUID.fromString((uuidText.getText().toString())));
       }
     });
 
+    // Pull User data from firebase for UUID in uuidText
     updateButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -104,6 +123,7 @@ public class TestUserActivity extends AppCompatActivity {
       }
     });
 
+    // Get uuid stored in local data
     loadButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -114,6 +134,7 @@ public class TestUserActivity extends AppCompatActivity {
       }
     });
 
+    // Create a new User in firebase with the information in the UI
     createButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -129,12 +150,17 @@ public class TestUserActivity extends AppCompatActivity {
     });
   }
 
+  /**
+   * Get user data from firebase for a given UUID
+   *
+   * @param docName User document ID to read
+   */
   private void fetchFirebaseData(String docName) {
     firestore.collection("users")
         .document(docName).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
       @Override
       public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-        if(task.isSuccessful()) {
+        if (task.isSuccessful()) {
           DocumentSnapshot document = task.getResult();
           if (document.exists()) {
             Log.d("FIRESTORE", "Document snapshot: " + document.getData());
@@ -151,8 +177,13 @@ public class TestUserActivity extends AppCompatActivity {
     });
   }
 
+  /**
+   * Update UI text fields to match the provided user
+   *
+   * @param user
+   */
   private void updateTextFields(User user) {
-    if(user == null) {
+    if (user == null) {
       Log.d("UI", "Cannot update with null user");
       return;
     }
@@ -162,6 +193,11 @@ public class TestUserActivity extends AppCompatActivity {
     phoneText.setText(user.getPhoneNumber());
   }
 
+  /**
+   * Upload user to firestore
+   *
+   * @param user
+   */
   private void UpdateUser(User user) {
     firestore.collection("users").document(user.getUuid().toString()).set(user);
   }

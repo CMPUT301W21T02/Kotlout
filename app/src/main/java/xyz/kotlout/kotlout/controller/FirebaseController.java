@@ -1,9 +1,7 @@
 package xyz.kotlout.kotlout.controller;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import xyz.kotlout.kotlout.model.user.User;
 
 
 /**
@@ -20,22 +18,30 @@ public class FirebaseController {
   private static FirebaseFirestore firestore;
   private static FirebaseAuth firebaseAuth;
 
+  /**
+   * Gets an instance of firestore and returns it
+   * @return An instance of firestore
+   */
   public static FirebaseFirestore getFirestore() {
-    if(firestore == null) {
+    if (firestore == null) {
       firestore = FirebaseFirestore.getInstance();
 
-      if(USE_EMU) {
+      if (USE_EMU) {
         firestore.useEmulator(EMU_HOST, EMU_FIREBASE_PORT);
       }
     }
     return firestore;
   }
-  
+
+  /**
+   * Gets an instance of firebase Auth
+   * @return An instance of Girebase Auth
+   */
   public static FirebaseAuth getAuth() {
-    if(firebaseAuth == null) {
+    if (firebaseAuth == null) {
       firebaseAuth = FirebaseAuth.getInstance();
 
-      if(USE_EMU) {
+      if (USE_EMU) {
         firebaseAuth.useEmulator(EMU_HOST, EMU_AUTH_PORT);
       }
     }

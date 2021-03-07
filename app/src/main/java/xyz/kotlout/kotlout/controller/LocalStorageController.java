@@ -2,7 +2,6 @@ package xyz.kotlout.kotlout.controller;
 
 import android.content.Context;
 import android.util.Log;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,7 +9,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.UUID;
-import xyz.kotlout.kotlout.model.user.User;
 
 /**
  * Manages internal storage
@@ -27,24 +25,28 @@ public class LocalStorageController {
   }
 
   /**
-   * Initialize local storage
-   * Currently reads the UUID stored internally
-   * Will create a UUID if none exists
+   * Initialize local storage Currently reads the UUID stored internally Will create a UUID if none
+   * exists
    */
   public static void initLocalStorage(Context context) {
     ctx = context;
     uuid = readUUID();
     Log.d(TAG, "Loaded UUID: " + uuid.toString());
-    if(uuid == null) {
+    if (uuid == null) {
       uuid = UUID.randomUUID();
       storeUUID(uuid);
     }
   }
 
+  /**
+   * Read uuid from storage
+   * @return UUID stored in internal storage
+   */
   public static UUID readUUID() {
     Log.d(TAG, "LOCAL STORAGE DIR: " + ctx.getFilesDir());
     try (
-        FileInputStream uuidFileStream = new FileInputStream(ctx.getFilesDir().toString() + '/' + UUID_FILE_NAME);
+        FileInputStream uuidFileStream = new FileInputStream(
+            ctx.getFilesDir().toString() + '/' + UUID_FILE_NAME);
         ObjectInputStream uuidObjStream = new ObjectInputStream(uuidFileStream)
     ) {
       return (UUID) uuidObjStream.readObject();
@@ -58,6 +60,10 @@ public class LocalStorageController {
     return null;
   }
 
+  /**
+   * Store a given uuid into local storage
+   * @param new_uuid UUID to store
+   */
   public static void storeUUID(UUID new_uuid) {
     if (new_uuid == null) {
       Log.w(TAG, "ERROR: cannot store empty uuid");
