@@ -40,7 +40,6 @@ public class TestUserActivity extends AppCompatActivity {
     ConstraintLayout profileLayout = (ConstraintLayout) findViewById(R.id.profileConstraintLayout);
     ConstraintSet profileLayoutConstraints = new ConstraintSet();
 
-    LocalStorageController.initLocalStorage(getApplicationContext());
 
     firstNameText = findViewById(R.id.profileFirstNameEditText);
     lastNameText = findViewById(R.id.profileLastNameEditText);
@@ -57,7 +56,12 @@ public class TestUserActivity extends AppCompatActivity {
     createButton.setText("Push Data");
     storeButton.setText("Store Data");
     loadButton.setText("Load Data");
-    uuidText.setText(LocalStorageController.getUUID().toString());
+    UUID curent_uuid = LocalStorageController.readUUID();
+    if(curent_uuid == null) {
+      curent_uuid = UUID.randomUUID();
+      LocalStorageController.storeUUID(curent_uuid);
+    }
+    uuidText.setText(curent_uuid.toString());
 
     updateButton.setId(View.generateViewId());
     createButton.setId(View.generateViewId());
@@ -127,8 +131,7 @@ public class TestUserActivity extends AppCompatActivity {
     loadButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        LocalStorageController.readUUID();
-        UUID localUuid = LocalStorageController.getUUID();
+        UUID localUuid =  LocalStorageController.readUUID();
         Log.d("ACTIVITY", localUuid.toString());
         uuidText.setText(localUuid.toString());
       }

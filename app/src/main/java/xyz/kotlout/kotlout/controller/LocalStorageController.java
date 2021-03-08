@@ -17,32 +17,14 @@ public class LocalStorageController {
 
   private static final String UUID_FILE_NAME = "uuid.ser";
   private static final String TAG = "LOCAL STORAGE";
-  private static Context ctx;
-  private static UUID uuid;
-
-  public static UUID getUUID() {
-    return uuid;
-  }
-
-  /**
-   * Initialize local storage Currently reads the UUID stored internally Will create a UUID if none
-   * exists
-   */
-  public static void initLocalStorage(Context context) {
-    ctx = context;
-    uuid = readUUID();
-    Log.d(TAG, "Loaded UUID: " + uuid.toString());
-    if (uuid == null) {
-      uuid = UUID.randomUUID();
-      storeUUID(uuid);
-    }
-  }
 
   /**
    * Read uuid from storage
+   *
    * @return UUID stored in internal storage
    */
   public static UUID readUUID() {
+    Context ctx = ApplicationContextProvider.getAppContext();
     Log.d(TAG, "LOCAL STORAGE DIR: " + ctx.getFilesDir());
     try (
         FileInputStream uuidFileStream = new FileInputStream(
@@ -62,6 +44,7 @@ public class LocalStorageController {
 
   /**
    * Store a given uuid into local storage
+   *
    * @param new_uuid UUID to store
    */
   public static void storeUUID(UUID new_uuid) {
@@ -70,7 +53,8 @@ public class LocalStorageController {
       return;
     }
     try (
-        FileOutputStream uuidFileStream = ctx.openFileOutput(UUID_FILE_NAME, Context.MODE_PRIVATE);
+        FileOutputStream uuidFileStream = ApplicationContextProvider.getAppContext()
+            .openFileOutput(UUID_FILE_NAME, Context.MODE_PRIVATE);
         ObjectOutputStream uuidObjStream = new ObjectOutputStream(uuidFileStream)
     ) {
       uuidObjStream.writeObject(new_uuid);
