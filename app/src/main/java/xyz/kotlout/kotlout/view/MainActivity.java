@@ -10,7 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import xyz.kotlout.kotlout.R;
-import xyz.kotlout.kotlout.view.ExperimentListFragment.ListType;
+import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment;
+import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment.ListType;
 
 public class MainActivity extends AppCompatActivity {
 
