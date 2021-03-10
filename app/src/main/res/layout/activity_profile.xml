@@ -34,13 +34,13 @@
           android:layout_height="@dimen/profile_input_text_height"
           android:layout_marginTop="100dp"
           android:ems="10"
-          android:inputType="textPersonName"
+          android:inputType="none"
           android:autofillHints="personGivenName"
           android:hint="@string/profile_first_name_text"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintHorizontal_bias="0.495"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent" />
+          app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
           android:id="@+id/profileFirstNameLabel"
@@ -57,7 +57,7 @@
           android:layout_height="@dimen/profile_input_text_height"
           android:layout_marginTop="@dimen/profile_input_spacing"
           android:ems="10"
-          android:inputType="textPersonName"
+          android:inputType="none"
           android:autofillHints="personFamilyName"
           android:hint="@string/profile_last_name_text"
           app:layout_constraintEnd_toEndOf="parent"
@@ -80,7 +80,7 @@
           android:layout_height="@dimen/profile_input_text_height"
           android:layout_marginTop="@dimen/profile_input_spacing"
           android:ems="10"
-          android:inputType="textEmailAddress"
+          android:inputType="none"
           android:autofillHints="emailAddress"
           android:hint="@string/profile_email_text"
           app:layout_constraintEnd_toEndOf="parent"
@@ -103,7 +103,7 @@
           android:layout_height="@dimen/profile_input_text_height"
           android:layout_marginTop="@dimen/profile_input_spacing"
           android:ems="10"
-          android:inputType="phone"
+          android:inputType="none"
           android:autofillHints="phone"
           android:hint="@string/profile_phone_text"
           app:layout_constraintEnd_toEndOf="parent"
