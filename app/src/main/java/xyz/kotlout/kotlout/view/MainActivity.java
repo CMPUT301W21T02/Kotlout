@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
       getSupportFragmentManager()
           .beginTransaction()
           .replace(R.id.fragment_frame, fragment)
-          .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
           .commit();
       return true;
     } else if (id == R.id.all_experiments_view) {
@@ -53,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
       getSupportFragmentManager()
           .beginTransaction()
           .replace(R.id.fragment_frame, fragment)
-          .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
           .commit();
       return true;
     } else if (id == R.id.subscribed_experiments_view) {
@@ -61,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
       getSupportFragmentManager()
           .beginTransaction()
           .replace(R.id.fragment_frame, fragment)
-          .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
           .commit();
       return true;
     }
