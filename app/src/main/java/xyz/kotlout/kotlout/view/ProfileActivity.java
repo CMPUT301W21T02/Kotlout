@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.core.app.NavUtils;
 import com.google.firebase.firestore.FirebaseFirestore;
+import java.util.function.Consumer;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.LocalStorageController;
 import xyz.kotlout.kotlout.controller.UserController;
@@ -24,8 +25,8 @@ public class ProfileActivity extends AppCompatActivity {
     private EditText firstNameText, lastNameText, emailText, phoneText;
     private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     private Menu optionsMenu;
+    private  UserController controller;
     String uuid = LocalStorageController.readUUID();
-    User user = UserController.fetchUser(uuid, firestore);
 
     /**
      * When the user launches the activity, their information should be displayed if it exists
@@ -35,6 +36,8 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        controller = new UserController(uuid);
+        controller.setUpdateCallback(updateCallback);
 
         firstNameText = findViewById(R.id.profileFirstNameEditText);
         lastNameText = findViewById(R.id.profileLastNameEditText);
@@ -43,18 +46,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         changeEditable();
 
-        if (user.getFirstName() != null && user.getFirstName() != "") {
-            firstNameText.setText(user.getFirstName());
-        }
-        if (user.getLastName() != null && user.getFirstName() != "") {
-            lastNameText.setText(user.getFirstName());
-        }
-        if (user.getEmail() != null && user.getFirstName() != "") {
-            emailText.setText(user.getFirstName());
-        }
-        if (user.getPhoneNumber() != null && user.getFirstName() != "") {
-            phoneText.setText(user.getFirstName());
-        }
+
     }
 
     /**
@@ -158,20 +150,32 @@ public class ProfileActivity extends AppCompatActivity {
 
                 if (UserController.validateEmail(newEmail) == true && UserController.validatePhoneNumber(newPhone) == true) {
 
-                    UserController.setInfo(user, newFirstName, newLastName, newEmail, newPhone);
 
                     firstNameText.setInputType(InputType.TYPE_NULL);
                     lastNameText.setInputType(InputType.TYPE_NULL);
                     emailText.setInputType(InputType.TYPE_NULL);
                     phoneText.setInputType(InputType.TYPE_NULL);
 
-                    firestore.collection("users").add(user);
-                    firestore.collection("users").document(user.getUuid()).set(user);
-
+                    controller.updateUserData( new User(newFirstName, newLastName, newEmail, newPhone, uuid));
                 } else {
                     Toast.makeText(this, "Invalid Entry", Toast.LENGTH_SHORT);
                 }
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private Consumer<User> updateCallback = (user) -> {
+        if (user.getFirstName() != null && user.getFirstName() != "") {
+            firstNameText.setText(user.getFirstName());
+        }
+        if (user.getLastName() != null && user.getFirstName() != "") {
+            lastNameText.setText(user.getLastName());
+        }
+        if (user.getEmail() != null && user.getEmail() != "") {
+            emailText.setText(user.getEmail());
+        }
+        if (user.getPhoneNumber() != null && user.getPhoneNumber() != "") {
+            phoneText.setText(user.getPhoneNumber());
+        }
+    };
 }
