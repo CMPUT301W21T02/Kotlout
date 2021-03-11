@@ -11,11 +11,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.model.experiment.Experiment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment.ListType;
 
 public class MainActivity extends AppCompatActivity {
+
+  List<Experiment> experimentList = new ArrayList<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
           .beginTransaction()
           .replace(R.id.frame_main, fragment)
           .commit();
+
       return true;
     } else if (id == R.id.all_experiments_view) {
       ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.ALL);
@@ -56,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
           .beginTransaction()
           .replace(R.id.frame_main, fragment)
           .commit();
+
       return true;
     } else if (id == R.id.subscribed_experiments_view) {
       ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.SUBSCRIBED);
@@ -63,14 +71,24 @@ public class MainActivity extends AppCompatActivity {
           .beginTransaction()
           .replace(R.id.frame_main, fragment)
           .commit();
+
       return true;
     }
 
     return false;
   }
 
-  public void addNewExperiment(View view) {
+  public void fabNewExperiment(View view) {
     Intent intent = new Intent(this, ExperimentNewActivity.class);
-    startActivity(intent);
+    startActivityForResult(intent, ExperimentNewActivity.NEW_EXPERIMENT_REQUEST);
+  }
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if(requestCode == ExperimentNewActivity.NEW_EXPERIMENT_REQUEST) {
+      Experiment newExperiment = data.getParcelableExtra(ExperimentNewActivity.EXPERIMENT_EXTRA);
+      experimentList.add(newExperiment);
+    }
   }
 }

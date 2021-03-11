@@ -36,7 +36,7 @@
     android:contentDescription="Create new experiment"
     android:src="@drawable/ic_baseline_add"
 
-    android:onClick="addNewExperiment"
+    android:onClick="fabNewExperiment"
 
     app:fabSize="auto"
 
