@@ -36,8 +36,7 @@ public class ProfileActivity extends AppCompatActivity {
     EditText email = findViewById(R.id.profileEmailEditText);
     EditText phone = findViewById(R.id.profilePhoneEditText);
     private FirebaseFirestore firestore;
-    String uuid = LocalStorageController.readUUID().toString();
-    // I think Amir/Tharidu are gonna add a feature to UserController after they change the UUID class
+    String uuid = LocalStorageController.readUUID();
     User user = UserController.fetchUser(uuid, firestore);
 
 
@@ -65,9 +64,9 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * An options menu
+     * An options relevant to the user profile will appear
      * @param menu
-     * @return
+     * @return true
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -79,7 +78,9 @@ public class ProfileActivity extends AppCompatActivity {
     /**
      * Allows for the selection of items in the options menu
      * @param item
+     *  The menu item which was clicked
      * @return
+     *  Whether the item was successfully clicked
      */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -106,7 +107,6 @@ public class ProfileActivity extends AppCompatActivity {
                 newPhone = phone.getText().toString();
 
                 if (UserController.validateEmail(newEmail) == true && UserController.validatePhoneNumber(newPhone) == true) {
-                    // I think the setting should be done through the controller, but I'm not 100% sure
                     confirm.setVisibility(View.INVISIBLE);
                     edit.setVisibility(View.VISIBLE);
 
@@ -117,7 +117,7 @@ public class ProfileActivity extends AppCompatActivity {
                     email.setInputType(InputType.TYPE_NULL);
                     phone.setInputType(InputType.TYPE_NULL);
 
-                    firestore.collection("users").document(user.getUuid().toString()).set(user);
+                    firestore.collection("users").document(user.getUuid()).set(user);
                 } else {
                     Toast.makeText(this, "Invalid Entry", Toast.LENGTH_SHORT);
                 }
