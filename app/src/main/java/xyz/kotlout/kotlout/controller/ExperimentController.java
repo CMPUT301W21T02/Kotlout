@@ -1,5 +1,7 @@
 package xyz.kotlout.kotlout.controller;
 
+import android.util.Log;
+import com.google.firebase.firestore.FirebaseFirestore;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.BinomialExperiment;
 import xyz.kotlout.kotlout.model.experiment.CountExperiment;
@@ -12,6 +14,8 @@ import xyz.kotlout.kotlout.model.experiment.NonNegativeExperiment;
  */
 public class ExperimentController {
 
+  private static final String TAG = "EXPERIMENT_CONTROLLER";
+  private static final String EXPERIMENT_COLLECTION = "experiment";
   Experiment experiment;
 
   /**
@@ -63,6 +67,24 @@ public class ExperimentController {
    */
   public Experiment getExperimentContext() {
     return experiment;
+  }
+
+  /**
+   * Adds a new experiment to the firestore database.
+   */
+  public void publishExperiment() {
+    if (experiment == null) {
+      return;
+    }
+
+    FirebaseFirestore db = FirebaseController
+        .getFirestore(); // TODO: disable emulation for prod release
+    db.collection(EXPERIMENT_COLLECTION)
+        .add(experiment)
+        .addOnSuccessListener(
+            documentReference -> Log
+                .d(TAG, "Experiment published with id: " + documentReference.getId()))
+        .addOnFailureListener(e -> Log.w(TAG, "Experiment not published", e));
   }
 }
 
