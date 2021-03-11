@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
           "btables@ualberta.ca", "123-456-7890"));
 
       ExperimentController experimentController = new ExperimentController(newExperiment);
-      experimentController.publishExperiment();
+      experimentController.publish();
     }
   }
 }
