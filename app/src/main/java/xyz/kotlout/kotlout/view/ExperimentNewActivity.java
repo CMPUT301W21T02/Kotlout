@@ -6,11 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import xyz.kotlout.kotlout.R;
 
-public class NewExperimentActivity extends AppCompatActivity {
+public class ExperimentNewActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_experiment_new);
     }
 }

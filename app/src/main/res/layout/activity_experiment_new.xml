@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  tools:context=".view.ExperimentNewActivity">
+
+  <EditText
+    android:id="@+id/et_experiment_new_description"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:ems="10"
+    android:gravity="start|top"
+    android:hint="@string/new_experiment_description"
+    android:importantForAutofill="no"
+    android:inputType="textMultiLine"
+    app:layout_constraintTop_toTopOf="parent" />
+
+  <EditText
+    android:id="@+id/et_experiment_new_region"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:ems="10"
+    android:gravity="start|top"
+    android:hint="@string/new_experiment_region"
+    android:importantForAutofill="no"
+    android:inputType="text"
+    app:layout_constraintTop_toBottomOf="@id/et_experiment_new_description" />
+
+  <EditText
+    android:id="@+id/et_experiment_new_min_trials"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:digits="0123456789"
+    android:ems="10"
+    android:gravity="start|top"
+    android:hint="@string/new_experiment_min_trials"
+    android:importantForAutofill="no"
+    android:inputType="number"
+    app:layout_constraintTop_toBottomOf="@id/et_experiment_new_region" />
+
+  <Spinner
+    android:id="@+id/sp_experiment_new_type"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:entries="@array/experiment_types"
+    app:layout_constraintTop_toBottomOf="@id/et_experiment_new_min_trials" />
+
+  <Button
+    android:id="@+id/btn_experiment_new_add"
+
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="64dp"
+    android:text="@string/btn_new_experiment_add"
+
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/sp_experiment_new_type" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

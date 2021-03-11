@@ -1,10 +1,12 @@
 package xyz.kotlout.kotlout.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,11 +26,11 @@ public class MainActivity extends AppCompatActivity {
       ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.MINE);
       getSupportFragmentManager()
           .beginTransaction()
-          .add(R.id.fragment_frame, fragment)
+          .add(R.id.frame_main, fragment)
           .commit();
     }
 
-    BottomNavigationView bnv = findViewById(R.id.bottom_navigation);
+    BottomNavigationView bnv = findViewById(R.id.nav_main);
     bnv.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
   }
 
@@ -45,25 +47,30 @@ public class MainActivity extends AppCompatActivity {
       ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.MINE);
       getSupportFragmentManager()
           .beginTransaction()
-          .replace(R.id.fragment_frame, fragment)
+          .replace(R.id.frame_main, fragment)
           .commit();
       return true;
     } else if (id == R.id.all_experiments_view) {
       ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.ALL);
       getSupportFragmentManager()
           .beginTransaction()
-          .replace(R.id.fragment_frame, fragment)
+          .replace(R.id.frame_main, fragment)
           .commit();
       return true;
     } else if (id == R.id.subscribed_experiments_view) {
       ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.SUBSCRIBED);
       getSupportFragmentManager()
           .beginTransaction()
-          .replace(R.id.fragment_frame, fragment)
+          .replace(R.id.frame_main, fragment)
           .commit();
       return true;
     }
 
     return false;
+  }
+
+  public void addNewExperiment(View view) {
+    Intent intent = new Intent(this, ExperimentNewActivity.class);
+    startActivity(intent);
   }
 }

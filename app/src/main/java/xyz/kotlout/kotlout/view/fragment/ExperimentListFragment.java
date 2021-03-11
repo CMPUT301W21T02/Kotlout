@@ -73,9 +73,9 @@ public class ExperimentListFragment extends Fragment {
         convertView = inflater.inflate(R.layout.experiment_list_group, parent, false);
       }
 
-      TextView group_tv = convertView.findViewById(R.id.groupTitle);
+      TextView tvGroup = convertView.findViewById(R.id.tv_experiment_list_group);
 
-      group_tv.setText(groups[groupPosition]);
+      tvGroup.setText(groups[groupPosition]);
       return convertView;
     }
 
@@ -89,7 +89,7 @@ public class ExperimentListFragment extends Fragment {
       }
 
       TextView experimentDescription = convertView
-          .findViewById(R.id.activity_main_tv_experiment_description);
+          .findViewById(R.id.tv_experiment_list_description);
 
       experimentDescription.setText(children[groupPosition][childPosition]);
       return convertView;
@@ -131,7 +131,7 @@ public class ExperimentListFragment extends Fragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    ExpandableListView elv = view.findViewById(R.id.activity_main_elv_experiment_list);
+    ExpandableListView elv = view.findViewById(R.id.elv_main_experiment_list);
     elv.setAdapter(new ExperimentListAdapter());
 
   }

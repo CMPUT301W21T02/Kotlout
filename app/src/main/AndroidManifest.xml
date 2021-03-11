@@ -19,6 +19,10 @@
             </intent-filter>
         </activity>
         <activity
+          android:name=".view.ExperimentNewActivity"
+          android:label="@string/title_activity_new">
+        </activity>
+        <activity
             android:name=".view.ProfileActivity"
             android:label="@string/title_activity_profile">
         </activity>
