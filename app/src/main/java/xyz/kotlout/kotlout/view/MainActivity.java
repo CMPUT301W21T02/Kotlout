@@ -5,28 +5,85 @@ import android.os.Bundle;
 
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment;
+import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment.ListType;
 
 public class MainActivity extends AppCompatActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    if (savedInstanceState == null) {
+      ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.MINE);
+      getSupportFragmentManager()
+          .beginTransaction()
+          .add(R.id.fragment_frame, fragment)
+          .commit();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.experiment_list_menu, menu);
+    BottomNavigationView bnv = findViewById(R.id.bottom_navigation);
+    bnv.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.experiment_list_menu, menu);
+    return true;
+  }
+
+  public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    int id = item.getItemId();
+
+    if (id == R.id.my_experiments_view) {
+      ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.MINE);
+      getSupportFragmentManager()
+          .beginTransaction()
+          .replace(R.id.fragment_frame, fragment)
+          .commit();
+      return true;
+    } else if (id == R.id.all_experiments_view) {
+      ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.ALL);
+      getSupportFragmentManager()
+          .beginTransaction()
+          .replace(R.id.fragment_frame, fragment)
+          .commit();
+      return true;
+    } else if (id == R.id.subscribed_experiments_view) {
+      ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.SUBSCRIBED);
+      getSupportFragmentManager()
+          .beginTransaction()
+          .replace(R.id.fragment_frame, fragment)
+          .commit();
+      return true;
+    }
+
+    return false;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.sync_experiments:
         return true;
-    }
 
-    public void sendMessage(View view) {
-        Intent intent = new Intent(this, ProfileActivity.class);
-        startActivity(intent);
+      case R.id.show_profile:
+        Intent intent = new Intent(this, TestUserActivity.class);
+        this.startActivity(intent);
+        return true;
+
+      case R.id.search_experiments:
+        return true;
+
+      default:
+        return super.onOptionsItemSelected(item);
     }
+  }
 }

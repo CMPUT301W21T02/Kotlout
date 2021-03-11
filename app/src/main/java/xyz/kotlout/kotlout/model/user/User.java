@@ -1,10 +1,8 @@
 package xyz.kotlout.kotlout.model.user;
 
-//import com.google.firebase.firestore.Exclude;
-
+import com.google.firebase.firestore.Exclude;
 import java.util.List;
 import java.util.UUID;
-
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 
 public class User {
@@ -16,26 +14,30 @@ public class User {
 
   // UUID doens't have a no-argument constructor and cannot be deserialized by firestore
   // Maybe we should consider using Firebase ID's instead
-  private UUID uuid;
+  @Exclude
+  private String uuid;
+  @Exclude
   private List<Experiment> subscriptions;
 
   // Required for Firebase Serialization
   public User() {
   }
 
-  public User(String firstName, String lastName, String email, String phoneNumber) {
+  public User(String firstName, String lastName, String email, String phoneNumber, String uuid) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.phoneNumber = phoneNumber;
-    this.uuid = UUID.randomUUID();
+    this.uuid = uuid;
   }
 
-  public UUID getUuid() {
+  @Exclude
+  public String getUuid() {
     return uuid;
   }
 
-  public void setUuid(UUID uuid) {
+  @Exclude
+  public void setUuid(String uuid) {
     this.uuid = uuid;
   }
 
@@ -71,6 +73,7 @@ public class User {
     this.phoneNumber = phoneNumber;
   }
 
+  @Exclude
   public List<Experiment> getSubscriptions() {
     return subscriptions;
   }

@@ -2,20 +2,24 @@ package xyz.kotlout.kotlout.controller;
 
 import android.content.Context;
 import android.util.Log;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.charset.Charset;
 import java.util.UUID;
 
 /**
  * Manages internal storage
  */
-public class LocalStorageController {
+public final class LocalStorageController {
 
-  private static final String UUID_FILE_NAME = "uuid.ser";
+  private static final String UUID_FILE_NAME = "uuid.dat";
   private static final String TAG = "LOCAL STORAGE";
 
   /**
@@ -23,19 +27,27 @@ public class LocalStorageController {
    *
    * @return UUID stored in internal storage
    */
-  public static UUID readUUID() {
+  public static String readUUID() {
     Context ctx = ApplicationContextProvider.getAppContext();
     Log.d(TAG, "LOCAL STORAGE DIR: " + ctx.getFilesDir());
     try (
         FileInputStream uuidFileStream = new FileInputStream(
             ctx.getFilesDir().toString() + '/' + UUID_FILE_NAME);
-        ObjectInputStream uuidObjStream = new ObjectInputStream(uuidFileStream)
+        DataInputStream uuidInputStream = new DataInputStream(uuidFileStream);
+        BufferedReader uuidBuffer = new BufferedReader(new InputStreamReader(uuidInputStream));
     ) {
-      return (UUID) uuidObjStream.readObject();
+      String uuidString = uuidBuffer.readLine();
+      if (uuidBuffer.readLine() == null) {
+        return (String) uuidString;
+      } else {
+        throw new RuntimeException("File contains extra lines");
+      }
+
     } catch (FileNotFoundException e) {
       Log.d(TAG, "UUID file not found" + e.getMessage());
-    } catch (ClassNotFoundException e) {
+    } catch (RuntimeException e) {
       Log.e(TAG, "UUID file exists, but data is not a valid UUID\n\t" + e.getMessage());
+      return "Please don't edit the uuid file :'(..." + UUID.randomUUID().toString();
     } catch (IOException e) {
       Log.e(TAG, "General IO exception:\n\t" + e.getMessage());
     }
@@ -47,7 +59,7 @@ public class LocalStorageController {
    *
    * @param new_uuid UUID to store
    */
-  public static void storeUUID(UUID new_uuid) {
+  public static void storeUUID(String new_uuid) {
     if (new_uuid == null) {
       Log.w(TAG, "ERROR: cannot store empty uuid");
       return;
@@ -55,10 +67,9 @@ public class LocalStorageController {
     try (
         FileOutputStream uuidFileStream = ApplicationContextProvider.getAppContext()
             .openFileOutput(UUID_FILE_NAME, Context.MODE_PRIVATE);
-        ObjectOutputStream uuidObjStream = new ObjectOutputStream(uuidFileStream)
     ) {
-      uuidObjStream.writeObject(new_uuid);
-      Log.w(TAG, "Wrote uuid: " + new_uuid.toString() + " to Data");
+      uuidFileStream.write(new_uuid.getBytes(Charset.defaultCharset()));
+      Log.w(TAG, "Wrote uuid: " + new_uuid + " to Data");
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
