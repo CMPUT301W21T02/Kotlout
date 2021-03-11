@@ -1,5 +1,10 @@
 package xyz.kotlout.kotlout.controller;
 
+import androidx.annotation.NonNull;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.regex.Pattern;
 import xyz.kotlout.kotlout.model.user.User;
 
@@ -30,5 +35,29 @@ public class UserController {
 
   public User getUser() {
     return user;
+  }
+
+  public static void setInfo(User user, String firstName, String lastName, String email, String phone) {
+    user.setFirstName(firstName);
+    user.setLastName(lastName);
+    user.setEmail(email);
+    user.setPhoneNumber(phone);
+  }
+
+  public static User fetchUser(String docName, FirebaseFirestore firestore) {
+    final User[] user = {new User()};
+    firestore.collection("users").document(docName).get().addOnCompleteListener(
+        new OnCompleteListener<DocumentSnapshot>() {
+          @Override
+          public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+            if (task.isSuccessful()) {
+              DocumentSnapshot documentSnapshot = task.getResult();
+              if (documentSnapshot.exists()) {
+                user[0] = documentSnapshot.toObject(User.class);
+              }
+            }
+          }
+        });
+    return user[0];
   }
 }
