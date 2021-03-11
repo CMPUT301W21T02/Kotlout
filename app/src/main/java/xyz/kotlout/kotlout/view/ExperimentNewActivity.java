@@ -75,7 +75,8 @@ public class ExperimentNewActivity extends AppCompatActivity {
     int typeId = (int) ((Spinner) this.findViewById(R.id.sp_experiment_new_type))
         .getSelectedItemId();
 
-    ExperimentController experimentController = new ExperimentController(description, region,
+    ExperimentController experimentController = new ExperimentController();
+    experimentController.setExperimentContext(description, region,
         minTrials, ExperimentType.values()[typeId]);
 
     Intent intent = new Intent();

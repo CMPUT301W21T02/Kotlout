@@ -15,14 +15,29 @@ public class ExperimentController {
   Experiment experiment;
 
   /**
-   * Create a new ExperimentController with the basic fields needed to start a new Experiment.
+   * Default constructor.
+   */
+  public ExperimentController() {
+  }
+
+  /**
+   * Initializes the controller and sets the context to an existing Experiment object.
+   *
+   * @param experiment An instance of Experiment.
+   */
+  public ExperimentController(Experiment experiment) {
+    this.experiment = experiment;
+  }
+
+  /**
+   * Sets the experiment context with the basic fields needed for a new Experiment.
    *
    * @param description The experiment description.
    * @param region      The region where the experiment is conducted.
    * @param minTrials   The minimum number of trials required for the experiment.
    * @param type        The type of experiment.
    */
-  public ExperimentController(String description, String region, int minTrials,
+  public void setExperimentContext(String description, String region, int minTrials,
       ExperimentType type) {
     switch (type) {
 
