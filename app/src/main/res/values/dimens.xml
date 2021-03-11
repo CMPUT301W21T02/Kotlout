@@ -1,10 +1,10 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
-    <!--
-    Because the window insets on round devices are larger than 15dp, this padding only applies
-    to square screens.
-    -->
-    <dimen name="box_inset_layout_padding">0dp</dimen>
+  <dimen name="fab_margin">16dp</dimen>
+  <!--
+  Because the window insets on round devices are larger than 15dp, this padding only applies
+  to square screens.
+  -->
+  <dimen name="box_inset_layout_padding">0dp</dimen>
 
     <!--
     This padding applies to both square and round screens. The total padding between the buttons
@@ -17,4 +17,6 @@
     <dimen name="profile_input_text_width">300dp</dimen>
     <dimen name="profile_input_text_height">45dp</dimen>
     <dimen name="profile_input_spacing">60dp</dimen>
+  <dimen name="listview_group_text_padding">10dp</dimen>
+  <!-- Padding around the group label in ExpandableListView -->
 </resources>
