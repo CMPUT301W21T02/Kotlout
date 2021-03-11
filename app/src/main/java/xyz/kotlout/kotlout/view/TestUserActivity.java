@@ -56,12 +56,12 @@ public class TestUserActivity extends AppCompatActivity {
     createButton.setText("Push Data");
     storeButton.setText("Store Data");
     loadButton.setText("Load Data");
-    UUID curent_uuid = LocalStorageController.readUUID();
+    String curent_uuid = LocalStorageController.readUUID();
     if(curent_uuid == null) {
-      curent_uuid = UUID.randomUUID();
+      curent_uuid = UUID.randomUUID().toString();
       LocalStorageController.storeUUID(curent_uuid);
     }
-    uuidText.setText(curent_uuid.toString());
+    uuidText.setText(curent_uuid);
 
     updateButton.setId(View.generateViewId());
     createButton.setId(View.generateViewId());
@@ -111,11 +111,10 @@ public class TestUserActivity extends AppCompatActivity {
     storeButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        UUID currentUUID = UUID.fromString(uuidText.getText().toString());
+        String currentUUID = uuidText.getText().toString();
         Log.d("ACTIVITY",
-            "Current UUID " + uuidText.getText().toString() + " New UUID " + currentUUID
-                .toString());
-        LocalStorageController.storeUUID(UUID.fromString((uuidText.getText().toString())));
+            "Current UUID " + uuidText.getText().toString() + " New UUID " + currentUUID);
+        LocalStorageController.storeUUID(uuidText.getText().toString());
       }
     });
 
@@ -131,9 +130,13 @@ public class TestUserActivity extends AppCompatActivity {
     loadButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        UUID localUuid =  LocalStorageController.readUUID();
-        Log.d("ACTIVITY", localUuid.toString());
-        uuidText.setText(localUuid.toString());
+        String localUuid =  LocalStorageController.readUUID();
+        if (localUuid != null) {
+          Log.d("ACTIVITY", (String) localUuid);
+        } else {
+          Log.d("ACTIVITY", ":pensive: (null uuid)");
+        }
+        uuidText.setText(localUuid);
       }
     });
 
@@ -145,10 +148,12 @@ public class TestUserActivity extends AppCompatActivity {
             firstNameText.getText().toString(),
             lastNameText.getText().toString(),
             emailText.getText().toString(),
-            phoneText.getText().toString()
+            phoneText.getText().toString(),
+            uuidText.getText().toString()
         );
         UpdateUser(createdUser);
-        uuidText.setText(createdUser.getUuid().toString());
+//        UpdateUser(createdUser);
+//        uuidText.setText(createdUser.getUuid());
       }
     });
   }
@@ -161,6 +166,7 @@ public class TestUserActivity extends AppCompatActivity {
   private void fetchFirebaseData(String docName) {
     firestore.collection("users")
         .document(docName).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
       @Override
       public void onComplete(@NonNull Task<DocumentSnapshot> task) {
         if (task.isSuccessful()) {
@@ -168,7 +174,7 @@ public class TestUserActivity extends AppCompatActivity {
           if (document.exists()) {
             Log.d("FIRESTORE", "Document snapshot: " + document.getData());
             User readUser = document.toObject(User.class);
-            readUser.setUuid(UUID.fromString(docName));
+            readUser.setUuid(docName);
             updateTextFields(readUser);
           } else {
             Log.d("FIRESTORE", "Document snapshot not found");
@@ -202,7 +208,7 @@ public class TestUserActivity extends AppCompatActivity {
    * @param user
    */
   private void UpdateUser(User user) {
-    firestore.collection("users").document(user.getUuid().toString()).set(user);
+    firestore.collection("users").document(user.getUuid()).set(user);
   }
 
 }
