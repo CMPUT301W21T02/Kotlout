@@ -15,7 +15,7 @@ public class User {
   // UUID doens't have a no-argument constructor and cannot be deserialized by firestore
   // Maybe we should consider using Firebase ID's instead
   @Exclude
-  private UUID uuid;
+  private String uuid;
   @Exclude
   private List<Experiment> subscriptions;
 
@@ -23,21 +23,21 @@ public class User {
   public User() {
   }
 
-  public User(String firstName, String lastName, String email, String phoneNumber) {
+  public User(String firstName, String lastName, String email, String phoneNumber, String uuid) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.phoneNumber = phoneNumber;
-    this.uuid = UUID.randomUUID();
+    this.uuid = uuid;
   }
 
   @Exclude
-  public UUID getUuid() {
+  public String getUuid() {
     return uuid;
   }
 
   @Exclude
-  public void setUuid(UUID uuid) {
+  public void setUuid(String uuid) {
     this.uuid = uuid;
   }
 

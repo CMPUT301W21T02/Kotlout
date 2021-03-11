@@ -38,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bnv = findViewById(R.id.nav_main);
     bnv.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
-
-    userController = new UserController(); // TODO: get user context
   }
 
   @Override
@@ -98,6 +96,25 @@ public class MainActivity extends AppCompatActivity {
 
       ExperimentController experimentController = new ExperimentController(newExperiment);
       experimentController.publish();
+    }
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.sync_experiments:
+        return true;
+
+      case R.id.show_profile:
+        Intent intent = new Intent(this, TestUserActivity.class);
+        this.startActivity(intent);
+        return true;
+
+      case R.id.search_experiments:
+        return true;
+
+      default:
+        return super.onOptionsItemSelected(item);
     }
   }
 }
