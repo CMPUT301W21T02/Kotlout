@@ -55,6 +55,15 @@ public abstract class Experiment implements Serializable {
   }
 
   /**
+   * Gets the experiment owner.
+   *
+   * @return The owner of the experiment.
+   */
+  public User getOwner() {
+    return this.owner;
+  }
+
+  /**
    * Gets the description of the experiment.
    *
    * @return The experiment description.

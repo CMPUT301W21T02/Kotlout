@@ -1,7 +1,11 @@
 package xyz.kotlout.kotlout.controller;
 
 import android.util.Log;
+
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Locale;
+
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.BinomialExperiment;
 import xyz.kotlout.kotlout.model.experiment.CountExperiment;
@@ -31,6 +35,16 @@ public class ExperimentController {
    */
   public ExperimentController(Experiment experiment) {
     this.experiment = experiment;
+  }
+
+  /**
+   * Initializes the controller and sets the context to an existing Experiment object using the
+   * experiment's UUID
+   *
+   * @param uuid UUID of an existing experiment.
+   */
+  public ExperimentController(String uuid) {
+    //this.experiment = ;
   }
 
   /**
@@ -85,6 +99,40 @@ public class ExperimentController {
             documentReference -> Log
                 .d(TAG, "Experiment published with id: " + documentReference.getId()))
         .addOnFailureListener(e -> Log.w(TAG, "Experiment not published", e));
+  }
+
+  /**
+   * Returns the number of trials already completed in the current experiment.
+   * <p>
+   * TODO: Actually fill this out
+   *
+   * @return Number of trials completed.
+   */
+  public int getTrials() {
+    // return experiment.getTrials().size();
+    return 1;
+  }
+
+  /**
+   * Generates a standardized string stating how many trials have been completed for this
+   * experiment.
+   * <p>
+   * When more than the minimum number of trials have been completed, it will print just the trial
+   * count. If less than the minimum number of trials have been completed, it will print both the
+   * minimum and current count.
+   *
+   * @return Formatted string formed from experiment information.
+   */
+  public String generateCountText() {
+
+    int minTrials = experiment.getMinimumTrials();
+    int currentTrials = getTrials();
+
+    if (minTrials > currentTrials) {
+      return String.format(Locale.CANADA, "%d Trials (%d minimum)", currentTrials, minTrials);
+    } else {
+      return String.format(Locale.CANADA, "%d Trials", currentTrials);
+    }
   }
 }
 
