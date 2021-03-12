@@ -20,7 +20,7 @@ public class ExperimentController {
 
   private static final String TAG = "EXPERIMENT_CONTROLLER";
   private static final String EXPERIMENT_COLLECTION = "experiment";
-  Experiment experiment;
+  Experiment experimentContext;
 
   /**
    * Default constructor.
@@ -34,7 +34,7 @@ public class ExperimentController {
    * @param experiment An instance of Experiment.
    */
   public ExperimentController(Experiment experiment) {
-    this.experiment = experiment;
+    this.experimentContext = experiment;
   }
 
   /**
@@ -60,16 +60,16 @@ public class ExperimentController {
     switch (type) {
 
       case binomial:
-        experiment = new BinomialExperiment(description, region, minTrials);
+        experimentContext = new BinomialExperiment(description, region, minTrials);
         break;
       case nonNegativeInteger:
-        experiment = new NonNegativeExperiment(description, region, minTrials);
+        experimentContext = new NonNegativeExperiment(description, region, minTrials);
         break;
       case count:
-        experiment = new CountExperiment(description, region, minTrials);
+        experimentContext = new CountExperiment(description, region, minTrials);
         break;
       case measurement:
-        experiment = new MeasurementExperiment(description, region, minTrials);
+        experimentContext = new MeasurementExperiment(description, region, minTrials);
         break;
     }
   }
@@ -80,21 +80,21 @@ public class ExperimentController {
    * @return An Experiment object.
    */
   public Experiment getExperimentContext() {
-    return experiment;
+    return experimentContext;
   }
 
   /**
    * Adds a new experiment to the firestore database.
    */
-  public void publishExperiment() {
-    if (experiment == null) {
+  public void publish() {
+    if (experimentContext == null) {
       return;
     }
 
     FirebaseFirestore db = FirebaseController
         .getFirestore(); // TODO: disable emulation for prod release
     db.collection(EXPERIMENT_COLLECTION)
-        .add(experiment)
+        .add(experimentContext)
         .addOnSuccessListener(
             documentReference -> Log
                 .d(TAG, "Experiment published with id: " + documentReference.getId()))
@@ -125,7 +125,7 @@ public class ExperimentController {
    */
   public String generateCountText() {
 
-    int minTrials = experiment.getMinimumTrials();
+    int minTrials = experimentContext.getMinimumTrials();
     int currentTrials = getTrials();
 
     if (minTrials > currentTrials) {
