@@ -1,8 +1,10 @@
 package xyz.kotlout.kotlout.controller;
 
+import android.os.Build.VERSION_CODES;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -46,6 +48,7 @@ public class UserController {
   public UserController(String userId) {
     userDoc = FirebaseController.getFirestore().collection("users").document(userId);
     userDoc.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+      @RequiresApi(api = VERSION_CODES.N)
       @Override
       public void onEvent(
           @Nullable DocumentSnapshot value,
