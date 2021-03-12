@@ -5,4 +5,45 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
+  <androidx.appcompat.widget.Toolbar
+    android:id="@+id/tb_experiment_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent">
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent" />
+  </androidx.appcompat.widget.Toolbar>
+
+  <com.google.android.material.tabs.TabLayout
+    android:id="@+id/tl_experiment_view"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent">
+    <com.google.android.material.tabs.TabItem
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/view_info_text" />
+
+    <com.google.android.material.tabs.TabItem
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/view_map_text" />
+
+    <com.google.android.material.tabs.TabItem
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/view_trials_text" />
+  </com.google.android.material.tabs.TabLayout>
+
+  <FrameLayout
+    android:id="@+id/frame_experiment_view"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:animateLayoutChanges="true"
+    app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

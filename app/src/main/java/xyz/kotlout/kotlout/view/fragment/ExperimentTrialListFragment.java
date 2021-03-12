@@ -9,36 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import xyz.kotlout.kotlout.R;
-import xyz.kotlout.kotlout.model.adapter.ExperimentListAdapter;
+import xyz.kotlout.kotlout.model.adapter.TrialListAdapter;
 
-public class ExperimentListFragment extends Fragment {
+public class ExperimentTrialListFragment extends Fragment {
 
-  public static String ARG_TYPE = "TYPE";
-
-  public enum ListType {
-    MINE,
-    ALL,
-    SUBSCRIBED
-  }
-
-  private ListType type;
-
-  public static ExperimentListFragment newInstance(@NonNull ListType type) {
-    ExperimentListFragment fragment = new ExperimentListFragment();
-
-    Bundle args = new Bundle();
-    args.putSerializable(ARG_TYPE, type);
-    fragment.setArguments(args);
-
-    return fragment;
+  public static ExperimentTrialListFragment newInstance() {
+    return new ExperimentTrialListFragment();
   }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    if (getArguments() != null) {
-      type = (ListType) getArguments().getSerializable(ARG_TYPE);
-    }
   }
 
   @Override
@@ -53,7 +34,7 @@ public class ExperimentListFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
 
     ExpandableListView elv = view.findViewById(R.id.elv_main_experiment_list);
-    elv.setAdapter(new ExperimentListAdapter(getContext()));
+    elv.setAdapter(new TrialListAdapter(getContext()));
 
   }
 }

@@ -18,11 +18,11 @@
 
   <string name="hello_world">Hello World!</string>
 
-    <!-- User Profile Activity -->
-    <string name="profile_first_name_text">First Name</string>
-    <string name="profile_last_name_text">Last Name</string>
-    <string name="profile_email_text">Email</string>
-    <string name="profile_phone_text">Phone Number</string>
+  <!-- User Profile Activity -->
+  <string name="profile_first_name_text">First Name</string>
+  <string name="profile_last_name_text">Last Name</string>
+  <string name="profile_email_text">Email</string>
+  <string name="profile_phone_text">Phone Number</string>
 
   <!-- New Experiment Activity -->
   <string name="new_experiment_min_trials">Minimum Number of Trials</string>
@@ -30,6 +30,11 @@
   <string name="new_experiment_description">Description</string>
   <string name="btn_new_experiment_add">Add Experiment</string>
   <string name="title_activity_new">New Experiment</string>
+  <string name="share_experiment">Share Experiment</string>
+  <string name="subscribe_to_experiment">Subscribe to Experiment</string>
+  <string name="view_info_text">Info</string>
+  <string name="view_map_text">Map</string>
+  <string name="view_trials_text">Trials</string>
 
   <string-array name="experiment_types">
     <item>Binomial</item>
@@ -37,5 +42,5 @@
     <item>Count</item>
     <item>Measurement</item>
   </string-array>
-  
+
 </resources>
