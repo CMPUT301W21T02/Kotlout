@@ -16,11 +16,11 @@ public class ApplicationContextProvider extends Application {
     super.onCreate();
     applicationContext = getApplicationContext();
     FirebaseFirestore firestore = FirebaseController.getFirestore();
-
     String curent_uuid = LocalStorageController.readUUID();
     if(curent_uuid == null) {
       User newUser = new User();
       newUser.setUuid(UUID.randomUUID().toString());
+      LocalStorageController.storeUUID(newUser.getUuid());
       firestore.collection("users").document(newUser.getUuid()).set(newUser);
     }
 

@@ -4,8 +4,17 @@
 
   <item
     app:showAsAction="ifRoom"
-    android:id="@+id/confirm_button"
+    android:id="@+id/edit_profile_button"
     android:icon="@drawable/ic_baseline_edit"
     android:title="TODO"
+    android:visible="true"
     />
+
+  <item
+    app:showAsAction="ifRoom"
+    android:id="@+id/edit_confirm_button"
+    android:icon="@drawable/ic_baseline_check"
+    android:title="CHECK"
+    android:visible="false"/>
+
 </menu>

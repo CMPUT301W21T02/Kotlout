@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
 
       case R.id.show_profile:
-        Intent intent = new Intent(this, TestUserActivity.class);
+        Intent intent = new Intent(this, ProfileActivity.class);
         this.startActivity(intent);
         return true;
 
