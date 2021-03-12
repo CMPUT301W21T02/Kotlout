@@ -30,18 +30,13 @@ public class ProfileActivity extends AppCompatActivity {
    * Callback function that runs whenever an update to the Firebase user is detected
    */
   private final Consumer<User> updateCallback = (user) -> {
-    if (user.getFirstName() != null && !user.getFirstName().isEmpty()) {
-      firstNameText.setText(user.getFirstName());
+    if(user == null) {
+      user = new User();
     }
-    if (user.getLastName() != null && !user.getFirstName().isEmpty()) {
-      lastNameText.setText(user.getLastName());
-    }
-    if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-      emailText.setText(user.getEmail());
-    }
-    if (user.getPhoneNumber() != null && !user.getPhoneNumber().isEmpty()) {
-      phoneText.setText(user.getPhoneNumber());
-    }
+    firstNameText.setText(user.getFirstName() == null ? "": user.getFirstName());
+    lastNameText.setText(user.getLastName() == null ? "": user.getLastName());
+    emailText.setText(user.getEmail() == null ? "": user.getEmail());
+    phoneText.setText(user.getPhoneNumber() == null ? "": user.getPhoneNumber());
   };
 
   /**
@@ -174,6 +169,8 @@ public class ProfileActivity extends AppCompatActivity {
 
           controller.updateUserData(new User(newFirstName, newLastName, newEmail, newPhone, uuid));
         } else {
+          // If there are invalid fields, reset them to the firebase value
+          updateCallback.accept(controller.getUser());
           Toast.makeText(this, "Invalid Entry", Toast.LENGTH_SHORT);
         }
     }

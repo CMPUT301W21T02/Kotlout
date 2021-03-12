@@ -32,6 +32,7 @@ public class UserController {
 
   /**
    * Creates a UserController with a Firestore Document Reference a given user doc
+   *
    * @param userId Id of the userdoc to reference with this controller
    */
   public UserController(String userId) {
@@ -101,10 +102,9 @@ public class UserController {
   }
 
   /**
-   * Creates a snapshot listener for the userdoc iff snapshotListenerRef does not
-   * already have a listener. The new listener is stored in snapshotListenerRef
-   * Unregister this listener with unregisterSnapshotListener
-   * when finished using unregisterSnapshotListener()
+   * Creates a snapshot listener for the userdoc iff snapshotListenerRef does not already have a
+   * listener. The new listener is stored in snapshotListenerRef Unregister this listener with
+   * unregisterSnapshotListener when finished using unregisterSnapshotListener()
    */
   public void registerSnapshotListener() {
     if (snapshotListenerRef == null) {
@@ -117,7 +117,9 @@ public class UserController {
             }
             if (value != null && value.exists()) {
               Log.d(TAG, "FOUND VALID UPDATE");
-              updateCallback.accept(value.toObject(User.class));
+              User newUser = value.toObject(User.class);
+              updateCallback.accept(newUser);
+              onUserUpdate(newUser);
             } else {
               Log.d(TAG, "no update");
             }
@@ -126,14 +128,23 @@ public class UserController {
   }
 
   /**
-   * Unregisters snapshotListenerRef and sets it to null
-   * Should be called once listener is no longer needed
+   * Unregisters snapshotListenerRef and sets it to null Should be called once listener is no longer
+   * needed
    */
   public void unregisterSnapshotListener() {
-    if(snapshotListenerRef != null) {
+    if (snapshotListenerRef != null) {
       snapshotListenerRef.remove();
     }
     snapshotListenerRef = null;
+  }
+
+  /**
+   * Local callback for user updates Currently just updates the locally stored user
+   *
+   * @param newUser userData from firestore update
+   */
+  private void onUserUpdate(User newUser) {
+    this.user = newUser;
   }
 
   private void syncUser() {
@@ -152,7 +163,8 @@ public class UserController {
 
   /**
    * Sets the callback to be run when user document changes
-   * @param updateCallback
+   *
+   * @param updateCallback Callback function that will run on every User data update
    */
   public void setUpdateCallback(Consumer<User> updateCallback) {
     this.updateCallback = updateCallback;
