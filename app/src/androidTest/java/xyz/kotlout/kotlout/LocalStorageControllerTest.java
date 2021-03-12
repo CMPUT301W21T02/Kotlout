@@ -1,8 +1,6 @@
 package xyz.kotlout.kotlout;
 
-import android.app.Instrumentation;
 import android.content.Context;
-import android.util.Log;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import java.io.File;
@@ -11,13 +9,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import kotlin.jvm.Throws;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -28,6 +24,9 @@ import xyz.kotlout.kotlout.controller.FirebaseController;
 import xyz.kotlout.kotlout.controller.LocalStorageController;
 import xyz.kotlout.kotlout.model.user.User;
 
+/**
+ * Local storage tests Requires app context to get app path
+ */
 @RunWith(AndroidJUnit4.class)
 public class LocalStorageControllerTest {
 
@@ -35,6 +34,10 @@ public class LocalStorageControllerTest {
   private static final String UUID_FILE_NAME = "uuid.dat";
   private static Context ctx;
 
+  @BeforeClass
+  public static void initLocalStorageTest() {
+    ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+  }
 
   public String getFilePath() {
     return ctx.getFilesDir().toString() + '/' + UUID_FILE_NAME;
@@ -46,10 +49,11 @@ public class LocalStorageControllerTest {
         FileInputStream fileInputStream = new FileInputStream(getFilePath())
     ) {
       res = new byte[fileInputStream.available()];
-      while (fileInputStream.read(res) != -1);
+      while (fileInputStream.read(res) != -1) {
+      }
     }
     String fileString = new String(res);
-    if(fileString == null | fileString.isEmpty()) {
+    if (fileString == null | fileString.isEmpty()) {
       return null;
     }
     return fileString;
@@ -75,11 +79,6 @@ public class LocalStorageControllerTest {
     }
   }
 
-  @BeforeClass
-  public static void initLocalStorageTest() {
-    ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
-  }
-
   @Before
   public void deleteStoredId() {
     File uuidFile = new File(getFilePath());
@@ -91,16 +90,17 @@ public class LocalStorageControllerTest {
   @Test
   public void testReadValidId() {
     String TAG = "testReadValidId";
-    List<String> Ids = Stream.generate(() -> UUID.randomUUID().toString()).limit(10).collect(Collectors.toList());
+    List<String> Ids = Stream.generate(() -> UUID.randomUUID().toString()).limit(10)
+        .collect(Collectors.toList());
     boolean success = true;
-    for(String uuid: Ids) {
+    for (String uuid : Ids) {
       writeStringToFile(uuid, false);
-      String readId = LocalStorageController.readUUID().toString();
+      String readId = LocalStorageController.readUUID();
       System.out.println("Testing id: " + uuid);
-      if(!readId.equals(uuid)) {
-         success = false;
-         break;
-       }
+      if (!readId.equals(uuid)) {
+        success = false;
+        break;
+      }
     }
     Assert.assertTrue(success);
 
@@ -121,8 +121,8 @@ public class LocalStorageControllerTest {
       if (id != null) {
         Assert.fail("Non-empty id on read id file: " + uuidFile);
       }
-    } catch (Exception e) {
-      Assert.fail("Encountered error: " + e.getMessage());
+    } catch (IOException e) {
+      Assert.fail("Encountered error reading file: " + e.getMessage());
     }
   }
 
@@ -151,13 +151,14 @@ public class LocalStorageControllerTest {
 
   @Test
   public void testStoreValidId() {
-    List<String> Ids = Stream.generate(() -> UUID.randomUUID().toString()).limit(10).collect(Collectors.toList());
+    List<String> Ids = Stream.generate(() -> UUID.randomUUID().toString()).limit(10)
+        .collect(Collectors.toList());
     boolean success = true;
-    for(String id : Ids) {
+    for (String id : Ids) {
       LocalStorageController.storeUUID(id);
       try {
         String inputId = readStringFromFile();
-        if(!id.equals(inputId)) {
+        if (!id.equals(inputId)) {
           Assert.fail("Stored and read Id's differ:\n\tStored: " + id + "\n\t" + inputId);
         }
       } catch (IOException e) {
