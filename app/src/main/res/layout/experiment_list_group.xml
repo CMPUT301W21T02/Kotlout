@@ -7,9 +7,10 @@
   <TextView
     android:id="@+id/tv_experiment_list_group"
     android:layout_width="match_parent"
-    android:layout_height="32dp"
-    android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
+    android:layout_height="wrap_content"
     android:text="Group Name"
-    android:padding="@dimen/listview_group_text_padding"
+    android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
+    android:paddingTop="@dimen/listview_group_text_padding"
+    android:paddingBottom="@dimen/listview_group_text_padding"
     tools:ignore="RtlHardcoded,RtlSymmetry" />
 </LinearLayout>

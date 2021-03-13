@@ -2,6 +2,7 @@ package xyz.kotlout.kotlout.model.experiment;
 
 import java.util.List;
 
+import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
 
 /**
@@ -11,6 +12,11 @@ public class MeasurementExperiment extends Experiment {
 
   private List<MeasurementTrial> trials;
 
+  public ExperimentType type = ExperimentType.MEASUREMENT;
+
+  public MeasurementExperiment() {
+
+  }
   /**
    * Creates a new BinomialExperiment with basic fields passed on to the base Experiment
    * constructor.

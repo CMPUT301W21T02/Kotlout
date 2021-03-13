@@ -1,41 +1,85 @@
 package xyz.kotlout.kotlout.model.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.ExperimentListController;
+import xyz.kotlout.kotlout.controller.MyExperimentGroup;
+import xyz.kotlout.kotlout.model.experiment.Experiment;
 
+/**
+ * An adapter that keeps the experiment list up-to-date.
+ */
 public class ExperimentListAdapter extends BaseExpandableListAdapter {
 
-  private String[] groups = {"Open experiments", "Closed Experiments"};
-  private String[][] children = {{"peepee"}, {"Poopoo"}};
+  private static final String TAG = "EXP_LIST_ADAPTER";
+  private ExperimentListController experimentListController;
+  private Query myExperimentsRef;
+  private Map<MyExperimentGroup, List<ExperimentController>> myExperiments;
   private Context context;
 
-  public ExperimentListAdapter(Context context) {
+  public ExperimentListAdapter(String userUuid, Context context) {
     this.context = context;
+
+    experimentListController = new ExperimentListController(userUuid);
+    myExperiments = experimentListController.initializeMyExperiments();
+
+    myExperimentsRef = experimentListController.getGetUserExperiments();
+
+    myExperimentsRef.addSnapshotListener((queryDocumentSnapshots, e) -> {
+
+      for (Entry<MyExperimentGroup, List<ExperimentController>> pair : myExperiments.entrySet()) {
+        pair.getValue().clear();
+      }
+
+      for (QueryDocumentSnapshot experimentDoc : queryDocumentSnapshots) {
+        Log.d(TAG, experimentDoc.getId() + " => " + experimentDoc.getData());
+
+        ExperimentController controller = new ExperimentController(experimentDoc);
+        Experiment experiment = controller.getExperimentContext();
+
+        if (experiment.getIsOngoing()) {
+          myExperiments.get(MyExperimentGroup.OPEN).add(controller);
+        } else {
+          myExperiments.get(MyExperimentGroup.CLOSED).add(controller);
+        }
+      }
+      this.notifyDataSetChanged();
+    });
   }
 
   @Override
   public int getGroupCount() {
-    return groups.length;
+    return myExperiments.size();
   }
 
   @Override
   public int getChildrenCount(int groupPosition) {
-    return children[groupPosition].length;
+    MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
+    return myExperiments.get(experimentGroup).size();
   }
 
   @Override
   public Object getGroup(int groupPosition) {
-    return groups[groupPosition];
+    MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
+    return myExperiments.get(experimentGroup);
   }
 
   @Override
   public Object getChild(int groupPosition, int childPosition) {
-    return children[groupPosition][childPosition];
+    MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
+    return myExperiments.get(experimentGroup).get(childPosition);
   }
 
   @Override
@@ -64,7 +108,9 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
 
     TextView tvGroup = convertView.findViewById(R.id.tv_experiment_list_group);
 
-    tvGroup.setText(groups[groupPosition]);
+    MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
+    tvGroup.setText(experimentGroup.toString());
+
     return convertView;
   }
 
@@ -80,12 +126,17 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
     TextView experimentDescription = convertView
         .findViewById(R.id.tv_experiment_list_description);
 
-    experimentDescription.setText(children[groupPosition][childPosition]);
+    MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
+
+    experimentDescription
+        .setText(myExperiments.get(experimentGroup).get(childPosition).getExperimentContext()
+            .getDescription());
+
     return convertView;
   }
 
   @Override
   public boolean isChildSelectable(int groupPosition, int childPosition) {
-    return false;
+    return true;
   }
 }

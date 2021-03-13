@@ -35,6 +35,7 @@
   <string name="view_info_text">Info</string>
   <string name="view_map_text">Map</string>
   <string name="view_trials_text">Trials</string>
+  <string name="title_activity_view">Experiment Info</string>
 
   <string-array name="experiment_types">
     <item>Binomial</item>

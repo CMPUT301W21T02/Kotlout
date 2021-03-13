@@ -1,11 +1,10 @@
 package xyz.kotlout.kotlout.controller;
 
 import android.util.Log;
-
+import androidx.annotation.NonNull;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.Locale;
-
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.BinomialExperiment;
 import xyz.kotlout.kotlout.model.experiment.CountExperiment;
@@ -18,14 +17,47 @@ import xyz.kotlout.kotlout.model.experiment.NonNegativeExperiment;
  */
 public class ExperimentController {
 
+  public static final String EXPERIMENT_COLLECTION = "experiments";
   private static final String TAG = "EXPERIMENT_CONTROLLER";
-  private static final String EXPERIMENT_COLLECTION = "experiment";
+
   Experiment experimentContext;
+  String experimentId;
 
   /**
-   * Default constructor.
+   * Default constructor. Disabled, because an empty controller is useless.
    */
-  public ExperimentController() {
+  private ExperimentController() {
+  }
+
+  /**
+   * Initializes the controller and sets the context to a string that refers to the experiment's
+   * document ID in Firestore.
+   *
+   * @param documentId Firestore DocumentID that refers to the experiment.
+   */
+  public ExperimentController(String documentId) {
+    FirebaseFirestore db = FirebaseController.getFirestore();
+    this.experimentId = documentId;
+
+    db.collection(EXPERIMENT_COLLECTION).document(documentId).get()
+        .addOnSuccessListener(documentSnapshot -> {
+          //TODO: This feels jank. There must be a better way. Generics?
+          ExperimentType type = ExperimentType.valueOf((String) documentSnapshot.get("type"));
+          switch (type) {
+            case BINOMIAL:
+              experimentContext = documentSnapshot.toObject(BinomialExperiment.class);
+              break;
+            case NON_NEGATIVE_INTEGER:
+              experimentContext = documentSnapshot.toObject(NonNegativeExperiment.class);
+              break;
+            case COUNT:
+              experimentContext = documentSnapshot.toObject(CountExperiment.class);
+              break;
+            case MEASUREMENT:
+              experimentContext = documentSnapshot.toObject(MeasurementExperiment.class);
+              break;
+          }
+        });
   }
 
   /**
@@ -37,14 +69,23 @@ public class ExperimentController {
     this.experimentContext = experiment;
   }
 
-  /**
-   * Initializes the controller and sets the context to an existing Experiment object using the
-   * experiment's UUID
-   *
-   * @param uuid UUID of an existing experiment.
-   */
-  public ExperimentController(String uuid) {
-    //this.experiment = ;
+  public ExperimentController(DocumentSnapshot experimentDoc) {
+    ExperimentType type = ExperimentType.valueOf((String) experimentDoc.get("type"));
+    this.experimentId = experimentDoc.getId();
+    switch (type) {
+      case BINOMIAL:
+        experimentContext = experimentDoc.toObject(BinomialExperiment.class);
+        break;
+      case NON_NEGATIVE_INTEGER:
+        experimentContext = experimentDoc.toObject(NonNegativeExperiment.class);
+        break;
+      case COUNT:
+        experimentContext = experimentDoc.toObject(CountExperiment.class);
+        break;
+      case MEASUREMENT:
+        experimentContext = experimentDoc.toObject(MeasurementExperiment.class);
+        break;
+    }
   }
 
   /**
@@ -55,23 +96,30 @@ public class ExperimentController {
    * @param minTrials   The minimum number of trials required for the experiment.
    * @param type        The type of experiment.
    */
-  public void setExperimentContext(String description, String region, int minTrials,
-      ExperimentType type) {
-    switch (type) {
+  @NonNull
+  public static ExperimentController newInstance(@NonNull String description, String region,
+      int minTrials, @NonNull ExperimentType type) {
 
-      case binomial:
-        experimentContext = new BinomialExperiment(description, region, minTrials);
-        break;
-      case nonNegativeInteger:
-        experimentContext = new NonNegativeExperiment(description, region, minTrials);
-        break;
-      case count:
-        experimentContext = new CountExperiment(description, region, minTrials);
-        break;
-      case measurement:
-        experimentContext = new MeasurementExperiment(description, region, minTrials);
-        break;
+    switch (type) {
+      case BINOMIAL:
+        return new ExperimentController(new BinomialExperiment(description, region, minTrials));
+      case NON_NEGATIVE_INTEGER:
+        return new ExperimentController(new NonNegativeExperiment(description, region, minTrials));
+      case COUNT:
+        return new ExperimentController(new CountExperiment(description, region, minTrials));
+      case MEASUREMENT:
+        return new ExperimentController(new MeasurementExperiment(description, region, minTrials));
     }
+    return null;
+  }
+
+  /**
+   * Gets the document ID of the current experiment object owned by the controller.
+   *
+   * @return A String stating the ID
+   */
+  public String getExperimentId() {
+    return experimentId;
   }
 
   /**
@@ -91,13 +139,15 @@ public class ExperimentController {
       return;
     }
 
-    FirebaseFirestore db = FirebaseController
-        .getFirestore(); // TODO: disable emulation for prod release
+    FirebaseFirestore db = FirebaseController.getFirestore();
     db.collection(EXPERIMENT_COLLECTION)
         .add(experimentContext)
         .addOnSuccessListener(
-            documentReference -> Log
-                .d(TAG, "Experiment published with id: " + documentReference.getId()))
+            documentReference -> {
+              experimentId = documentReference.getId();
+              Log.d(TAG, "Experiment published with id: " + experimentId);
+            }
+        )
         .addOnFailureListener(e -> Log.w(TAG, "Experiment not published", e));
   }
 
@@ -108,8 +158,7 @@ public class ExperimentController {
    *
    * @return Number of trials completed.
    */
-  public int getTrials() {
-    // return experiment.getTrials().size();
+  public int getTrialsCompleted() {
     return 1;
   }
 
@@ -126,7 +175,7 @@ public class ExperimentController {
   public String generateCountText() {
 
     int minTrials = experimentContext.getMinimumTrials();
-    int currentTrials = getTrials();
+    int currentTrials = getTrialsCompleted();
 
     if (minTrials > currentTrials) {
       return String.format(Locale.CANADA, "%d Trials (%d minimum)", currentTrials, minTrials);

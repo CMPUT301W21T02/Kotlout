@@ -12,7 +12,8 @@ import xyz.kotlout.kotlout.controller.ExperimentController;
 
 public class ExperimentViewActivity extends AppCompatActivity {
 
-    public static String EXPERIMENT_ARGUMENT = "EXPERIMENT";
+    public static final int VIEW_EXPERIMENT_REQUEST = 0;
+    public static final String EXPERIMENT_ID = "EXPERIMENT";
 
     ExperimentController experimentController;
 
@@ -22,7 +23,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_experiment_view);
 
         Intent intent = getIntent();
-        String experimentId = intent.getStringExtra(EXPERIMENT_ARGUMENT);
+        String experimentId = intent.getStringExtra(EXPERIMENT_ID);
 
         experimentController = new ExperimentController(experimentId);
 

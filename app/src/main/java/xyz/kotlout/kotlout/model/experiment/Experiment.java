@@ -4,7 +4,7 @@ package xyz.kotlout.kotlout.model.experiment;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import xyz.kotlout.kotlout.model.user.User;
+import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
 /**
  * Base class for modelling experiments. Child classes should model a particular type of
@@ -12,13 +12,13 @@ import xyz.kotlout.kotlout.model.user.User;
  */
 public abstract class Experiment implements Serializable {
 
-  private User owner;
+  private String ownerUuid;
   private String description;
   private String region;
   private int minimumTrials;
   private boolean isOngoing;
   private boolean geolocationRequired;
-  private List<User> ignoredUsers;
+  private List<String> ignoredUsers;
   private List<Post> posts;
 
   /**
@@ -46,21 +46,21 @@ public abstract class Experiment implements Serializable {
   }
 
   /**
-   * Sets for the experiment owner.
+   * Gets the UUID of the experiment owner.
    *
-   * @param owner The owner of the experiment.
+   * @return The UUID of the experiment owner.
    */
-  public void setOwner(User owner) {
-    this.owner = owner;
+  public String getOwnerUuid() {
+    return ownerUuid;
   }
 
   /**
-   * Gets the experiment owner.
+   * Sets the UUID of the experiment owner.
    *
-   * @return The owner of the experiment.
+   * @param ownerUuid The owner of the experiment.
    */
-  public User getOwner() {
-    return this.owner;
+  public void setOwnerUuid(String ownerUuid) {
+    this.ownerUuid = ownerUuid;
   }
 
   /**
@@ -95,7 +95,7 @@ public abstract class Experiment implements Serializable {
    *
    * @return Returns true if the experiment is ongoing, or false otherwise.
    */
-  public boolean isOngoing() {
+  public boolean getIsOngoing() {
     return isOngoing;
   }
 
@@ -108,6 +108,11 @@ public abstract class Experiment implements Serializable {
     return geolocationRequired;
   }
 
+  /**
+   * Gets the posts associated with the experiment.
+   *
+   * @return A list of posts associated with the experiment.
+   */
   public List<Post> getPosts() {
     return posts;
   }

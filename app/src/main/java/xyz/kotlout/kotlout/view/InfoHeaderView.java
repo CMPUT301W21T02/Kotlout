@@ -45,7 +45,7 @@ public class InfoHeaderView extends LinearLayout {
   public void setExperiment(Experiment experiment) {
     tvDescription.setText(experiment.getDescription());
 
-    String ownerName = experiment.getOwner().getFirstName() + experiment.getOwner().getLastName();
+    String ownerName = "UWU";
     tvOwner.setText(ownerName.toUpperCase());
 
     tvRegion.setText(experiment.getRegion());
