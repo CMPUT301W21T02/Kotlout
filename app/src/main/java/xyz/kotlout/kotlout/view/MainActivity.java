@@ -8,20 +8,14 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import java.util.ArrayList;
-import java.util.List;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
-import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
-import xyz.kotlout.kotlout.model.user.User;
 import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment.ListType;
 
 public class MainActivity extends AppCompatActivity {
 
-  private UserController userController;
-  List<Experiment> experimentList = new ArrayList<>();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -86,13 +80,18 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-
     if (requestCode == ExperimentNewActivity.NEW_EXPERIMENT_REQUEST) {
-      Experiment newExperiment = (Experiment) data
-          .getSerializableExtra(ExperimentNewActivity.EXPERIMENT_EXTRA);
-//      newExperiment.setOwner(userController.getUser()); // TODO
-      newExperiment.setOwner(new User("Bobby", "Tables",
-          "btables@ualberta.ca", "123-456-7890"));
+      // Get newly created experiment and publish it to the database
+      Experiment newExperiment;
+      try {
+        newExperiment = (Experiment) data
+            .getSerializableExtra(ExperimentNewActivity.EXPERIMENT_EXTRA);
+      } catch (NullPointerException ignored) {
+        return;
+      }
+
+      // TODO: set experiment owner
+      newExperiment.setOwnerUuid("0");
 
       ExperimentController experimentController = new ExperimentController(newExperiment);
       experimentController.publish();

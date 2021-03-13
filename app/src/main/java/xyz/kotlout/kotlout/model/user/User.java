@@ -2,7 +2,6 @@ package xyz.kotlout.kotlout.model.user;
 
 import com.google.firebase.firestore.Exclude;
 import java.util.List;
-import java.util.UUID;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 
 public class User {

@@ -14,8 +14,8 @@ import xyz.kotlout.kotlout.model.experiment.NonNegativeExperiment;
  */
 public class ExperimentController {
 
+  public static final String EXPERIMENT_COLLECTION = "experiments";
   private static final String TAG = "EXPERIMENT_CONTROLLER";
-  private static final String EXPERIMENT_COLLECTION = "experiment";
   Experiment experimentContext;
 
   /**
@@ -77,8 +77,7 @@ public class ExperimentController {
       return;
     }
 
-    FirebaseFirestore db = FirebaseController
-        .getFirestore(); // TODO: disable emulation for prod release
+    FirebaseFirestore db = FirebaseController.getFirestore();
     db.collection(EXPERIMENT_COLLECTION)
         .add(experimentContext)
         .addOnSuccessListener(
