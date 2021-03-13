@@ -11,6 +11,12 @@ public class BinomialExperiment extends Experiment {
   private List<BinomialTrial> trials;
 
   /**
+   * Default constructor.
+   */
+  public BinomialExperiment() {
+  }
+
+  /**
    * Creates a new BinomialExperiment with basic fields passed on to the base Experiment
    * constructor.
    */
