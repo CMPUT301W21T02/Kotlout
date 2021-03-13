@@ -1,6 +1,8 @@
 package xyz.kotlout.kotlout.view.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +12,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import java.util.List;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.controller.ExperimentListController;
+import xyz.kotlout.kotlout.model.experiment.BinomialExperiment;
+import xyz.kotlout.kotlout.model.experiment.Experiment;
 
+/**
+ * A fragment used to represent the user's experiments in a list.
+ */
 public class ExperimentListFragment extends Fragment {
+
+  private ExperimentListAdapter experimentListAdapter;
 
   public static String ARG_TYPE = "TYPE";
 
@@ -24,29 +37,58 @@ public class ExperimentListFragment extends Fragment {
 
   private ListType type;
 
+  /**
+   * An adapter that keeps the experiment list up-to-date.
+   */
   public class ExperimentListAdapter extends BaseExpandableListAdapter {
 
-    private String[] groups = {"Open experiments", "Closed Experiments"};
-    private String[][] children = {{"peepee"}, {"Poopoo"}};
+    private static final String TAG = "EXP_LIST_ADAPTER";
+    private ExperimentListController experimentListController;
+    private Query myExperimentsRef;
+    private List<Pair<String, List<Experiment>>> myExperiments;
+
+    public ExperimentListAdapter(String userUuid) {
+      experimentListController = new ExperimentListController(userUuid);
+      myExperiments = experimentListController.initializeMyExperiments();
+
+      myExperimentsRef = experimentListController.getGetUserExperiments();
+      myExperimentsRef.addSnapshotListener((queryDocumentSnapshots, e) -> {
+        myExperiments.get(0).second.clear();
+        myExperiments.get(1).second.clear();
+
+        for (QueryDocumentSnapshot experimentDoc : queryDocumentSnapshots) {
+          Log.d(TAG, experimentDoc.getId() + " => " + experimentDoc.getData());
+          Experiment experiment = experimentDoc
+              .toObject(BinomialExperiment.class); // TODO: handle different types of experiment
+
+          if (experiment.getIsOngoing()) {
+            myExperiments.get(0).second.add(experiment);
+          } else {
+            myExperiments.get(1).second.add(experiment);
+          }
+        }
+        this.notifyDataSetChanged();
+      });
+    }
 
     @Override
     public int getGroupCount() {
-      return groups.length;
+      return myExperiments.size();
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-      return children[groupPosition].length;
+      return myExperiments.get(groupPosition).second.size();
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-      return groups[groupPosition];
+      return myExperiments.get(groupPosition);
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-      return children[groupPosition][childPosition];
+      return myExperiments.get(groupPosition).second.get(childPosition);
     }
 
     @Override
@@ -75,7 +117,7 @@ public class ExperimentListFragment extends Fragment {
 
       TextView tvGroup = convertView.findViewById(R.id.tv_experiment_list_group);
 
-      tvGroup.setText(groups[groupPosition]);
+      tvGroup.setText(myExperiments.get(groupPosition).first);
       return convertView;
     }
 
@@ -91,7 +133,9 @@ public class ExperimentListFragment extends Fragment {
       TextView experimentDescription = convertView
           .findViewById(R.id.tv_experiment_list_description);
 
-      experimentDescription.setText(children[groupPosition][childPosition]);
+      experimentDescription
+          .setText(myExperiments.get(groupPosition).second.get(childPosition).getDescription());
+
       return convertView;
     }
 
@@ -132,8 +176,8 @@ public class ExperimentListFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
 
     ExpandableListView elv = view.findViewById(R.id.elv_main_experiment_list);
-    elv.setAdapter(new ExperimentListAdapter());
-
+    experimentListAdapter = new ExperimentListAdapter("0"); // TODO: get current user uuid
+    elv.setAdapter(experimentListAdapter);
   }
 }
 
