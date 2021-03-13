@@ -1,12 +1,12 @@
 package xyz.kotlout.kotlout.controller;
 
-import android.util.Pair;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import xyz.kotlout.kotlout.model.experiment.Experiment;
+import java.util.Map;
 
 /**
  * A controller for managing lists of Experiment objects.
@@ -14,7 +14,6 @@ import xyz.kotlout.kotlout.model.experiment.Experiment;
 public class ExperimentListController {
 
   private static final String TAG = "EXP_LIST_CONTROLLER";
-  private final String[] myExperimentsGroups = {"Open experiments", "Closed Experiments"};
   private final Query getUserExperiments;
 
   public ExperimentListController(String userUuid) {
@@ -28,10 +27,12 @@ public class ExperimentListController {
    *
    * @return An empty list for user experiments grouped by Open and Closed.
    */
-  public List<Pair<String, List<Experiment>>> initializeMyExperiments() {
-    List<Pair<String, List<Experiment>>> myExperiments = new ArrayList<>();
-    for (String group : myExperimentsGroups) {
-      myExperiments.add(new Pair<>(group, new ArrayList<>()));
+  public Map<MyExperimentGroup, List<ExperimentController>> initializeMyExperiments() {
+
+    Map<MyExperimentGroup, List<ExperimentController>> myExperiments = new HashMap<>();
+
+    for (MyExperimentGroup group : MyExperimentGroup.values()) {
+      myExperiments.put(group, new ArrayList<>());
     }
     return myExperiments;
   }

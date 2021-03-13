@@ -1,8 +1,8 @@
 package xyz.kotlout.kotlout.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +15,14 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.controller.ExperimentController;
 import xyz.kotlout.kotlout.controller.ExperimentListController;
-import xyz.kotlout.kotlout.model.experiment.BinomialExperiment;
+import xyz.kotlout.kotlout.controller.MyExperimentGroup;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
+import xyz.kotlout.kotlout.view.ExperimentViewActivity;
 
 /**
  * A fragment used to represent the user's experiments in a list.
@@ -45,26 +49,30 @@ public class ExperimentListFragment extends Fragment {
     private static final String TAG = "EXP_LIST_ADAPTER";
     private ExperimentListController experimentListController;
     private Query myExperimentsRef;
-    private List<Pair<String, List<Experiment>>> myExperiments;
+    private Map<MyExperimentGroup, List<ExperimentController>> myExperiments;
 
     public ExperimentListAdapter(String userUuid) {
       experimentListController = new ExperimentListController(userUuid);
       myExperiments = experimentListController.initializeMyExperiments();
 
       myExperimentsRef = experimentListController.getGetUserExperiments();
+
       myExperimentsRef.addSnapshotListener((queryDocumentSnapshots, e) -> {
-        myExperiments.get(0).second.clear();
-        myExperiments.get(1).second.clear();
+
+        for (Entry<MyExperimentGroup, List<ExperimentController>> pair : myExperiments.entrySet()) {
+          pair.getValue().clear();
+        }
 
         for (QueryDocumentSnapshot experimentDoc : queryDocumentSnapshots) {
           Log.d(TAG, experimentDoc.getId() + " => " + experimentDoc.getData());
-          Experiment experiment = experimentDoc
-              .toObject(BinomialExperiment.class); // TODO: handle different types of experiment
+
+          ExperimentController controller = new ExperimentController(experimentDoc);
+          Experiment experiment = controller.getExperimentContext();
 
           if (experiment.getIsOngoing()) {
-            myExperiments.get(0).second.add(experiment);
+            myExperiments.get(MyExperimentGroup.OPEN).add(controller);
           } else {
-            myExperiments.get(1).second.add(experiment);
+            myExperiments.get(MyExperimentGroup.CLOSED).add(controller);
           }
         }
         this.notifyDataSetChanged();
@@ -78,17 +86,20 @@ public class ExperimentListFragment extends Fragment {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-      return myExperiments.get(groupPosition).second.size();
+      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
+      return myExperiments.get(experimentGroup).size();
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-      return myExperiments.get(groupPosition);
+      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
+      return myExperiments.get(experimentGroup);
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-      return myExperiments.get(groupPosition).second.get(childPosition);
+      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
+      return myExperiments.get(experimentGroup).get(childPosition);
     }
 
     @Override
@@ -117,7 +128,9 @@ public class ExperimentListFragment extends Fragment {
 
       TextView tvGroup = convertView.findViewById(R.id.tv_experiment_list_group);
 
-      tvGroup.setText(myExperiments.get(groupPosition).first);
+      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
+      tvGroup.setText(experimentGroup.toString());
+
       return convertView;
     }
 
@@ -133,15 +146,18 @@ public class ExperimentListFragment extends Fragment {
       TextView experimentDescription = convertView
           .findViewById(R.id.tv_experiment_list_description);
 
+      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
+
       experimentDescription
-          .setText(myExperiments.get(groupPosition).second.get(childPosition).getDescription());
+          .setText(myExperiments.get(experimentGroup).get(childPosition).getExperimentContext()
+              .getDescription());
 
       return convertView;
     }
 
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-      return false;
+      return true;
     }
   }
 
@@ -167,17 +183,33 @@ public class ExperimentListFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
+    View view = inflater.inflate(R.layout.fragment_experiment_list, container, false);
+
+    ExpandableListView elv = view.findViewById(R.id.elv_main_experiment_list);
+    experimentListAdapter = new ExperimentListAdapter("0"); // TODO: get current user uuid
+    elv.setAdapter(experimentListAdapter);
+    elv.setOnChildClickListener(this::onChildClick);
+
     // Inflate the layout for this fragment
-    return inflater.inflate(R.layout.fragment_experiment_list, container, false);
+    return view;
   }
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    ExpandableListView elv = view.findViewById(R.id.elv_main_experiment_list);
-    experimentListAdapter = new ExperimentListAdapter("0"); // TODO: get current user uuid
-    elv.setAdapter(experimentListAdapter);
+  }
+
+  boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition,
+      long id) {
+    ExperimentController tapped = (ExperimentController) experimentListAdapter
+        .getChild(groupPosition, childPosition);
+
+    Intent intent = new Intent(getContext(), ExperimentViewActivity.class);
+    intent.putExtra(ExperimentViewActivity.EXPERIMENT_ID, tapped.getExperimentId());
+    startActivityForResult(intent, 0);
+
+    return true;
   }
 }
 

@@ -15,7 +15,6 @@ public class FirebaseController {
   private static final int EMU_FIREBASE_PORT = 8080;
   private static final int EMU_AUTH_PORT = 9099;
 
-  private static FirebaseFirestore firestore;
   private static FirebaseAuth firebaseAuth;
 
   /**
@@ -23,6 +22,7 @@ public class FirebaseController {
    * @return An instance of firestore
    */
   public static FirebaseFirestore getFirestore() {
+    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     if (firestore == null) {
       firestore = FirebaseFirestore.getInstance();
 
@@ -35,7 +35,7 @@ public class FirebaseController {
 
   /**
    * Gets an instance of firebase Auth
-   * @return An instance of Girebase Auth
+   * @return An instance of Firebase Auth
    */
   public static FirebaseAuth getAuth() {
     if (firebaseAuth == null) {

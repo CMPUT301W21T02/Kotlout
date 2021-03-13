@@ -30,6 +30,7 @@
   <string name="new_experiment_description">Description</string>
   <string name="btn_new_experiment_add">Add Experiment</string>
   <string name="title_activity_new">New Experiment</string>
+  <string name="title_activity_view">Experiment Info</string>
 
   <string-array name="experiment_types">
     <item>Binomial</item>

@@ -2,6 +2,7 @@ package xyz.kotlout.kotlout.model.experiment;
 
 import java.util.List;
 
+import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial;
 
 /**
@@ -11,6 +12,12 @@ import xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial;
 public class NonNegativeExperiment extends Experiment {
 
   private List<NonNegativeTrial> trials;
+
+  public ExperimentType type = ExperimentType.NON_NEGATIVE_INTEGER;
+
+  public NonNegativeExperiment() {
+
+  }
 
   /**
    * Creates a new BinomialExperiment with basic fields passed on to the base Experiment
