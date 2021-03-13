@@ -102,7 +102,7 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
       ViewGroup parent) {
 
     if (convertView == null) {
-      LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+      LayoutInflater inflater = LayoutInflater.from(context);
       convertView = inflater.inflate(R.layout.experiment_list_group, parent, false);
     }
 
@@ -119,7 +119,7 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
       View convertView, ViewGroup parent) {
 
     if (convertView == null) {
-      LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+      LayoutInflater inflater = LayoutInflater.from(context);
       convertView = inflater.inflate(R.layout.experiment_list_item, parent, false);
     }
 
