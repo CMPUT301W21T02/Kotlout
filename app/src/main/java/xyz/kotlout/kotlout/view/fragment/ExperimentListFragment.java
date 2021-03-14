@@ -72,7 +72,6 @@ public class ExperimentListFragment extends Fragment {
     elv.setAdapter(experimentListAdapter);
     elv.setOnChildClickListener(this::onChildClick);
 
-    // Inflate the layout for this fragment
     return view;
   }
 
