@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 
 /**
@@ -42,18 +43,16 @@ public class InfoHeaderView extends LinearLayout {
   }
 
 
-  public void setExperiment(Experiment experiment) {
+  public void setExperiment(Experiment experiment, ExperimentType type) {
     tvDescription.setText(experiment.getDescription());
 
-    String ownerName = "UWU";
+    String ownerName = "SKRUNT DIGDERIDOO";
     tvOwner.setText(ownerName.toUpperCase());
 
     tvRegion.setText(experiment.getRegion());
-//    tvType.setText(experiment.getType());
-    tvType.setText("Binomial");
+    tvType.setText(type.toString());
 
     ExperimentController exp = new ExperimentController(experiment);
     tvCount.setText(exp.generateCountText());
-
   }
 }

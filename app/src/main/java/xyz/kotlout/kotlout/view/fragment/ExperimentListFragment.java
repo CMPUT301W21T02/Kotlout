@@ -1,15 +1,7 @@
 package xyz.kotlout.kotlout.view.fragment;
 
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +14,6 @@ import androidx.fragment.app.Fragment;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.model.adapter.ExperimentListAdapter;
 import xyz.kotlout.kotlout.controller.ExperimentController;
-import xyz.kotlout.kotlout.controller.ExperimentListController;
-import xyz.kotlout.kotlout.controller.MyExperimentGroup;
-import xyz.kotlout.kotlout.model.experiment.Experiment;
 import xyz.kotlout.kotlout.view.ExperimentViewActivity;
 
 /**
@@ -67,7 +56,7 @@ public class ExperimentListFragment extends Fragment {
       Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_experiment_list, container, false);
 
-    ExpandableListView elv = view.findViewById(R.id.elv_main_experiment_list);
+    ExpandableListView elv = view.findViewById(R.id.elv_main_experiments);
     experimentListAdapter = new ExperimentListAdapter("0", getContext()); // TODO: get current user uuid
     elv.setAdapter(experimentListAdapter);
     elv.setOnChildClickListener(this::onChildClick);
@@ -78,7 +67,6 @@ public class ExperimentListFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
   }
 
   boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition,

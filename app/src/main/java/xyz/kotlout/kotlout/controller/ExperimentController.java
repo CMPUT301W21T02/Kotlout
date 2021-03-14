@@ -76,10 +76,11 @@ public class ExperimentController {
   }
 
   /**
-   * Initializes the controller and sets the context to an existing Experiment object of known type.
+   * Initializes the controller and sets the context to an existing Experiment object of known
+   * type.
    *
    * @param experiment An instance of Experiment.
-   * @param type Type of experiment
+   * @param type       Type of experiment
    */
   public ExperimentController(Experiment experiment, ExperimentType type) {
     this.experimentContext = experiment;
@@ -123,11 +124,13 @@ public class ExperimentController {
         return new ExperimentController(new BinomialExperiment(description, region, minTrials),
             type);
       case NON_NEGATIVE_INTEGER:
-        return new ExperimentController(new NonNegativeExperiment(description, region, minTrials), type);
+        return new ExperimentController(new NonNegativeExperiment(description, region, minTrials),
+            type);
       case COUNT:
         return new ExperimentController(new CountExperiment(description, region, minTrials), type);
       case MEASUREMENT:
-        return new ExperimentController(new MeasurementExperiment(description, region, minTrials), type);
+        return new ExperimentController(new MeasurementExperiment(description, region, minTrials),
+            type);
     }
     return null;
   }
@@ -148,6 +151,10 @@ public class ExperimentController {
    */
   public Experiment getExperimentContext() {
     return experimentContext;
+  }
+
+  public ExperimentType getType() {
+    return type;
   }
 
   /**
