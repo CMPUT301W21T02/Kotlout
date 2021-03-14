@@ -9,10 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.charset.Charset;
-import java.util.UUID;
 
 /**
  * Manages internal storage
@@ -34,7 +31,7 @@ public final class LocalStorageController {
         FileInputStream uuidFileStream = new FileInputStream(
             ctx.getFilesDir().toString() + '/' + UUID_FILE_NAME);
         DataInputStream uuidInputStream = new DataInputStream(uuidFileStream);
-        BufferedReader uuidBuffer = new BufferedReader(new InputStreamReader(uuidInputStream));
+        BufferedReader uuidBuffer = new BufferedReader(new InputStreamReader(uuidInputStream))
     ) {
       String uuidString = uuidBuffer.readLine();
       if (uuidBuffer.readLine() == null) {
@@ -47,7 +44,8 @@ public final class LocalStorageController {
       Log.d(TAG, "UUID file not found" + e.getMessage());
     } catch (RuntimeException e) {
       Log.e(TAG, "UUID file exists, but data is not a valid UUID\n\t" + e.getMessage());
-      return "Please don't edit the uuid file :'(..." + UUID.randomUUID().toString();
+      return null;
+      //return "Please don't edit the uuid file :'(..." + UUID.randomUUID().toString();
     } catch (IOException e) {
       Log.e(TAG, "General IO exception:\n\t" + e.getMessage());
     }
@@ -60,18 +58,16 @@ public final class LocalStorageController {
    * @param new_uuid UUID to store
    */
   public static void storeUUID(String new_uuid) {
-    if (new_uuid == null) {
+    if (new_uuid == null || new_uuid.isEmpty()) {
       Log.w(TAG, "ERROR: cannot store empty uuid");
       return;
     }
     try (
         FileOutputStream uuidFileStream = ApplicationContextProvider.getAppContext()
-            .openFileOutput(UUID_FILE_NAME, Context.MODE_PRIVATE);
+            .openFileOutput(UUID_FILE_NAME, Context.MODE_PRIVATE)
     ) {
       uuidFileStream.write(new_uuid.getBytes(Charset.defaultCharset()));
       Log.w(TAG, "Wrote uuid: " + new_uuid + " to Data");
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
     }
