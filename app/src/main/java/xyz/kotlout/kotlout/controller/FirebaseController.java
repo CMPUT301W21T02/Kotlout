@@ -14,27 +14,30 @@ public class FirebaseController {
   private static final String EMU_HOST = "10.0.2.2";
   private static final int EMU_FIREBASE_PORT = 8080;
   private static final int EMU_AUTH_PORT = 9099;
-
+  private static boolean firestoreInitialized = false;
   private static FirebaseAuth firebaseAuth;
 
   /**
    * Gets an instance of firestore and returns it
+   *
    * @return An instance of firestore
    */
   public static FirebaseFirestore getFirestore() {
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-    if (firestore == null) {
-      firestore = FirebaseFirestore.getInstance();
 
+    if (!firestoreInitialized) {
       if (USE_EMU) {
         firestore.useEmulator(EMU_HOST, EMU_FIREBASE_PORT);
       }
+      firestoreInitialized = true;
     }
+
     return firestore;
   }
 
   /**
    * Gets an instance of firebase Auth
+   *
    * @return An instance of Firebase Auth
    */
   public static FirebaseAuth getAuth() {

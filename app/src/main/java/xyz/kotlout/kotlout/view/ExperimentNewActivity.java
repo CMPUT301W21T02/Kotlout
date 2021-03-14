@@ -66,9 +66,8 @@ public class ExperimentNewActivity extends AppCompatActivity {
     // default minimum trials is 0 if field left blank
     int minTrials = 0;
     try {
-      Integer.parseInt(
+      minTrials = Integer.parseInt(
           ((EditText) this.findViewById(R.id.et_experiment_new_min_trials)).getText().toString());
-
     } catch (NumberFormatException ignored) {
     }
 

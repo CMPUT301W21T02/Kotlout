@@ -131,6 +131,11 @@ public class ExperimentListFragment extends Fragment {
       MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
       tvGroup.setText(experimentGroup.toString());
 
+      if (experimentGroup == MyExperimentGroup.OPEN) {
+        ExpandableListView elv = (ExpandableListView) parent;
+        elv.expandGroup(groupPosition);
+      }
+
       return convertView;
     }
 
@@ -143,14 +148,20 @@ public class ExperimentListFragment extends Fragment {
         convertView = inflater.inflate(R.layout.experiment_list_item, parent, false);
       }
 
-      TextView experimentDescription = convertView
+      TextView description = convertView
           .findViewById(R.id.tv_experiment_list_description);
+      TextView region = convertView.findViewById(R.id.tv_experiment_list_region);
+      TextView counter = convertView.findViewById(R.id.tv_experiment_list_counter);
+      TextView type = convertView.findViewById(R.id.tv_experiment_list_type);
 
       MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
 
-      experimentDescription
-          .setText(myExperiments.get(experimentGroup).get(childPosition).getExperimentContext()
-              .getDescription());
+      description.setText(myExperiments.get(experimentGroup)
+          .get(childPosition).getExperimentContext().getDescription());
+      region.setText(myExperiments.get(experimentGroup)
+          .get(childPosition).getExperimentContext().getRegion());
+      counter.setText(myExperiments.get(experimentGroup).get(childPosition).generateCountText());
+      type.setText("Binomial"); //TODO: Figure out how to get this working
 
       return convertView;
     }

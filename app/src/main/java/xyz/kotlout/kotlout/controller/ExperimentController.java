@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import java.util.Locale;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.BinomialExperiment;
 import xyz.kotlout.kotlout.model.experiment.CountExperiment;
@@ -149,6 +150,38 @@ public class ExperimentController {
             }
         )
         .addOnFailureListener(e -> Log.w(TAG, "Experiment not published", e));
+  }
+
+  /**
+   * Returns the number of trials that this experiment has completed TODO: This returns 0 all the
+   * time at the moment.
+   *
+   * @return integer value representing the count of experiments
+   */
+  public int getTrialsCompleted() {
+    return 0;
+  }
+
+  /**
+   * Generates a standardized string stating how many trials have been completed for this
+   * experiment.
+   * <p>
+   * When more than the minimum number of trials have been completed, it will print just the trial
+   * count. If less than the minimum number of trials have been completed, it will print both the
+   * minimum and current count.
+   *
+   * @return Formatted string formed from experiment information.
+   */
+  public String generateCountText() {
+
+    int minTrials = experimentContext.getMinimumTrials();
+    int currentTrials = getTrialsCompleted();
+
+    if (minTrials > currentTrials) {
+      return String.format(Locale.CANADA, "%d Trials (%d minimum)", currentTrials, minTrials);
+    } else {
+      return String.format(Locale.CANADA, "%d Trials", currentTrials);
+    }
   }
 }
 
