@@ -165,7 +165,6 @@ public class ProfileActivity extends AppCompatActivity {
                     emailText.setInputType(InputType.TYPE_NULL);
                     phoneText.setInputType(InputType.TYPE_NULL);
 
-                    firestore.collection("users").add(user);
                     firestore.collection("users").document(user.getUuid()).set(user);
 
                 } else {
