@@ -19,7 +19,9 @@ import xyz.kotlout.kotlout.model.user.User;
 
 public class ProfileActivity extends AppCompatActivity {
 
+  // Getting the user
   String uuid = LocalStorageController.readUUID();
+
   // Declaration and instantiation of Objects
   private EditText firstNameText, lastNameText, emailText, phoneText;
   private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -148,6 +150,7 @@ public class ProfileActivity extends AppCompatActivity {
         lastNameText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         emailText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         phoneText.setInputType(InputType.TYPE_CLASS_PHONE);
+        Toast.makeText(this,"Confirm clicked", Toast.LENGTH_SHORT);
         return true;
 
       case R.id.edit_confirm_button:
@@ -158,9 +161,11 @@ public class ProfileActivity extends AppCompatActivity {
         newPhone = phoneText.getText().toString();
         changeVisibility(optionsMenu);
         changeEditable();
+        Toast.makeText(this,"Confirm clicked", Toast.LENGTH_SHORT);
 
         if (UserController.validateEmail(newEmail) == true
             && UserController.validatePhoneNumber(newPhone) == true) {
+          Toast.makeText(this, "Valid Entry", Toast.LENGTH_SHORT);
 
           firstNameText.setInputType(InputType.TYPE_NULL);
           lastNameText.setInputType(InputType.TYPE_NULL);
@@ -173,6 +178,8 @@ public class ProfileActivity extends AppCompatActivity {
           updateCallback.accept(controller.getUser());
           Toast.makeText(this, "Invalid Entry", Toast.LENGTH_SHORT);
         }
+
+        return true;
     }
     return super.onOptionsItemSelected(item);
   }

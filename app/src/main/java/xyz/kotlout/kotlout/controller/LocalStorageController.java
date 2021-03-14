@@ -45,7 +45,6 @@ public final class LocalStorageController {
     } catch (RuntimeException e) {
       Log.e(TAG, "UUID file exists, but data is not a valid UUID\n\t" + e.getMessage());
       return null;
-      //return "Please don't edit the uuid file :'(..." + UUID.randomUUID().toString();
     } catch (IOException e) {
       Log.e(TAG, "General IO exception:\n\t" + e.getMessage());
     }
