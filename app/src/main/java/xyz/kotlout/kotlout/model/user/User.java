@@ -11,7 +11,7 @@ public class User {
   private String email;
   private String phoneNumber;
 
-  // UUID doens't have a no-argument constructor and cannot be deserialized by firestore
+  // UUID doesn't have a no-argument constructor and cannot be deserialized by firestore
   // Maybe we should consider using Firebase ID's instead
   private String uuid;
   @Exclude
@@ -22,6 +22,19 @@ public class User {
   }
 
   public User(String firstName, String lastName, String email, String phoneNumber, String uuid) {
+    // If the User is initialized with empty Strings, those fields should be set to null
+    if (firstName.equals("")) {
+      firstName = null;
+    }
+    if (lastName.equals("")) {
+      lastName = null;
+    }
+    if (email.equals("")) {
+      email = null;
+    }
+    if (phoneNumber.equals("")) {
+      phoneNumber = null;
+    }
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
