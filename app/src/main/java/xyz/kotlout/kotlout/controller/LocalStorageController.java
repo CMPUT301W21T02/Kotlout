@@ -34,7 +34,7 @@ public final class LocalStorageController {
         FileInputStream uuidFileStream = new FileInputStream(
             ctx.getFilesDir().toString() + '/' + UUID_FILE_NAME);
         DataInputStream uuidInputStream = new DataInputStream(uuidFileStream);
-        BufferedReader uuidBuffer = new BufferedReader(new InputStreamReader(uuidInputStream));
+        BufferedReader uuidBuffer = new BufferedReader(new InputStreamReader(uuidInputStream))
     ) {
       String uuidString = uuidBuffer.readLine();
       if (uuidBuffer.readLine() == null) {
@@ -66,7 +66,7 @@ public final class LocalStorageController {
     }
     try (
         FileOutputStream uuidFileStream = ApplicationContextProvider.getAppContext()
-            .openFileOutput(UUID_FILE_NAME, Context.MODE_PRIVATE);
+            .openFileOutput(UUID_FILE_NAME, Context.MODE_PRIVATE)
     ) {
       uuidFileStream.write(new_uuid.getBytes(Charset.defaultCharset()));
       Log.w(TAG, "Wrote uuid: " + new_uuid + " to Data");

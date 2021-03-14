@@ -10,9 +10,9 @@ import xyz.kotlout.kotlout.R;
 
 public class TrialListAdapter extends BaseExpandableListAdapter {
 
-  private String[] groups = { "Mine", "Amir", "Tharidu"};
-  private String[][] children = {{"peepee"}, {"Poopoo"}};
-  private Context context;
+  private final String[] groups = { "Mine", "Amir", "Tharidu"};
+  private final String[][] children = {{"peepee"}, {"Poopoo"}};
+  private final Context context;
 
   public TrialListAdapter(Context context) {
     this.context = context;

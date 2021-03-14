@@ -6,12 +6,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
+
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
 import xyz.kotlout.kotlout.controller.ExperimentListController;
@@ -24,10 +28,10 @@ import xyz.kotlout.kotlout.model.experiment.Experiment;
 public class ExperimentListAdapter extends BaseExpandableListAdapter {
 
   private static final String TAG = "EXP_LIST_ADAPTER";
-  private ExperimentListController experimentListController;
-  private Query myExperimentsRef;
-  private Map<MyExperimentGroup, List<ExperimentController>> myExperiments;
-  private Context context;
+  private final ExperimentListController experimentListController;
+  private final Query myExperimentsRef;
+  private final Map<MyExperimentGroup, List<ExperimentController>> myExperiments;
+  private final Context context;
 
   public ExperimentListAdapter(String userUuid, Context context) {
     this.context = context;
@@ -111,6 +115,11 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
     MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
     tvGroup.setText(experimentGroup.toString());
 
+    if (experimentGroup == MyExperimentGroup.OPEN) {
+      ExpandableListView elv = (ExpandableListView) parent;
+      elv.expandGroup(groupPosition);
+    }
+
     return convertView;
   }
 
@@ -123,14 +132,20 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
       convertView = inflater.inflate(R.layout.experiment_list_item, parent, false);
     }
 
-    TextView experimentDescription = convertView
+    TextView description = convertView
         .findViewById(R.id.tv_experiment_list_description);
+    TextView region = convertView.findViewById(R.id.tv_experiment_list_region);
+    TextView counter = convertView.findViewById(R.id.tv_experiment_list_counter);
+    TextView type = convertView.findViewById(R.id.tv_experiment_list_type);
 
     MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
 
-    experimentDescription
-        .setText(myExperiments.get(experimentGroup).get(childPosition).getExperimentContext()
-            .getDescription());
+    description.setText(myExperiments.get(experimentGroup)
+        .get(childPosition).getExperimentContext().getDescription());
+    region.setText(myExperiments.get(experimentGroup)
+        .get(childPosition).getExperimentContext().getRegion());
+    counter.setText(myExperiments.get(experimentGroup).get(childPosition).generateCountText());
+    type.setText("Binomial"); //TODO: Figure out how to get this working
 
     return convertView;
   }

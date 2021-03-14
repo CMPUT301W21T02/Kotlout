@@ -1,10 +1,13 @@
 package xyz.kotlout.kotlout.controller;
 
-import android.util.Log;
-import androidx.annotation.NonNull;
+import java.util.Locale;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import java.util.Locale;
+
+import android.util.Log;
+import androidx.annotation.NonNull;
+
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.BinomialExperiment;
 import xyz.kotlout.kotlout.model.experiment.CountExperiment;
@@ -152,14 +155,13 @@ public class ExperimentController {
   }
 
   /**
-   * Returns the number of trials already completed in the current experiment.
-   * <p>
-   * TODO: Actually fill this out
+   * Returns the number of trials that this experiment has completed TODO: This returns 0 all the
+   * time at the moment.
    *
-   * @return Number of trials completed.
+   * @return integer value representing the count of experiments
    */
   public int getTrialsCompleted() {
-    return 1;
+    return 0;
   }
 
   /**
