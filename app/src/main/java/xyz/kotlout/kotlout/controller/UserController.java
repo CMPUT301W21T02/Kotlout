@@ -23,7 +23,6 @@ public class UserController {
   /**
    * Pattern to validate email addresses </br> Notation taken from Figma diagram: 000-111-2222
    */
-  private static final Pattern PHONE_REGEX = Pattern.compile("\\d{3}-\\d{3}-\\d{4}");
   private static final String TAG = "USER CONTROLLER";
   private final DocumentReference userDoc;
   private ListenerRegistration snapshotListenerRef;
@@ -45,7 +44,16 @@ public class UserController {
   }
 
   public static boolean validatePhoneNumber(String phoneNumber) {
-    return phoneNumber != null && PHONE_REGEX.matcher(phoneNumber).matches();
+    phoneNumber = phoneNumber.replace("-", "");
+    phoneNumber = phoneNumber.replace("+", "");
+    phoneNumber = phoneNumber.replace("(", "");
+    phoneNumber = phoneNumber.replace(")", "");
+    try {
+      Integer.parseInt(phoneNumber);
+      return true;
+    } catch (NumberFormatException e) {
+      return false;
+    }
   }
 
   public static void registerUser(String userUUID) {

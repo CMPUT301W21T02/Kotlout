@@ -2,9 +2,13 @@ package xyz.kotlout.kotlout.view;
 
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -59,8 +63,6 @@ public class ProfileActivity extends AppCompatActivity {
     phoneText = findViewById(R.id.profilePhoneEditText);
 
     changeEditable();
-
-
   }
 
   /**
@@ -139,10 +141,6 @@ public class ProfileActivity extends AppCompatActivity {
 
     switch (item.getItemId()) {
 
-      case android.R.id.home:
-        NavUtils.navigateUpFromSameTask(this);
-        return true;
-
       case R.id.edit_profile_button:
         changeVisibility(optionsMenu);
         changeEditable();
@@ -150,7 +148,6 @@ public class ProfileActivity extends AppCompatActivity {
         lastNameText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         emailText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         phoneText.setInputType(InputType.TYPE_CLASS_PHONE);
-        Toast.makeText(this,"Confirm clicked", Toast.LENGTH_SHORT);
         return true;
 
       case R.id.edit_confirm_button:
@@ -161,11 +158,11 @@ public class ProfileActivity extends AppCompatActivity {
         newPhone = phoneText.getText().toString();
         changeVisibility(optionsMenu);
         changeEditable();
-        Toast.makeText(this,"Confirm clicked", Toast.LENGTH_SHORT);
 
         if (UserController.validateEmail(newEmail) == true
             && UserController.validatePhoneNumber(newPhone) == true) {
           Toast.makeText(this, "Valid Entry", Toast.LENGTH_SHORT);
+          Log.d("hello", "Check passed");
 
           firstNameText.setInputType(InputType.TYPE_NULL);
           lastNameText.setInputType(InputType.TYPE_NULL);
@@ -174,11 +171,12 @@ public class ProfileActivity extends AppCompatActivity {
 
           controller.updateUserData(new User(newFirstName, newLastName, newEmail, newPhone, uuid));
         } else {
+          Log.d("email", String.valueOf(UserController.validateEmail(newEmail)));
+          Log.d("phone", String.valueOf(UserController.validatePhoneNumber(newPhone)));
           // If there are invalid fields, reset them to the firebase value
           updateCallback.accept(controller.getUser());
           Toast.makeText(this, "Invalid Entry", Toast.LENGTH_SHORT);
         }
-
         return true;
     }
     return super.onOptionsItemSelected(item);
