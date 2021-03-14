@@ -2,9 +2,13 @@ package xyz.kotlout.kotlout.view;
 
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -19,8 +23,10 @@ import xyz.kotlout.kotlout.model.user.User;
 
 public class ProfileActivity extends AppCompatActivity {
 
+  // Getting the user
   String uuid = LocalStorageController.readUUID();
-  // Declaration and instantiation of Objects
+
+  // Declaration of Objects, instantiation of Firestore
   private EditText firstNameText, lastNameText, emailText, phoneText;
   private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
   private Menu optionsMenu;
@@ -57,8 +63,6 @@ public class ProfileActivity extends AppCompatActivity {
     phoneText = findViewById(R.id.profilePhoneEditText);
 
     changeEditable();
-
-
   }
 
   /**
@@ -75,32 +79,38 @@ public class ProfileActivity extends AppCompatActivity {
     return true;
   }
 
+  /**
+   * If the EditTexts are editable, then they will be changed to be uneditable
+   * If the EditTexts are uneditable, then they will be changed to be editable with proper input
+   *
+   */
   public void changeEditable() {
-
     firstNameText = findViewById(R.id.profileFirstNameEditText);
     lastNameText = findViewById(R.id.profileLastNameEditText);
     emailText = findViewById(R.id.profileEmailEditText);
     phoneText = findViewById(R.id.profilePhoneEditText);
 
     if (firstNameText.getInputType() == InputType.TYPE_NULL) {
-
+      // Setting proper input type
       firstNameText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
       lastNameText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
       emailText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
       phoneText.setInputType(InputType.TYPE_CLASS_PHONE);
 
+      // Enabling the EditTexts
       firstNameText.setEnabled(true);
       lastNameText.setEnabled(true);
       emailText.setEnabled(true);
       phoneText.setEnabled(true);
 
     } else {
-
+      // Setting input to null
       firstNameText.setInputType(InputType.TYPE_NULL);
       lastNameText.setInputType(InputType.TYPE_NULL);
       emailText.setInputType(InputType.TYPE_NULL);
       phoneText.setInputType(InputType.TYPE_NULL);
 
+      // Enabling the EditTexts
       firstNameText.setEnabled(false);
       lastNameText.setEnabled(false);
       emailText.setEnabled(false);
@@ -108,6 +118,11 @@ public class ProfileActivity extends AppCompatActivity {
     }
   }
 
+  /**
+   * If the editing button is visible, it will be changed to the confirmation button, and vice versa
+   * @param menu
+   * @return true
+   */
   public boolean changeVisibility(Menu menu) {
     MenuItem edit = menu.findItem(R.id.edit_profile_button);
     MenuItem confirm = menu.findItem(R.id.edit_confirm_button);
@@ -137,19 +152,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     switch (item.getItemId()) {
 
-      case android.R.id.home:
-        NavUtils.navigateUpFromSameTask(this);
-        return true;
-
+      // Makes the EditTexts editable
       case R.id.edit_profile_button:
         changeVisibility(optionsMenu);
         changeEditable();
-        firstNameText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-        lastNameText.setInputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-        emailText.setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        phoneText.setInputType(InputType.TYPE_CLASS_PHONE);
         return true;
 
+      // Checks for valid inputs in the EditTexts
       case R.id.edit_confirm_button:
         String newFirstName, newLastName, newEmail, newPhone;
         newFirstName = firstNameText.getText().toString();
@@ -159,20 +168,14 @@ public class ProfileActivity extends AppCompatActivity {
         changeVisibility(optionsMenu);
         changeEditable();
 
-        if (UserController.validateEmail(newEmail) == true
-            && UserController.validatePhoneNumber(newPhone) == true) {
-
-          firstNameText.setInputType(InputType.TYPE_NULL);
-          lastNameText.setInputType(InputType.TYPE_NULL);
-          emailText.setInputType(InputType.TYPE_NULL);
-          phoneText.setInputType(InputType.TYPE_NULL);
-
+        if (UserController.validateEmail(newEmail) && UserController.validatePhoneNumber(newPhone)) {
           controller.updateUserData(new User(newFirstName, newLastName, newEmail, newPhone, uuid));
         } else {
           // If there are invalid fields, reset them to the firebase value
           updateCallback.accept(controller.getUser());
-          Toast.makeText(this, "Invalid Entry", Toast.LENGTH_SHORT);
+          Toast.makeText(this, "Invalid Entries Detected", Toast.LENGTH_SHORT).show();
         }
+        return true;
     }
     return super.onOptionsItemSelected(item);
   }
