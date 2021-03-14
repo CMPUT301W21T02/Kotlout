@@ -115,11 +115,6 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
     MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
     tvGroup.setText(experimentGroup.toString());
 
-    if (experimentGroup == MyExperimentGroup.OPEN) {
-      ExpandableListView elv = (ExpandableListView) parent;
-      elv.expandGroup(groupPosition);
-    }
-
     return convertView;
   }
 

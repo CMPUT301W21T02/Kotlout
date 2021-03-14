@@ -25,6 +25,7 @@ public class ExperimentController {
 
   Experiment experimentContext;
   String experimentId;
+  ExperimentType type;
 
   /**
    * Default constructor. Disabled, because an empty controller is useless.
@@ -38,14 +39,14 @@ public class ExperimentController {
    *
    * @param documentId Firestore DocumentID that refers to the experiment.
    */
-  public ExperimentController(String documentId) {
+  public ExperimentController(String documentId, Runnable callback) {
     FirebaseFirestore db = FirebaseController.getFirestore();
     this.experimentId = documentId;
 
     db.collection(EXPERIMENT_COLLECTION).document(documentId).get()
         .addOnSuccessListener(documentSnapshot -> {
           //TODO: This feels jank. There must be a better way. Generics?
-          ExperimentType type = ExperimentType.valueOf((String) documentSnapshot.get("type"));
+          type = ExperimentType.valueOf((String) documentSnapshot.get("type"));
           switch (type) {
             case BINOMIAL:
               experimentContext = documentSnapshot.toObject(BinomialExperiment.class);
@@ -60,6 +61,7 @@ public class ExperimentController {
               experimentContext = documentSnapshot.toObject(MeasurementExperiment.class);
               break;
           }
+          callback.run();
         });
   }
 
@@ -70,11 +72,25 @@ public class ExperimentController {
    */
   public ExperimentController(Experiment experiment) {
     this.experimentContext = experiment;
+    this.type = ExperimentType.UNKNOWN;
+  }
+
+  /**
+   * Initializes the controller and sets the context to an existing Experiment object of known
+   * type.
+   *
+   * @param experiment An instance of Experiment.
+   * @param type       Type of experiment
+   */
+  public ExperimentController(Experiment experiment, ExperimentType type) {
+    this.experimentContext = experiment;
+    this.type = type;
   }
 
   public ExperimentController(DocumentSnapshot experimentDoc) {
-    ExperimentType type = ExperimentType.valueOf((String) experimentDoc.get("type"));
     this.experimentId = experimentDoc.getId();
+    type = ExperimentType.valueOf((String) experimentDoc.get("type"));
+
     switch (type) {
       case BINOMIAL:
         experimentContext = experimentDoc.toObject(BinomialExperiment.class);
@@ -105,13 +121,16 @@ public class ExperimentController {
 
     switch (type) {
       case BINOMIAL:
-        return new ExperimentController(new BinomialExperiment(description, region, minTrials));
+        return new ExperimentController(new BinomialExperiment(description, region, minTrials),
+            type);
       case NON_NEGATIVE_INTEGER:
-        return new ExperimentController(new NonNegativeExperiment(description, region, minTrials));
+        return new ExperimentController(new NonNegativeExperiment(description, region, minTrials),
+            type);
       case COUNT:
-        return new ExperimentController(new CountExperiment(description, region, minTrials));
+        return new ExperimentController(new CountExperiment(description, region, minTrials), type);
       case MEASUREMENT:
-        return new ExperimentController(new MeasurementExperiment(description, region, minTrials));
+        return new ExperimentController(new MeasurementExperiment(description, region, minTrials),
+            type);
     }
     return null;
   }
@@ -132,6 +151,10 @@ public class ExperimentController {
    */
   public Experiment getExperimentContext() {
     return experimentContext;
+  }
+
+  public ExperimentType getType() {
+    return type;
   }
 
   /**
