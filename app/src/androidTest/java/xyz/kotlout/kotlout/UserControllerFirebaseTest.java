@@ -1,6 +1,5 @@
 package xyz.kotlout.kotlout;
 
-import com.google.common.truth.Expect;
 import static com.google.common.truth.Truth.assertWithMessage;
 
 import androidx.core.util.Consumer;

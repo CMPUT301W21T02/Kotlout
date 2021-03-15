@@ -1,7 +1,6 @@
 package xyz.kotlout.kotlout;
 
 import com.google.common.truth.Expect;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;

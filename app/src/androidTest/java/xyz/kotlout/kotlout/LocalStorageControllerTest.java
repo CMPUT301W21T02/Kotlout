@@ -1,7 +1,7 @@
 package xyz.kotlout.kotlout;
 
-import static com.google.common.truth.Truth.assertWithMessage;
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.Truth.assertWithMessage;
 
 import android.content.Context;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -17,6 +17,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -46,14 +47,14 @@ public class LocalStorageControllerTest {
   // Restore the state before tests were run
   @AfterClass
   public static void tearDownLocalStorageTest() {
-    if(previousUuid != null) {
+    if (previousUuid != null) {
       LocalStorageController.storeUUID(previousUuid);
     } else {
       // If no file existed, it should be deleted
       File uuidFile = new File(getFilePath());
       uuidFile.delete();
+    }
   }
-}
 
   public static String getFilePath() {
     return ctx.getFilesDir().toString() + '/' + UUID_FILE_NAME;
@@ -153,7 +154,7 @@ public class LocalStorageControllerTest {
     String id = LocalStorageController.readUUID();
     User test = new User("Name", "Last", "test", "phone", id);
     FirebaseController.getFirestore().collection("users").document(id).set(test);
-    assertWithMessage("Garbage UUID read as valid: " + id, id).that(id).isNull();;
+    assertWithMessage("Garbage UUID read as valid: " + id, id).that(id).isNull();
   }
 
   @Test
@@ -175,7 +176,8 @@ public class LocalStorageControllerTest {
       try {
         String inputId = readStringFromFile();
         if (!id.equals(inputId)) {
-          assertWithMessage("Stored and read Id's differ:\n\tStored: " + id + "\n\t" + inputId).fail();
+          assertWithMessage("Stored and read Id's differ:\n\tStored: " + id + "\n\t" + inputId)
+              .fail();
         }
       } catch (IOException e) {
         assertWithMessage("Failed to read file: " + e.getMessage()).fail();
