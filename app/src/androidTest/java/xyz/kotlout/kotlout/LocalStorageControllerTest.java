@@ -1,5 +1,8 @@
 package xyz.kotlout.kotlout;
 
+import static com.google.common.truth.Truth.assertWithMessage;
+import static com.google.common.truth.Truth.assertThat;
+
 import android.content.Context;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -14,8 +17,6 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -80,7 +81,7 @@ public class LocalStorageControllerTest {
     ) {
       uuidFileStream.write(data);
     } catch (IOException e) {
-      Assert.fail("Error writing bytes to file: " + e.getMessage());
+      assertWithMessage("Error writing bytes to file: " + e.getMessage()).fail();
     }
   }
 
@@ -90,7 +91,7 @@ public class LocalStorageControllerTest {
     ) {
       uuidFileStream.write(data);
     } catch (IOException e) {
-      Assert.fail("Error writing string to file: " + e.getMessage());
+      assertWithMessage("Error writing string to file: " + e.getMessage()).fail();
     }
   }
 
@@ -117,14 +118,14 @@ public class LocalStorageControllerTest {
         break;
       }
     }
-    Assert.assertTrue(success);
+    assertThat(success).isTrue();
 
   }
 
   @Test
   public void testReadNoId() {
     String id = LocalStorageController.readUUID();
-    Assert.assertNull(id);
+    assertThat(id).isNull();
   }
 
   @Test
@@ -134,10 +135,10 @@ public class LocalStorageControllerTest {
       uuidFile.createNewFile();
       String id = LocalStorageController.readUUID();
       if (id != null) {
-        Assert.fail("Non-empty id on read id file: " + uuidFile);
+        assertWithMessage("Non-empty id on read id file: " + uuidFile).fail();
       }
     } catch (IOException e) {
-      Assert.fail("Encountered error reading file: " + e.getMessage());
+      assertWithMessage("Encountered error reading file: " + e.getMessage()).fail();
     }
   }
 
@@ -152,7 +153,7 @@ public class LocalStorageControllerTest {
     String id = LocalStorageController.readUUID();
     User test = new User("Name", "Last", "test", "phone", id);
     FirebaseController.getFirestore().collection("users").document(id).set(test);
-    Assert.assertNull("Garbage UUID read as valid: " + id, id);
+    assertWithMessage("Garbage UUID read as valid: " + id, id).that(id).isNull();;
   }
 
   @Test
@@ -161,7 +162,7 @@ public class LocalStorageControllerTest {
         .format("%s\n%s\n%s", UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
     writeStringToFile(multiLineId, false);
     String id = LocalStorageController.readUUID();
-    Assert.assertNull("Multiline UUID read as valid: " + id, id);
+    assertWithMessage("Multiline UUID read as valid: " + id).that(id).isNull();
   }
 
   @Test
@@ -174,10 +175,10 @@ public class LocalStorageControllerTest {
       try {
         String inputId = readStringFromFile();
         if (!id.equals(inputId)) {
-          Assert.fail("Stored and read Id's differ:\n\tStored: " + id + "\n\t" + inputId);
+          assertWithMessage("Stored and read Id's differ:\n\tStored: " + id + "\n\t" + inputId).fail();
         }
       } catch (IOException e) {
-        Assert.fail("Failed to read file: " + e.getMessage());
+        assertWithMessage("Failed to read file: " + e.getMessage()).fail();
       }
     }
 

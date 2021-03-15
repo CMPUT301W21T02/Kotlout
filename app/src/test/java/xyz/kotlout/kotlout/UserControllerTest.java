@@ -1,14 +1,22 @@
 package xyz.kotlout.kotlout;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import com.google.common.truth.Expect;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import xyz.kotlout.kotlout.controller.UserController;
 
+@RunWith(JUnit4.class)
 public class UserControllerTest {
 
+  @Rule
+  public final Expect expect = Expect.create();
+
   @Test
-  void testValidateEmail() {
-    boolean success = true;
+  public void testValidateEmail() {
+    boolean isValid = true;
     String[] positiveTestCases = {
         "danny@phantom.ca",
         "one+filter@gmail.gov",
@@ -21,8 +29,6 @@ public class UserControllerTest {
       bigBoi.append(bigBoi.toString());
     }
     String[] negativeTestCases = {
-        "",
-        null,
         "don'tAtMe",
         "UwU",
         "too+Many+Filters+1+2+3@gmail.gov",
@@ -31,26 +37,24 @@ public class UserControllerTest {
     };
 
     for (String testCase : positiveTestCases) {
-      success = UserController.validateEmail(testCase);
-      if (!success) {
-        Assertions.fail("Failed positive test case: " + testCase);
-      }
+      isValid = UserController.validateEmail(testCase);
+      expect.withMessage("Failed positive test case: " + testCase).that(isValid).isTrue();
     }
 
     for (String testCase : negativeTestCases) {
-      success = !UserController.validateEmail(testCase);
-      if (!success) {
-        Assertions.fail("Failed negative test case: " + testCase);
-      }
+      isValid = UserController.validateEmail(testCase);
+      expect.withMessage("Failed negative test case: " + testCase).that(isValid).isFalse();
     }
   }
 
   @Test
-  void testValidatePhoneNumber() {
-    boolean success = true;
+  public void testValidatePhoneNumber() {
+    boolean isValid = true;
     String[] positiveTestCases = {
         "123-456-7890",
         "000-000-0000",
+        "(123)345-5678",
+        "+84(123)345-5678"
     };
 
     StringBuilder bigBoi = new StringBuilder(1024);
@@ -59,39 +63,35 @@ public class UserControllerTest {
       bigBoi.append(bigBoi.toString());
     }
     String[] negativeTestCases = {
-        null,
-        "",
+        "123-456-duck",
+        "+123-432?",
+        "[789]123-4567",
         "phone_number",
-        "000000000"
     };
 
     for (String testCase : positiveTestCases) {
-      success = UserController.validatePhoneNumber(testCase);
-      if (!success) {
-        Assertions.fail("Failed positive test case: " + testCase);
-      }
+      isValid = UserController.validatePhoneNumber(testCase);
+      expect.withMessage("Failed positive test case: " + testCase).that(isValid).isTrue();
     }
 
     for (String testCase : negativeTestCases) {
-      success = !UserController.validatePhoneNumber(testCase);
-      if (!success) {
-        Assertions.fail("Failed negative test case: " + testCase);
-      }
+      isValid = UserController.validatePhoneNumber(testCase);
+      expect.withMessage("Failed negative test case: " + testCase).that(isValid).isFalse();
     }
   }
 
 
   @Test
-  void testSyncUser() {
+  public void testSyncUser() {
   }
 
   @Test
-  void testRegisterUser() {
+  public void testRegisterUser() {
 
   }
 
   @Test
-  void testUpdateUser() {
+  public void testUpdateUser() {
 
   }
 }

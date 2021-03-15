@@ -1,11 +1,13 @@
 package xyz.kotlout.kotlout;
 
+import com.google.common.truth.Expect;
+import static com.google.common.truth.Truth.assertWithMessage;
+
 import androidx.core.util.Consumer;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.firebase.firestore.DocumentReference;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import xyz.kotlout.kotlout.controller.FirebaseController;
@@ -31,7 +33,7 @@ public class UserControllerFirebaseTest {
       if (user != null && user.getUuid().equals(testUuid)) {
         updateCount.incrementAndGet();
       } else {
-        Assert.fail("I don't know how you did it, but the UUID is wrong");
+        assertWithMessage("I don't know how you did it, but the UUID is wrong").fail();
       }
     };
 
@@ -45,7 +47,7 @@ public class UserControllerFirebaseTest {
 
     while (updateCount.get() < 10) {
       if (System.currentTimeMillis() - startTime > timeoutMillis) {
-        Assert.fail("Timeout, updates did not occur in time");
+        assertWithMessage("Timeout, updates did not occur in time").fail();
       }
     }
   }
