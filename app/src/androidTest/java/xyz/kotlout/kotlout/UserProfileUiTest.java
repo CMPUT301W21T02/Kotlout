@@ -18,7 +18,12 @@ import android.os.SystemClock;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
+import com.google.firebase.firestore.FirebaseFirestore;
+import java.util.UUID;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +45,30 @@ public class UserProfileUiTest {
   String VALID_EMAIL_ADDR_STRING = "high@iq.gov";
   String INVALID_PHONE_NUM_STRING = "0-0-1-1-2-2-";
   String INVALID_EMAIL_ADDR_STRING = "high@iq.gov@";
+
+  private static String oldUuid;
+
+
+  // Restore state to before unit test
+  @AfterClass
+  public static void tearDownUserProfileTest() {
+    if(oldUuid != null) {
+      LocalStorageController.storeUUID(oldUuid);
+    } else {
+      // If no file existed, it should be deleted
+      InstrumentationRegistry.getInstrumentation().getTargetContext().getFilesDir().toPath().resolve("uuid.dat").toFile().delete();
+    }
+  }
+
+  @BeforeClass
+  public static void initLocalStorage() {
+    FirebaseFirestore firestore = FirebaseController.getFirestore();
+    String oldUuid = LocalStorageController.readUUID();
+    User newUser = new User();
+    newUser.setUuid(UUID.randomUUID().toString());
+    LocalStorageController.storeUUID(newUser.getUuid());
+    firestore.collection("users").document(newUser.getUuid()).set(newUser);
+  }
 
   @Before
   public void clearUserFields() {

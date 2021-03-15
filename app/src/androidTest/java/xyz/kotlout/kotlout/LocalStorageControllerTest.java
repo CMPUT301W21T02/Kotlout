@@ -14,6 +14,7 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -33,13 +34,27 @@ public class LocalStorageControllerTest {
   // Idk if there is a better way to keep track of the file name
   private static final String UUID_FILE_NAME = "uuid.dat";
   private static Context ctx;
+  private static String previousUuid;
 
   @BeforeClass
   public static void initLocalStorageTest() {
     ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
+    previousUuid = LocalStorageController.readUUID();
   }
 
-  public String getFilePath() {
+  // Restore the state before tests were run
+  @AfterClass
+  public static void tearDownLocalStorageTest() {
+    if(previousUuid != null) {
+      LocalStorageController.storeUUID(previousUuid);
+    } else {
+      // If no file existed, it should be deleted
+      File uuidFile = new File(getFilePath());
+      uuidFile.delete();
+  }
+}
+
+  public static String getFilePath() {
     return ctx.getFilesDir().toString() + '/' + UUID_FILE_NAME;
   }
 
