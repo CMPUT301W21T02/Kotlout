@@ -22,6 +22,11 @@
             android:name=".view.ProfileActivity"
             android:label="@string/title_activity_profile">
         </activity>
+        <activity
+          android:name=".view.DiscussionPostsActivity"
+          android:label="Discussion"
+          android:exported="true">
+        </activity>
     </application>
 
 </manifest>

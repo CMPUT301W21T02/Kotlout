@@ -20,4 +20,9 @@
     values-round/strings.xml for round devices.
     -->
   <string name="hello_world">Hello Square World!</string>
+  <string name="add_post_hint">Submit a new question</string>
+  <string name="default_author_name">Anonymous</string>
+  <string name="default_comment_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque nisi tellus, porta eget varius nec, elementum quis nulla. Duis dapibus venenatis est, ut aliquet libero fringilla vitae. Sed at lectus eu lectus blandit dictum sed eu enim. Vestibulum malesuada convallis libero ac tempor. Sed eleifend sit amet nibh vel dictum.</string>
+  <string name="default_comment_date">2021–03–16 14:03</string>
+  <string name="comment_reply_count">0 Replies</string>
 </resources>

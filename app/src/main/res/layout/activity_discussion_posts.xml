@@ -6,17 +6,32 @@
   android:layout_height="match_parent"
   tools:context=".view.DiscussionPostsActivity">
 
-  <com.google.android.material.bottomappbar.BottomAppBar
-    android:id="@+id/bottomAppBar"
-    style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
-    android:layout_width="match_parent"
+  <com.google.android.material.textfield.TextInputLayout
+    android:id="@+id/discussion_enter_question"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:layout_gravity="bottom"
-    app:layout_constraintBottom_toBottomOf="parent" />
+    android:padding="5dp"
+    android:background="@color/design_default_color_primary"
+    android:hint="@string/add_post_hint"
+    app:boxBackgroundColor="@color/design_default_color_background"
+    app:boxBackgroundMode="filled"
+    app:endIconDrawable="@android:drawable/ic_menu_send"
+    app:endIconMode="custom"
+    app:hintEnabled="true"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
+
+    <com.google.android.material.textfield.TextInputEditText
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" />
+  </com.google.android.material.textfield.TextInputLayout>
   <ListView
-    android:layout_width="match_parent"
+    android:id="@+id/discussion_post_list"
+    android:layout_width="0dp"
     android:layout_height="0dp"
-    app:layout_constraintBottom_toTopOf="@+id/bottomAppBar"
-    app:layout_constraintTop_toTopOf="parent"
-    tools:layout_editor_absoluteX="98dp" />
+    app:layout_constraintBottom_toTopOf="@+id/discussion_enter_question"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
