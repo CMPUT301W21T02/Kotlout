@@ -80,18 +80,4 @@ public class UserControllerTest {
     }
   }
 
-
-  @Test
-  public void testSyncUser() {
-  }
-
-  @Test
-  public void testRegisterUser() {
-
-  }
-
-  @Test
-  public void testUpdateUser() {
-
-  }
 }

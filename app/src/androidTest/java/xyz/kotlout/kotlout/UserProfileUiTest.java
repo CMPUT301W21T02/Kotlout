@@ -25,6 +25,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -49,22 +50,31 @@ public class UserProfileUiTest {
   String INVALID_PHONE_NUM_STRING = "0-0-1-1-2-2-";
   String INVALID_EMAIL_ADDR_STRING = "high@iq.gov@";
 
-  private static String oldUuid;
+  private static User oldUser ;
 
 
   @BeforeClass
-  public static void initLocalStorage() {
+  public static void setupProfileTest() {
     FirebaseFirestore firestore = FirebaseController.getFirestore();
     AtomicBoolean initalized = new AtomicBoolean();
     User newUser = new User();
     newUser.setUuid(UUID.randomUUID().toString());
     firestore.collection(UserHelper.USER_COLLECTION).document(newUser.getUuid()).get().addOnCompleteListener( task -> {
-      if(task.isSuccessful()) {
-        task.getResult().toObject(User.class);
+      if(task.isSuccessful() && task.getResult() != null) {
+        oldUser = task.getResult().toObject(User.class);
         initalized.set(true);
       }
     });
+    while(!initalized.get()) {
+      SystemClock.sleep(100);
+    }
     firestore.collection(UserHelper.USER_COLLECTION).document(newUser.getUuid()).set(newUser);
+  }
+
+  @AfterClass
+  public static void tearDownProfileTest() {
+    FirebaseFirestore firestore = FirebaseController.getFirestore();
+    firestore.collection(UserHelper.USER_COLLECTION).document(oldUser.getUuid()).set(oldUser);
   }
 
   @Before
