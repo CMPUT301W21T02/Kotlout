@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import xyz.kotlout.kotlout.controller.UserController;
+import xyz.kotlout.kotlout.controller.UserHelper;
 
 @RunWith(JUnit4.class)
 public class UserControllerTest {
@@ -36,12 +37,12 @@ public class UserControllerTest {
     };
 
     for (String testCase : positiveTestCases) {
-      isValid = UserController.validateEmail(testCase);
+      isValid = UserHelper.validateEmail(testCase);
       expect.withMessage("Failed positive test case: " + testCase).that(isValid).isTrue();
     }
 
     for (String testCase : negativeTestCases) {
-      isValid = UserController.validateEmail(testCase);
+      isValid = UserHelper.validateEmail(testCase);
       expect.withMessage("Failed negative test case: " + testCase).that(isValid).isFalse();
     }
   }
@@ -69,12 +70,12 @@ public class UserControllerTest {
     };
 
     for (String testCase : positiveTestCases) {
-      isValid = UserController.validatePhoneNumber(testCase);
+      isValid = UserHelper.validatePhoneNumber(testCase);
       expect.withMessage("Failed positive test case: " + testCase).that(isValid).isTrue();
     }
 
     for (String testCase : negativeTestCases) {
-      isValid = UserController.validatePhoneNumber(testCase);
+      isValid = UserHelper.validatePhoneNumber(testCase);
       expect.withMessage("Failed negative test case: " + testCase).that(isValid).isFalse();
     }
   }

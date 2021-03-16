@@ -26,10 +26,9 @@ public class ApplicationContextProvider extends Application {
     FirebaseFirestore firestore = FirebaseController.getFirestore();
     String curent_uuid = LocalStorageController.readUUID();
     if (curent_uuid == null) {
-      User newUser = new User();
-      newUser.setUuid(UUID.randomUUID().toString());
-      LocalStorageController.storeUUID(newUser.getUuid());
-      firestore.collection("users").document(newUser.getUuid()).set(newUser);
+      String newUserId = UUID.randomUUID().toString();
+      LocalStorageController.storeUUID(newUserId);
+      UserHelper.registerUser(newUserId);
     }
   }
 }

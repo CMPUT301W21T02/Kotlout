@@ -19,6 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.LocalStorageController;
 import xyz.kotlout.kotlout.controller.UserController;
+import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.user.User;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -168,7 +169,7 @@ public class ProfileActivity extends AppCompatActivity {
         changeVisibility(optionsMenu);
         changeEditable();
 
-        if (UserController.validateEmail(newEmail) && UserController.validatePhoneNumber(newPhone)) {
+        if (UserHelper.validateEmail(newEmail) && UserHelper.validatePhoneNumber(newPhone)) {
           controller.updateUserData(new User(newFirstName, newLastName, newEmail, newPhone, uuid));
         } else {
           // If there are invalid fields, reset them to the firebase value
