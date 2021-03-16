@@ -20,10 +20,6 @@
             </intent-filter>
         </activity>
         <activity
-          android:name=".view.TestUserActivity"
-          android:label="@string/title_activity_profile">
-        </activity>
-        <activity
             android:name=".view.ProfileActivity"
             android:label="@string/title_activity_profile">
         </activity>

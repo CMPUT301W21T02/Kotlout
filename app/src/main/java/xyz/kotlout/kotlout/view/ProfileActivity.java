@@ -2,22 +2,16 @@ package xyz.kotlout.kotlout.view;
 
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NavUtils;
 import androidx.core.util.Consumer;
 import com.google.firebase.firestore.FirebaseFirestore;
 import xyz.kotlout.kotlout.R;
-import xyz.kotlout.kotlout.controller.LocalStorageController;
 import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.user.User;
@@ -25,7 +19,7 @@ import xyz.kotlout.kotlout.model.user.User;
 public class ProfileActivity extends AppCompatActivity {
 
   // Getting the user
-  String uuid = LocalStorageController.readUUID();
+  String uuid = UserHelper.readUUID();
 
   // Declaration of Objects, instantiation of Firestore
   private EditText firstNameText, lastNameText, emailText, phoneText;

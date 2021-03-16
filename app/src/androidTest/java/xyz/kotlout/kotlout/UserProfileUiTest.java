@@ -15,20 +15,23 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
 import android.os.SystemClock;
+import androidx.annotation.NonNull;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.UUID;
-import org.junit.AfterClass;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import xyz.kotlout.kotlout.controller.FirebaseController;
-import xyz.kotlout.kotlout.controller.LocalStorageController;
+import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.user.User;
 import xyz.kotlout.kotlout.view.MainActivity;
 import xyz.kotlout.kotlout.view.ProfileActivity;
@@ -49,31 +52,25 @@ public class UserProfileUiTest {
   private static String oldUuid;
 
 
-  // Restore state to before unit test
-  @AfterClass
-  public static void tearDownUserProfileTest() {
-    if(oldUuid != null) {
-      LocalStorageController.storeUUID(oldUuid);
-    } else {
-      // If no file existed, it should be deleted
-      InstrumentationRegistry.getInstrumentation().getTargetContext().getFilesDir().toPath().resolve("uuid.dat").toFile().delete();
-    }
-  }
-
   @BeforeClass
   public static void initLocalStorage() {
     FirebaseFirestore firestore = FirebaseController.getFirestore();
-    String oldUuid = LocalStorageController.readUUID();
+    AtomicBoolean initalized = new AtomicBoolean();
     User newUser = new User();
     newUser.setUuid(UUID.randomUUID().toString());
-    LocalStorageController.storeUUID(newUser.getUuid());
-    firestore.collection("users").document(newUser.getUuid()).set(newUser);
+    firestore.collection(UserHelper.USER_COLLECTION).document(newUser.getUuid()).get().addOnCompleteListener( task -> {
+      if(task.isSuccessful()) {
+        task.getResult().toObject(User.class);
+        initalized.set(true);
+      }
+    });
+    firestore.collection(UserHelper.USER_COLLECTION).document(newUser.getUuid()).set(newUser);
   }
 
   @Before
   public void clearUserFields() {
-    String uuid = LocalStorageController.readUUID();
-    FirebaseController.getFirestore().collection("users").document(uuid).set(new User());
+    String uuid = UserHelper.readUUID();
+    FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(uuid).set(new User());
   }
 
   @Test
@@ -168,8 +165,8 @@ public class UserProfileUiTest {
     onView(withId(R.id.profileEmailEditText)).check(matches(withHint(R.string.profile_email_text)));
     onView(withId(R.id.profilePhoneEditText)).check(matches(withHint(R.string.profile_phone_text)));
 
-    String uuid = LocalStorageController.readUUID();
-    FirebaseController.getFirestore().collection("users").document(uuid).set(
+    String uuid = UserHelper.readUUID();
+    FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(uuid).set(
         new User(VALID_FIRST_NAME_STRING, VALID_LAST_NAME_STRING, VALID_EMAIL_ADDR_STRING,
             VALID_PHONE_NUM_STRING, uuid));
     // Pause to make sure update happens in time

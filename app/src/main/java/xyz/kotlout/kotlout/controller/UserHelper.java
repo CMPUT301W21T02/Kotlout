@@ -1,5 +1,5 @@
 package xyz.kotlout.kotlout.controller;
-
+import android.provider.Settings.Secure;
 import android.util.Log;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -11,7 +11,11 @@ import xyz.kotlout.kotlout.model.user.User;
  * The user helper function class
  */
 public final class UserHelper {
-  private static final String USER_COLLECTION = "users";
+
+  /**
+   * Firestore collection name
+   */
+  public static final String USER_COLLECTION = "users";
 
   /**
    * Pattern to validate email addresses </br> Regex from: https://emailregex.com, Accessed on
@@ -124,6 +128,17 @@ public final class UserHelper {
           }
         });
     return user[0];
+  }
+
+  /**
+   * Read uuid from storage
+   *
+   * @return UUID stored in internal storage
+   */
+  public static String readUUID() {
+    String id = Secure.ANDROID_ID;
+    assert id != null;
+    return id;
   }
 
 }

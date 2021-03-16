@@ -19,16 +19,5 @@ public class ApplicationContextProvider extends Application {
     super.onCreate();
     applicationContext = getApplicationContext();
     FirebaseController.initFirestore();
-    initStorage();
-  }
-
-  private void initStorage() {
-    FirebaseFirestore firestore = FirebaseController.getFirestore();
-    String curent_uuid = LocalStorageController.readUUID();
-    if (curent_uuid == null) {
-      String newUserId = UUID.randomUUID().toString();
-      LocalStorageController.storeUUID(newUserId);
-      UserHelper.registerUser(newUserId);
-    }
   }
 }
