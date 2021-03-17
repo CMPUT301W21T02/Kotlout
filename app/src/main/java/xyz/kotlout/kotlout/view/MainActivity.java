@@ -1,5 +1,6 @@
 package xyz.kotlout.kotlout.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.Menu;
@@ -65,5 +66,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     return false;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.sync_experiments:
+        return true;
+
+      case R.id.show_profile:
+        Intent intent = new Intent(this, ProfileActivity.class);
+        this.startActivity(intent);
+        return true;
+
+      case R.id.search_experiments:
+        return true;
+
+      default:
+        return super.onOptionsItemSelected(item);
+    }
   }
 }

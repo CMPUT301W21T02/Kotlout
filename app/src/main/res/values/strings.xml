@@ -19,5 +19,12 @@
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.
     -->
-  <string name="hello_world">Hello Square World!</string>
+    <string name="hello_world">Hello Square World!</string>
+
+    <!-- User Profile Activity-->
+    <string name="profile_first_name_text">First Name</string>
+    <string name="profile_last_name_text">Last Name</string>
+    <string name="profile_email_text">Email</string>
+    <string name="profile_phone_text">Phone Number</string>
+
 </resources>
