@@ -2,12 +2,6 @@ package xyz.kotlout.kotlout.controller;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
-import java.util.UUID;
-import xyz.kotlout.kotlout.model.user.User;
 
 public class ApplicationContextProvider extends Application {
 

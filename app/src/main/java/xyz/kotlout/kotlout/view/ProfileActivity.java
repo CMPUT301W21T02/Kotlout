@@ -18,27 +18,25 @@ import xyz.kotlout.kotlout.model.user.User;
 
 public class ProfileActivity extends AppCompatActivity {
 
+  private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
   // Getting the user
   String uuid = UserHelper.readUUID();
-
   // Declaration of Objects, instantiation of Firestore
   private EditText firstNameText, lastNameText, emailText, phoneText;
-  private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-  private Menu optionsMenu;
-  private UserController controller;
-
   /**
    * Callback function that runs whenever an update to the Firebase user is detected
    */
   private final Consumer<User> updateCallback = (user) -> {
-    if(user == null) {
+    if (user == null) {
       user = new User();
     }
-    firstNameText.setText(user.getFirstName() == null ? "": user.getFirstName());
-    lastNameText.setText(user.getLastName() == null ? "": user.getLastName());
-    emailText.setText(user.getEmail() == null ? "": user.getEmail());
-    phoneText.setText(user.getPhoneNumber() == null ? "": user.getPhoneNumber());
+    firstNameText.setText(user.getFirstName() == null ? "" : user.getFirstName());
+    lastNameText.setText(user.getLastName() == null ? "" : user.getLastName());
+    emailText.setText(user.getEmail() == null ? "" : user.getEmail());
+    phoneText.setText(user.getPhoneNumber() == null ? "" : user.getPhoneNumber());
   };
+  private Menu optionsMenu;
+  private UserController controller;
 
   /**
    * When the user launches the activity, their information should be displayed if it exists
@@ -75,9 +73,8 @@ public class ProfileActivity extends AppCompatActivity {
   }
 
   /**
-   * If the EditTexts are editable, then they will be changed to be uneditable
-   * If the EditTexts are uneditable, then they will be changed to be editable with proper input
-   *
+   * If the EditTexts are editable, then they will be changed to be uneditable If the EditTexts are uneditable, then they will
+   * be changed to be editable with proper input
    */
   public void changeEditable() {
     firstNameText = findViewById(R.id.profileFirstNameEditText);
@@ -115,6 +112,7 @@ public class ProfileActivity extends AppCompatActivity {
 
   /**
    * If the editing button is visible, it will be changed to the confirmation button, and vice versa
+   *
    * @param menu
    * @return true
    */

@@ -2,15 +2,13 @@ package xyz.kotlout.kotlout.controller;
 
 import android.util.Log;
 import androidx.core.util.Consumer;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import java.util.regex.Pattern;
 import xyz.kotlout.kotlout.model.user.User;
 
 public class UserController {
+
   private static final String USER_COLLECTION = "users";
   private static final String TAG = "USER CONTROLLER";
 
@@ -30,9 +28,9 @@ public class UserController {
   }
 
   /**
-   * Creates a snapshot listener for the userdoc iff snapshotListenerRef does not already have a
-   * listener. The new listener is stored in snapshotListenerRef Unregister this listener with
-   * unregisterSnapshotListener when finished using unregisterSnapshotListener()
+   * Creates a snapshot listener for the userdoc iff snapshotListenerRef does not already have a listener. The new listener is
+   * stored in snapshotListenerRef Unregister this listener with unregisterSnapshotListener when finished using
+   * unregisterSnapshotListener()
    */
   public void registerSnapshotListener() {
     if (snapshotListenerRef == null) {
@@ -56,8 +54,7 @@ public class UserController {
   }
 
   /**
-   * Unregisters snapshotListenerRef and sets it to null Should be called once listener is no longer
-   * needed
+   * Unregisters snapshotListenerRef and sets it to null Should be called once listener is no longer needed
    */
   public void unregisterSnapshotListener() {
     if (snapshotListenerRef != null) {

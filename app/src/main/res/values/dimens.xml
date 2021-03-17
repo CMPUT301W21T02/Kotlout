@@ -6,17 +6,17 @@
   -->
   <dimen name="box_inset_layout_padding">0dp</dimen>
 
-    <!--
-    This padding applies to both square and round screens. The total padding between the buttons
-    and the window insets is box_inset_layout_padding (above variable) on square screens and
-    inner_frame_layout_padding (below variable) on round screens.
-    -->
-    <dimen name="inner_frame_layout_padding">5dp</dimen>
+  <!--
+  This padding applies to both square and round screens. The total padding between the buttons
+  and the window insets is box_inset_layout_padding (above variable) on square screens and
+  inner_frame_layout_padding (below variable) on round screens.
+  -->
+  <dimen name="inner_frame_layout_padding">5dp</dimen>
+  <!-- Padding around the group label in ExpandableListView -->
+  <dimen name="listview_group_text_padding">10dp</dimen>
 
     <!-- User Profile Activity variables -->
     <dimen name="profile_input_text_width">300dp</dimen>
     <dimen name="profile_input_text_height">45dp</dimen>
     <dimen name="profile_input_spacing">60dp</dimen>
-  <dimen name="listview_group_text_padding">10dp</dimen>
-  <!-- Padding around the group label in ExpandableListView -->
 </resources>

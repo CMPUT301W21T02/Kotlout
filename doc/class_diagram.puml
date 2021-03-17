@@ -274,11 +274,18 @@ MainActivity *-- ExperimentSearchFragment : Instantiates
 MainActivity --> NewExperimentActivity : Launches
 MainActivity --> ExperimentViewActivity : Launches
 
-ExperimentViewActivity *-- ExperimentController : Instantiates
-ExperimentViewActivity *-- ExperimentMapFragment : Instantiates
-ExperimentViewActivity *-- ExperimentInfoFragment : Instantiates
-ExperimentViewActivity *-- ExperimentForumFragment : Instantiates
-ExperimentViewActivity *-- ExperimentTrialsFragment : Instantiates
+
+ExperimentViewActivity *- ExperimentController : Instantiates
+ExperimentViewActivity *- ExperimentMapFragment : Instantiates
+ExperimentViewActivity *- ExperimentInfoFragment : Instantiates
+ExperimentViewActivity *- ExperimentForumFragment : Instantiates
+ExperimentViewActivity *- ExperimentTrialsFragment : Instantiates
+
+ExperimentViewActivity -[hidden]-> ExperimentController
+ExperimentController -[hidden]-> ExperimentMapFragment
+ExperimentMapFragment -[hidden]-> ExperimentInfoFragment
+ExperimentInfoFragment -[hidden]-> ExperimentForumFragment
+ExperimentForumFragment -[hidden]-> ExperimentTrialsFragment
 
 ProfileActivity *-- UserController : Instantiates
 
@@ -287,6 +294,12 @@ ExperimentViewActivity -- QrCodeFragment : Instantiates
 
 TrialNewActivity --> BarcodeScanActivity : Launches
 
-' User "*" *-- "0" ExperimentStatistics : Text
+view -[hidden]-> controller
+controller -[hidden]-> model
+ExperimentTrialsFragment -[hidden]-> controller
+ExperimentController -[hidden]-> model
+ExperimentTrialsFragment -[hidden]-> UserController
+ExperimentController -[hidden]-> user
+ExperimentStatistics -[hidden]-> trial
 
 @enduml
