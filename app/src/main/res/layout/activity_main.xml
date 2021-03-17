@@ -8,7 +8,7 @@
   tools:context=".view.MainActivity">
 
   <androidx.appcompat.widget.Toolbar
-    android:id="@+id/toolbar_main_activity"
+    android:id="@+id/tb_main"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:layout_constraintTop_toTopOf="parent">
@@ -18,7 +18,7 @@
   </androidx.appcompat.widget.Toolbar>
 
   <FrameLayout
-    android:id="@+id/fragment_frame"
+    android:id="@+id/frame_main"
 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -27,6 +27,8 @@
     app:layout_constraintTop_toTopOf="parent" />
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
+    android:id="@+id/fab_main_add_experiment"
+
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/fab_margin"
@@ -34,12 +36,15 @@
     android:contentDescription="Create new experiment"
     android:src="@drawable/ic_baseline_add"
 
+    android:onClick="fabNewExperiment"
+
     app:fabSize="auto"
 
-    app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+    app:layout_constraintBottom_toTopOf="@id/nav_main"
     app:layout_constraintEnd_toEndOf="parent" />
+
   <com.google.android.material.bottomnavigation.BottomNavigationView
-    android:id="@+id/bottom_navigation"
+    android:id="@+id/nav_main"
 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
