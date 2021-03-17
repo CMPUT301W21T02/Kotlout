@@ -29,17 +29,66 @@ import xyz.kotlout.kotlout.view.ExperimentViewActivity;
  */
 public class ExperimentListFragment extends Fragment {
 
-  private ExperimentListAdapter experimentListAdapter;
-
   public static String ARG_TYPE = "TYPE";
+  private ExperimentListAdapter experimentListAdapter;
+  private ListType type;
+
+  public static ExperimentListFragment newInstance(@NonNull ListType type) {
+    ExperimentListFragment fragment = new ExperimentListFragment();
+
+    Bundle args = new Bundle();
+    args.putSerializable(ARG_TYPE, type);
+
+    fragment.setArguments(args);
+
+    return fragment;
+  }
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    if (getArguments() != null) {
+      type = (ListType) getArguments().getSerializable(ARG_TYPE);
+    }
+  }
+
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+      Bundle savedInstanceState) {
+    View view = inflater.inflate(R.layout.fragment_experiment_list, container, false);
+
+    ExpandableListView elv = view.findViewById(R.id.elv_main_experiment_list);
+    experimentListAdapter = new ExperimentListAdapter("0"); // TODO: get current user uuid
+    elv.setAdapter(experimentListAdapter);
+    elv.setOnChildClickListener(this::onChildClick);
+
+    // Inflate the layout for this fragment
+    return view;
+  }
+
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+
+  }
+
+  boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition,
+      long id) {
+    ExperimentController tapped = (ExperimentController) experimentListAdapter
+        .getChild(groupPosition, childPosition);
+
+    Intent intent = new Intent(getContext(), ExperimentViewActivity.class);
+    intent.putExtra(ExperimentViewActivity.EXPERIMENT_ID, tapped.getExperimentId());
+    startActivityForResult(intent, 0);
+
+    return true;
+  }
 
   public enum ListType {
     MINE,
     ALL,
     SUBSCRIBED
   }
-
-  private ListType type;
 
   /**
    * An adapter that keeps the experiment list up-to-date.
@@ -170,57 +219,6 @@ public class ExperimentListFragment extends Fragment {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
       return true;
     }
-  }
-
-  public static ExperimentListFragment newInstance(@NonNull ListType type) {
-    ExperimentListFragment fragment = new ExperimentListFragment();
-
-    Bundle args = new Bundle();
-    args.putSerializable(ARG_TYPE, type);
-
-    fragment.setArguments(args);
-
-    return fragment;
-  }
-
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    if (getArguments() != null) {
-      type = (ListType) getArguments().getSerializable(ARG_TYPE);
-    }
-  }
-
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
-      Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_experiment_list, container, false);
-
-    ExpandableListView elv = view.findViewById(R.id.elv_main_experiment_list);
-    experimentListAdapter = new ExperimentListAdapter("0"); // TODO: get current user uuid
-    elv.setAdapter(experimentListAdapter);
-    elv.setOnChildClickListener(this::onChildClick);
-
-    // Inflate the layout for this fragment
-    return view;
-  }
-
-  @Override
-  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-
-  }
-
-  boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition,
-      long id) {
-    ExperimentController tapped = (ExperimentController) experimentListAdapter
-        .getChild(groupPosition, childPosition);
-
-    Intent intent = new Intent(getContext(), ExperimentViewActivity.class);
-    intent.putExtra(ExperimentViewActivity.EXPERIMENT_ID, tapped.getExperimentId());
-    startActivityForResult(intent, 0);
-
-    return true;
   }
 }
 

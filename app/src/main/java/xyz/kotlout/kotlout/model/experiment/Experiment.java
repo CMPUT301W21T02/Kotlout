@@ -6,8 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Base class for modelling experiments. Child classes should model a particular type of
- * experiment.
+ * Base class for modelling experiments. Child classes should model a particular type of experiment.
  */
 public abstract class Experiment implements Serializable {
 
@@ -27,8 +26,7 @@ public abstract class Experiment implements Serializable {
   }
 
   /**
-   * Creates a new Experiment with some basic details including description, region, and minimum
-   * number of trials.
+   * Creates a new Experiment with some basic details including description, region, and minimum number of trials.
    *
    * @param description   Experiment description.
    * @param region        The region the experiment is conducted in.
