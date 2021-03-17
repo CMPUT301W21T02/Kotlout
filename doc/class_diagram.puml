@@ -11,7 +11,7 @@ package controller {
     class ExperimentListController implements Searchable {
         - experimentList: List<Experiment>
         + ExperimentListController(user: User)
-        + getExperiment(id: UUID) : Experiment
+        + getExperiment(id: String) : Experiment
         + getAllExperiments() : List<Experiment>
         + getOwnedExperiments() : List<Experiment>
         + getSubscribedExperiments() : List<Experiment>
@@ -49,12 +49,27 @@ package controller {
         + addReply(reply : Post)
     }
 
+    class FirebaseController {
+        + getAuth()
+        + getFirestore()
+    }
+
     class UserController {
         - currentUser: User
         - offlineTrials: List<Trial>
+        - syncUser()
+
         + addSubscription(newExperiment: Experiment)
         + removeSubscription(removedExperiment: Experiment)
         + fetchSubscriptions() : List<Experiment>
+
+        ' TODO user-firebase stuff
+        {Static} validateEmail(email: String)
+        {Static} validatePhoneNumber(phoneNumber: String)
+        {Static} registerUser(userUUID: String)
+        {Static} fetchUser(userUUID: String): User
+
+        + updateUser(user: User)
     }
 
     interface QrEncodable {
@@ -72,12 +87,12 @@ package controller {
 package model {
     package user {
         class User {
-                    - uuid: UUID
+                    - uuid: String
                     - email: String
                     - phoneNumber: String
                     - subscriptions: List<Experiment>
                 }
-    }   
+    }
 
     package experiment {
         class ExperimentStatistics {
@@ -272,6 +287,9 @@ ExperimentViewActivity -- QrCodeFragment : Instantiates
 
 TrialNewActivity --> BarcodeScanActivity : Launches
 
-' User "*" *-- "0" ExperimentStatistics : Text
+view -[hidden]-> controller
+controller -[hidden]-> model
+BarcodeScanActivity -[hidden]-> controller
+ExperimentController -[hidden]-> model
 
 @enduml
