@@ -11,4 +11,25 @@ public class Post {
     private Post parent;
     private String text;
     private Date timestamp;
+
+
+    public User getPoster() {
+        return poster;
+    }
+
+    public List<Post> getChildren() {
+        return children;
+    }
+
+    public Post getParent() {
+        return parent;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
 }
