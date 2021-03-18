@@ -1,32 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="xyz.kotlout.kotlout">
+  package="xyz.kotlout.kotlout">
 
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.Kotlout">
-        <activity
-            android:name=".view.MainActivity"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+  <application
+    android:allowBackup="true"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:roundIcon="@mipmap/ic_launcher_round"
+    android:supportsRtl="true"
+    android:theme="@style/Theme.Kotlout">
+    <activity
+      android:label="@string/app_name"
+      android:name=".view.MainActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".view.ProfileActivity"
-            android:label="@string/title_activity_profile">
-        </activity>
-      <activity
-        android:name=".view.DiscussionPostsActivity"
-        android:label="Discussion"
-        android:exported="true">
-      </activity>
-    </application>
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+    </activity>
+    <activity
+      android:label="@string/title_activity_profile"
+      android:name=".view.ProfileActivity" />
+    <activity
+      android:exported="true"
+      android:label="Discussion"
+      android:name=".view.DiscussionPostsActivity" />
+  </application>
 
 </manifest>

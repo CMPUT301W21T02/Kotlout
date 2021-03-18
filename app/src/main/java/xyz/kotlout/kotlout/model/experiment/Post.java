@@ -5,30 +5,31 @@ import java.util.List;
 import xyz.kotlout.kotlout.model.user.User;
 
 public class Post {
-    private User poster;
-    private List<Post> children;
-    private Post parent;
-    private String text;
-    private Date timestamp;
+
+  private User poster;
+  private List<Post> children;
+  private Post parent;
+  private String text;
+  private Date timestamp;
 
 
-    public User getPoster() {
-        return poster;
-    }
+  public User getPoster() {
+    return poster;
+  }
 
-    public List<Post> getChildren() {
-        return children;
-    }
+  public List<Post> getChildren() {
+    return children;
+  }
 
-    public Post getParent() {
-        return parent;
-    }
+  public Post getParent() {
+    return parent;
+  }
 
-    public String getText() {
-        return text;
-    }
+  public String getText() {
+    return text;
+  }
 
-    public Date getTimestamp() {
-        return timestamp;
-    }
+  public Date getTimestamp() {
+    return timestamp;
+  }
 }

@@ -83,6 +83,17 @@ public class User {
   }
 
   @Exclude
+  public String getDisplayName() {
+    String displayName;
+    if (getFirstName() != null) {
+      displayName = getFirstName();
+    } else {
+      displayName = getUuid();
+    }
+    return displayName;
+  }
+
+  @Exclude
   public List<Experiment> getSubscriptions() {
     return subscriptions;
   }

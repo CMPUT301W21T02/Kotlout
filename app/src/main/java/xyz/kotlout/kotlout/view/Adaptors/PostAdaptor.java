@@ -1,18 +1,16 @@
 package xyz.kotlout.kotlout.view.Adaptors;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.Recycler;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.controller.ApplicationContextProvider;
 import xyz.kotlout.kotlout.model.experiment.Post;
 
 public class PostAdaptor extends RecyclerView.Adapter<PostAdaptor.ViewHolder> {
@@ -30,9 +28,27 @@ public class PostAdaptor extends RecyclerView.Adapter<PostAdaptor.ViewHolder> {
 
   @Override
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-      Post post = postData.get(position);
-      holder.getName().setText(post.getText());
-      holder.getName().setText(post.getPoster());
+    Post post = postData.get(position);
+    holder.getName().setText(post.getText());
+    holder.getName().setText(post.getPoster().getDisplayName());
+
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+        ApplicationContextProvider.getAppContext().getString(R.string.comment_date_format),
+        Locale.CANADA
+    );
+    holder.getDate().setText(simpleDateFormat.format(post.getTimestamp()));
+
+    if (post.getChildren().isEmpty()) {
+      holder.getReplies().setVisibility(View.GONE);
+    } else {
+      if (post.getChildren().size() > 1) {
+        holder.getReplies().setText(String.format(Locale.CANADA,
+            "%d Replies", post.getChildren().size()));
+      } else {
+        holder.getReplies().setText("1 Reply");
+      }
+      holder.getReplies().setVisibility(View.VISIBLE);
+    }
   }
 
   @Override
