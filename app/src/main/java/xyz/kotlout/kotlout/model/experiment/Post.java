@@ -2,7 +2,6 @@ package xyz.kotlout.kotlout.model.experiment;
 
 import java.util.Date;
 import java.util.List;
-
 import xyz.kotlout.kotlout.model.user.User;
 
 public class Post {

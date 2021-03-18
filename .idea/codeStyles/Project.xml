@@ -5,6 +5,7 @@
         <option name="CONTINUATION_INDENT_SIZE" value="4" />
       </value>
     </option>
+    <option name="RIGHT_MARGIN" value="128" />
     <AndroidXmlCodeStyleSettings>
       <option name="LAYOUT_SETTINGS">
         <value>
