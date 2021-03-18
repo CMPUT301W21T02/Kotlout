@@ -1,5 +1,6 @@
 package xyz.kotlout.kotlout.model.experiment;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import xyz.kotlout.kotlout.model.user.User;
@@ -7,7 +8,7 @@ import xyz.kotlout.kotlout.model.user.User;
 public class Post {
 
   private User poster;
-  private List<Post> children;
+  private final List<Post> children = new ArrayList<>();
   private Post parent;
   private String text;
   private Date timestamp;
@@ -31,5 +32,21 @@ public class Post {
 
   public Date getTimestamp() {
     return timestamp;
+  }
+
+  public void setPoster(User poster) {
+    this.poster = poster;
+  }
+
+  public void setParent(Post parent) {
+    this.parent = parent;
+  }
+
+  public void setText(String text) {
+    this.text = text;
+  }
+
+  public void setTimestamp(Date timestamp) {
+    this.timestamp = timestamp;
   }
 }

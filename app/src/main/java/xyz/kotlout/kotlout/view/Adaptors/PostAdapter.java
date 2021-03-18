@@ -1,5 +1,6 @@
 package xyz.kotlout.kotlout.view.Adaptors;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +14,10 @@ import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ApplicationContextProvider;
 import xyz.kotlout.kotlout.model.experiment.Post;
 
-public class PostAdaptor extends RecyclerView.Adapter<PostAdaptor.ViewHolder> {
+public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
   private List<Post> postData;
+  Context appContext;
 
   @NonNull
   @Override
@@ -29,11 +31,11 @@ public class PostAdaptor extends RecyclerView.Adapter<PostAdaptor.ViewHolder> {
   @Override
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     Post post = postData.get(position);
-    holder.getName().setText(post.getText());
+    holder.getText().setText(post.getText());
     holder.getName().setText(post.getPoster().getDisplayName());
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-        ApplicationContextProvider.getAppContext().getString(R.string.comment_date_format),
+        appContext.getString(R.string.comment_date_format),
         Locale.CANADA
     );
     holder.getDate().setText(simpleDateFormat.format(post.getTimestamp()));
@@ -89,8 +91,9 @@ public class PostAdaptor extends RecyclerView.Adapter<PostAdaptor.ViewHolder> {
     }
   }
 
-  public PostAdaptor(List<Post> posts) {
+  public PostAdapter(List<Post> posts, Context context) {
     this.postData = posts;
+    this.appContext = context;
   }
 
 }
