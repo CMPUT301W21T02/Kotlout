@@ -12,17 +12,17 @@ public enum MyExperimentGroup {
     this.text = text;
   }
 
-  @NonNull
-  @Override
-  public String toString() {
-    return text;
-  }
-
   public static MyExperimentGroup getByOrder(int id) {
     if (id == 0) {
       return OPEN;
     }
 
     return CLOSED;
+  }
+
+  @NonNull
+  @Override
+  public String toString() {
+    return text;
   }
 }

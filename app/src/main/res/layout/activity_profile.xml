@@ -6,21 +6,6 @@
 
   android:layout_width="match_parent"
   android:layout_height="match_parent">
-    <com.google.android.material.appbar.AppBarLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content">
-
-        <com.google.android.material.appbar.MaterialToolbar
-          android:id="@+id/topAppBar"
-          android:layout_width="match_parent"
-          android:layout_height="?attr/actionBarSize"
-          app:title="User Profile"
-          app:menu="@menu/user_profile_menu"
-          app:navigationIcon="@drawable/ic_baseline_arrow_back"
-          style="@style/Widget.MaterialComponents.Toolbar.Primary"
-          />
-
-    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
       android:id="@+id/profileConstraintLayout"
@@ -40,7 +25,7 @@
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintHorizontal_bias="0.495"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toTopOf="parent" />
+          app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
           android:id="@+id/profileFirstNameLabel"

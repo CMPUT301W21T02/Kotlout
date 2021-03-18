@@ -9,9 +9,8 @@ import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
  */
 public class BinomialExperiment extends Experiment {
 
-  private List<BinomialTrial> trials;
-
   public ExperimentType type = ExperimentType.BINOMIAL;
+  private List<BinomialTrial> trials;
 
   /**
    * Default constructor.
@@ -20,8 +19,7 @@ public class BinomialExperiment extends Experiment {
   }
 
   /**
-   * Creates a new BinomialExperiment with basic fields passed on to the base Experiment
-   * constructor.
+   * Creates a new BinomialExperiment with basic fields passed on to the base Experiment constructor.
    */
   public BinomialExperiment(String description, String region, int minimumTrials) {
     super(description, region, minimumTrials);

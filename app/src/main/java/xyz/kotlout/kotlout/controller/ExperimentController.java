@@ -2,10 +2,8 @@ package xyz.kotlout.kotlout.controller;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.Locale;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.BinomialExperiment;
@@ -32,8 +30,7 @@ public class ExperimentController {
   }
 
   /**
-   * Initializes the controller and sets the context to a string that refers to the experiment's
-   * document ID in Firestore.
+   * Initializes the controller and sets the context to a string that refers to the experiment's document ID in Firestore.
    *
    * @param documentId Firestore DocumentID that refers to the experiment.
    */
@@ -153,8 +150,7 @@ public class ExperimentController {
   }
 
   /**
-   * Returns the number of trials that this experiment has completed TODO: This returns 0 all the
-   * time at the moment.
+   * Returns the number of trials that this experiment has completed TODO: This returns 0 all the time at the moment.
    *
    * @return integer value representing the count of experiments
    */
@@ -163,12 +159,10 @@ public class ExperimentController {
   }
 
   /**
-   * Generates a standardized string stating how many trials have been completed for this
-   * experiment.
+   * Generates a standardized string stating how many trials have been completed for this experiment.
    * <p>
-   * When more than the minimum number of trials have been completed, it will print just the trial
-   * count. If less than the minimum number of trials have been completed, it will print both the
-   * minimum and current count.
+   * When more than the minimum number of trials have been completed, it will print just the trial count. If less than the
+   * minimum number of trials have been completed, it will print both the minimum and current count.
    *
    * @return Formatted string formed from experiment information.
    */
