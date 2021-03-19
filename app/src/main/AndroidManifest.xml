@@ -34,8 +34,6 @@
       android:label="@string/title_activity_view"
       android:name=".view.ExperimentViewActivity" />
 
-    <activity android:name=".view.TestUserActivity" />
-
   </application>
 
 </manifest>

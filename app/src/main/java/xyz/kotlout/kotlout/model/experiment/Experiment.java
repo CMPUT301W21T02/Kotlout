@@ -4,7 +4,6 @@ package xyz.kotlout.kotlout.model.experiment;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
 /**
  * Base class for modelling experiments. Child classes should model a particular type of

@@ -1,11 +1,10 @@
 package xyz.kotlout.kotlout.view.fragment;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import androidx.fragment.app.Fragment;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.Experiment;

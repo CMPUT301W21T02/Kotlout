@@ -10,13 +10,14 @@ import xyz.kotlout.kotlout.R;
 
 public class TrialListAdapter extends BaseExpandableListAdapter {
 
-  private final String[] groups = { "Mine", "Amir", "Tharidu"};
+  private final String[] groups = {"Mine", "Amir", "Tharidu"};
   private final String[][] children = {{"peepee"}, {"Poopoo"}};
   private final Context context;
 
   public TrialListAdapter(Context context) {
     this.context = context;
   }
+
   @Override
   public int getGroupCount() {
     return groups.length;

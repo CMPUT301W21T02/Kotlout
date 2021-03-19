@@ -6,14 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
 import xyz.kotlout.kotlout.R;
-import xyz.kotlout.kotlout.model.adapter.ExperimentListAdapter;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.model.adapter.ExperimentListAdapter;
 import xyz.kotlout.kotlout.view.ExperimentViewActivity;
 
 /**
@@ -21,16 +19,8 @@ import xyz.kotlout.kotlout.view.ExperimentViewActivity;
  */
 public class ExperimentListFragment extends Fragment {
 
-  private ExperimentListAdapter experimentListAdapter;
-
   public static String ARG_TYPE = "TYPE";
-
-  public enum ListType {
-    MINE,
-    ALL,
-    SUBSCRIBED
-  }
-
+  private ExperimentListAdapter experimentListAdapter;
   private ListType type;
 
   public static ExperimentListFragment newInstance(@NonNull ListType type) {
@@ -79,6 +69,12 @@ public class ExperimentListFragment extends Fragment {
     startActivityForResult(intent, 0);
 
     return true;
+  }
+
+  public enum ListType {
+    MINE,
+    ALL,
+    SUBSCRIBED
   }
 }
 

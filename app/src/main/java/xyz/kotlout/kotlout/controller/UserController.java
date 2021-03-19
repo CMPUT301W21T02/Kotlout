@@ -1,31 +1,102 @@
 package xyz.kotlout.kotlout.controller;
 
-import java.util.regex.Pattern;
+import android.util.Log;
+import androidx.core.util.Consumer;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import xyz.kotlout.kotlout.model.user.User;
 
 public class UserController {
 
-  /**
-   * Pattern to validate email addresses </br> Regex from: https://emailregex.com, Accessed on
-   * Friday March 5th 2021
-   */
-  private static final Pattern EMAIL_REGEX = Pattern.compile(
-      "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
-  );
+  private static final String USER_COLLECTION = "users";
+  private static final String TAG = "USER CONTROLLER";
 
-  /**
-   * Pattern to validate email addresses </br> Notation taken from Figma diagram: 000-111-2222
-   */
-  private static final Pattern PHONE_REGEX = Pattern.compile("\\d{3}-\\d{3}-\\d{4}");
-
+  private final DocumentReference userDoc;
+  private ListenerRegistration snapshotListenerRef;
+  private Consumer<User> updateCallback;
   private User user;
 
-  public static boolean validateEmail(String email) {
-    return EMAIL_REGEX.matcher(email).matches();
+  /**
+   * Creates a UserController with a Firestore Document Reference a given user doc
+   *
+   * @param userId Id of the userdoc to reference with this controller
+   */
+  public UserController(String userId) {
+    userDoc = FirebaseController.getFirestore().collection(USER_COLLECTION).document(userId);
+    registerSnapshotListener();
   }
 
-  public static boolean validatePhoneNumber(String phoneNumber) {
-    return PHONE_REGEX.matcher(phoneNumber).matches();
+  /**
+   * Creates a snapshot listener for the userdoc iff snapshotListenerRef does not already have a listener. The new listener is
+   * stored in snapshotListenerRef Unregister this listener with unregisterSnapshotListener when finished using
+   * unregisterSnapshotListener()
+   */
+  public void registerSnapshotListener() {
+    if (snapshotListenerRef == null) {
+      snapshotListenerRef =
+          userDoc.addSnapshotListener((value, error) -> {
+            Log.d(TAG, "Firebase event");
+            if (error != null) {
+              Log.d(TAG, "Firebase Error: " + error.getMessage());
+              return;
+            }
+            if (value != null && value.exists()) {
+              Log.d(TAG, "FOUND VALID UPDATE");
+              User newUser = value.toObject(User.class);
+              updateCallback.accept(newUser);
+              onUserUpdate(newUser);
+            } else {
+              Log.d(TAG, "no update");
+            }
+          });
+    }
+  }
+
+  /**
+   * Unregisters snapshotListenerRef and sets it to null Should be called once listener is no longer needed
+   */
+  public void unregisterSnapshotListener() {
+    if (snapshotListenerRef != null) {
+      snapshotListenerRef.remove();
+    }
+    snapshotListenerRef = null;
+  }
+
+  /**
+   * Local callback for user updates Currently just updates the locally stored user
+   *
+   * @param newUser userData from firestore update
+   */
+  private void onUserUpdate(User newUser) {
+    this.user = newUser;
+  }
+
+  private void syncUser() {
+    FirebaseFirestore firestore = FirebaseController.getFirestore();
+    firestore.collection(USER_COLLECTION).document(this.user.getUuid()).set(this.user);
+  }
+
+  public void updateUser(User user) {
+    if (this.user.getUuid().equals(user.getUuid())) {
+      this.user = user; //TODO: This probably needs changed for only updating say user info
+      syncUser();
+    } else {
+      throw new RuntimeException("UUIDs don't match to update user");
+    }
+  }
+
+  /**
+   * Sets the callback to be run when user document changes
+   *
+   * @param updateCallback Callback function that will run on every User data update
+   */
+  public void setUpdateCallback(Consumer<User> updateCallback) {
+    this.updateCallback = updateCallback;
+  }
+
+  public void updateUserData(User newData) {
+    userDoc.set(newData);
   }
 
   public User getUser() {
