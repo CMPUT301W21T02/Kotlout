@@ -144,7 +144,7 @@ public final class UserHelper {
    *
    * @return UUID stored in internal storage
    */
-  public static String readUUID() {
+  public static String readUuid() {
     return uuid;
   }
 
@@ -153,9 +153,9 @@ public final class UserHelper {
    */
   public static void initalizeUser() {
     User user = new User();
-    user.setUuid(readUUID());
+    user.setUuid(readUuid());
     DocumentReference ref = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION)
-        .document(UserHelper.readUUID());
+        .document(UserHelper.readUuid());
     ref.get().addOnCompleteListener(task -> {
       if (!task.isSuccessful() || task.getResult().get("uuid") == null) {
         ref.set(user);

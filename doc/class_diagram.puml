@@ -2,24 +2,26 @@
 @startuml Kotlout
 Title: Kotlout
 ' skinparam linetype ortho
+' skinparam groupInheritance 4
 
 package controller {
     interface Searchable {
-        + search(SearchString: String) : List<Experiment>
+        + search(SearchString: String): List<Experiment>
     }
 
     class ExperimentListController implements Searchable {
         - experimentList: List<Experiment>
-        + ExperimentListController(user: User)
-        + getExperiment(id: String) : Experiment
-        + getAllExperiments() : List<Experiment>
-        + getOwnedExperiments() : List<Experiment>
-        + getSubscribedExperiments() : List<Experiment>
-        + addExperiment(experiment: Experiment)
+        + ExperimentListController(userUuid: String)
+        + getExperiment(id: String): Experiment
+        + getAllExperiments(): List<Experiment>
+        + getOwnedExperiments(): List<Experiment>
+        + getSubscribedExperiments(): List<Experiment>
     }
 
-    class ExperimentController implements Registerable {
-        - experimentContext: Experiment
+    class ExperimentController<T extends Trial> implements Registerable {
+        - experimentId: UUID<Experiment>
+        - experimentType: ExperimentType
+        - experimentContext: Experiment<T>
 
         + publish()
         + unpublish()
@@ -30,9 +32,9 @@ package controller {
         + ignore(user: User)
 
         + addTrial(newTrial: T)
-        + getTrials() : List<Trial>
+        + getTrials(): List<T>
 
-        + getQuestions() : List<Post>
+        + getQuestions(): List<Post>
 
         + calculateStats(): ExperimentStatistics
     }
@@ -45,8 +47,9 @@ package controller {
     }
 
     class PostController {
-        - post: Post
-        + addReply(reply : Post)
+        - experimentID: UUID<Experiment>
+        + addPost(post: Post)
+        + addReply(post: Post, replyTo: UUID<Post>)
     }
 
     class FirebaseController {
@@ -61,7 +64,7 @@ package controller {
 
         + addSubscription(newExperiment: Experiment)
         + removeSubscription(removedExperiment: Experiment)
-        + fetchSubscriptions() : List<Experiment>
+        + fetchSubscriptions(): List<Experiment>
 
         ' TODO user-firebase stuff
         {Static} validateEmail(email: String)
@@ -70,6 +73,16 @@ package controller {
         {Static} fetchUser(userUUID: String): User
 
         + updateUser(user: User)
+    }
+
+     class UserHelper {
+        + {Static} USER_COLLECTION: String
+        + {Static} UUID_INTENT: String
+        + {Static} validateEmail(email: String): Boolean
+        + {Static} validatePhoneNumber(phoneNumber: String): Boolean
+        + {Static} readUuid(): String
+        + {Static} initUserHelper(context: Context)
+        + {Static} initalizeUser()
     }
 
     interface QrEncodable {
@@ -87,10 +100,10 @@ package controller {
 package model {
     package user {
         class User {
-                    - uuid: String
+                    - uuid: UUID<User>
                     - email: String
                     - phoneNumber: String
-                    - subscriptions: List<Experiment>
+                    - subscriptions: List<UUID<Experiment>>
                 }
     }
 
@@ -99,18 +112,20 @@ package model {
             - mean: Double
             - standardDeviation: Double
             - quartiles: Double[3]
-            + histogramValues : Map<Integer, Double>
+            + histogramValues: Map<Integer, Double>
             + timePlot: List<Pair<Date, Number>>
         }
 
-        abstract class Experiment <<abstract>> {
-            - owner: User
+        class Experiment<T extends Trial> {
+            - experimentID: UUID<Experiment>
+            - owner: UUID<User>
             - description: String
             - region: String
             - minimumTrials: Integer
             - isOngoing: Boolean
+            - is: Boolean
             - geolocationRequired: Boolean
-            - ignoredUsers: List<User>
+            - ignoredUsers: List<UUID<User>>
             - posts: List<Post>
         }
 
@@ -131,18 +146,18 @@ package model {
         }
 
         class Post {
-            - poster: User
-            - children: List<Post>
-            - parent: Post
+            - postId: UUID<Post>
+            - poster: UUID<User>
+            - parent: UUID<Post>
             - text: String
             - timestamp: Date
         }
 
         package trial {
             abstract class Trial <<abstract>> {
-                - trialId: Integer
-                - experimenter: User
-                - experiment: Experiment
+                - trialId: UUID<Trial>
+                - experimenter: UUID<User>
+                - experiment: UUID<Experiment>
                 - timestamp: Date
                 - location: Geolocation
                 - isUploaded: Boolean
@@ -168,13 +183,13 @@ package model {
 
         package scannable {
             class Scannable {
-                - experimentId : Integer
-                - geolocation : Geolocation
-                - outcome : Object
+                - experimentId: UUID<Experiment>
+                - geolocation: Geolocation
+                - outcome: Trial
             }
 
             class Barcode extends Scannable {
-                - value : Integer
+                - value: Integer
             }
         }
     }
@@ -196,15 +211,7 @@ package view {
 
     }
 
-    class SubscribedExperimentListFragment extends ExperimentListFragment{
-
-    }
-
-    class UserExperimentListFragment extends ExperimentListFragment{
-
-    }
-
-    class PublicExperimentListFragment extends ExperimentListFragment{
+    class ExperimentListFragment {
 
     }
 
@@ -232,7 +239,7 @@ package view {
 
     }
 
-    class ExperimentForumFragment {
+    class DiscussionPostsActivity {
 
     }
 
@@ -255,51 +262,100 @@ TrialController "1" *-- "0..1" Trial : Manages
 UserController "1" *-- "0..1" User : Manages
 
 
-Geolocation -- Trial : Performed at
-Experiment "1" *-- "0..*" Post : Has questions
-BinomialExperiment "1" *-- "0..*" BinomialTrial : Has
-NonNegativeExperiment "1" *-- "0..*" NonNegativeTrial : Has
-CountExperiment "1" *-- "0..*" CountTrial : Has
-MeasurementExperiment "1" *-- "0..*" MeasurementTrial : Has
+Geolocation -* Trial : Performed at
+Experiment "1" *- "0..*" Post : Has questions
+BinomialExperiment "1" *- "0..*" BinomialTrial : Has
+NonNegativeExperiment "1" *- "0..*" NonNegativeTrial : Has
+CountExperiment "1" *- "0..*" CountTrial : Has
+MeasurementExperiment "1" *- "0..*" MeasurementTrial : Has
 
 Experiment "1" *-- "1" ExperimentStatistics : Calculates
 User "0..1" o-- "0..*" Experiment: Owns
 Experiment "1" -- "0..*" User: Participated
-Post "1" *-- "0..*" Post: Replies
+Post "0..*" --> "0..1" Post: Replies
 
 
-MainActivity *-- ExperimentListController : Instantiates
-MainActivity *-- ExperimentListFragment : Instantiates
-MainActivity *-- ExperimentSearchFragment : Instantiates
-MainActivity --> NewExperimentActivity : Launches
-MainActivity --> ExperimentViewActivity : Launches
+MainActivity *- ExperimentListController : Instantiates
+MainActivity *- ExperimentListFragment : Instantiates
+MainActivity *- ExperimentSearchFragment : Instantiates
+MainActivity -> NewExperimentActivity : Launches
+MainActivity -> ExperimentViewActivity : Launches
+MainActivity -> ProfileActivity : Launches
 
 
+ExperimentViewActivity --> DiscussionPostsActivity : Launches
 ExperimentViewActivity *- ExperimentController : Instantiates
 ExperimentViewActivity *- ExperimentMapFragment : Instantiates
 ExperimentViewActivity *- ExperimentInfoFragment : Instantiates
-ExperimentViewActivity *- ExperimentForumFragment : Instantiates
 ExperimentViewActivity *- ExperimentTrialsFragment : Instantiates
+DiscussionPostsActivity *-> PostController : Instantiates
 
-ExperimentViewActivity -[hidden]-> ExperimentController
-ExperimentController -[hidden]-> ExperimentMapFragment
-ExperimentMapFragment -[hidden]-> ExperimentInfoFragment
-ExperimentInfoFragment -[hidden]-> ExperimentForumFragment
-ExperimentForumFragment -[hidden]-> ExperimentTrialsFragment
 
-ProfileActivity *-- UserController : Instantiates
+ProfileActivity *-> UserController : Instantiates
+
+UserController --> FirebaseController: Uses
+ExperimentController --> FirebaseController: Uses
+ExperimentListController --> FirebaseController: Uses
+UserHelper --> FirebaseController: Uses
+UserController --> UserHelper: Uses
+
 
 ExperimentViewActivity --> TrialNewActivity : Launches
 ExperimentViewActivity -- QrCodeFragment : Instantiates
 
 TrialNewActivity --> BarcodeScanActivity : Launches
 
+
+' Down here is just stuff to get it to format how the TA wants '
+
+MainActivity -[hidden]-> ExperimentListController
+ExperimentListController -[hidden]-> ExperimentListFragment
+ExperimentListFragment -[hidden]-> ExperimentSearchFragment
+ExperimentSearchFragment -[hidden]-> NewExperimentActivity
+NewExperimentActivity -[hidden]-> ExperimentViewActivity
+
+ExperimentViewActivity -[hidden]-> ExperimentController
+ExperimentController -[hidden]-> ExperimentMapFragment
+ExperimentMapFragment -[hidden]-> ExperimentInfoFragment
+ExperimentInfoFragment -[hidden]-> DiscussionPostsActivity
+DiscussionPostsActivity -[hidden]-> ExperimentTrialsFragment
+
 view -[hidden]-> controller
 controller -[hidden]-> model
 ExperimentTrialsFragment -[hidden]-> controller
-ExperimentController -[hidden]-> model
-ExperimentTrialsFragment -[hidden]-> UserController
+ExperimentTrialsFragment -[hidden]-> QrEncodable
+Searchable -[hidden]-> model
+ExperimentTrialsFragment -[hidden]-> UserHelper
 ExperimentController -[hidden]-> user
 ExperimentStatistics -[hidden]-> trial
+ExperimentTrialsFragment -[hidden]-> controller
+
+Trial -[hidden]-> BinomialTrial
+BinomialTrial -[hidden]-> NonNegativeTrial
+NonNegativeTrial -[hidden]-> CountTrial
+CountTrial -[hidden]-> MeasurementTrial
+
+Experiment -[hidden]-> BinomialExperiment
+BinomialExperiment -[hidden]-> NonNegativeExperiment
+NonNegativeExperiment -[hidden]-> CountExperiment
+CountExperiment -[hidden]-> MeasurementExperiment
+
+Geolocation -[hidden]-> experiment
+
+BinomialTrial -[hidden]-> BinomialExperiment
+
+user -[hidden]> Geolocation
+
+
+PostController -[hidden]-> UserHelper
+UserHelper -[hidden]-> FirebaseController
+UserHelper -[hidden]-> Searchable
+Searchable -[hidden]-> user
+FirebaseController -[hidden]-> PostController
+PostController -[hidden]-> UserController
+' ExperimentTrialsFragment -[hidden]-> PostController
+' ExperimentController -[hidden]-> ExperimentListController
+' ExperimentListController -[hidden]-> Searchable
+Searchable -[hidden]-> User
 
 @enduml
