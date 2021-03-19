@@ -21,6 +21,10 @@ public final class UserHelper {
    */
   public static final String USER_COLLECTION = "users";
   /**
+   * Firestore collection name
+   */
+  public static final String UUID_INTENT = "uuid";
+  /**
    * Pattern to validate email addresses </br> Regex from: https://emailregex.com, Accessed on * Friday March 5th 2021
    */
   private static final Pattern EMAIL_REGEX = Pattern.compile(
