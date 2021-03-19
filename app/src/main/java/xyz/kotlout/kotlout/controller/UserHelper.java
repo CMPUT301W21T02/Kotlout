@@ -7,7 +7,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import xyz.kotlout.kotlout.model.user.User;
 
@@ -34,7 +33,7 @@ public final class UserHelper {
    * Pattern to validate phone numbers </br> Notation taken from Figma diagram: 000-111-2222
    */
   private static final Pattern PHONE_REGEX = Pattern.compile("^[\\d\\-\\+\\(\\)]*$");
-  static Context ctx;
+  private static String uuid;
 
   /**
    * Validate email boolean.
@@ -137,7 +136,7 @@ public final class UserHelper {
   }
 
   public static void initUserHelper(Context context) {
-    ctx = context;
+    uuid = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
   }
 
   /**
@@ -146,15 +145,14 @@ public final class UserHelper {
    * @return UUID stored in internal storage
    */
   public static String readUUID() {
-    assert ctx != null;
-    String id = Secure.getString(ctx.getContentResolver(), Secure.ANDROID_ID);
-    assert id != null;
-    return id;
+    return uuid;
   }
 
+  /**
+   * Initialize user id locally and add user to firebase if it does not exist
+   */
   public static void initalizeUser() {
     User user = new User();
-    AtomicBoolean foundUser = new AtomicBoolean();
     user.setUuid(readUUID());
     DocumentReference ref = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION)
         .document(UserHelper.readUUID());
