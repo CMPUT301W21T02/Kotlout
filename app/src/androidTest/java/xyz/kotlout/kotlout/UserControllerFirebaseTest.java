@@ -80,7 +80,7 @@ public class UserControllerFirebaseTest {
     User newUser = new User();
     newUser.setUuid(UserHelper.readUUID());;
     User testUser = new User("FIRST", "LAST", "EMAIL", "PHONE", UserHelper.readUUID());
-    userDoc.set(testUser).addOnCompleteListener(task -> {
+    userDoc.set(testUser).addOnSuccessListener(task -> {
       done.set(true);
     });
     waitFor(done);
