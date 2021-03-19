@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import xyz.kotlout.kotlout.R;
-import xyz.kotlout.kotlout.controller.ApplicationContextProvider;
 import xyz.kotlout.kotlout.model.experiment.Post;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
@@ -71,7 +70,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
       name = itemView.findViewById(R.id.comment_name);
       date = itemView.findViewById(R.id.comment_date);
       text = itemView.findViewById(R.id.comment_text);
-      replies = itemView.findViewById(R.id.comment_reply_count);
+      replies = itemView.findViewById(R.id.comment_reply_string);
     }
 
     public TextView getName() {
