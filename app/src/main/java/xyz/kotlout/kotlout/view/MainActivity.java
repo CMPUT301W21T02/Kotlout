@@ -17,11 +17,14 @@ import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment.ListType;
 
 public class MainActivity extends AppCompatActivity {
 
+  NameView test;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-
+    test = findViewById(R.id.test_name_view);
+    test.setUserName("7");
     if (savedInstanceState == null) {
       ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.MINE);
       getSupportFragmentManager()
@@ -29,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
           .add(R.id.frame_main, fragment)
           .commit();
     }
+
 
     BottomNavigationView bnv = findViewById(R.id.nav_main);
     bnv.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
