@@ -15,10 +15,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content" />
 
-  <com.github.mikephil.charting.charts.HorizontalBarChart
+  <com.github.mikephil.charting.charts.BarChart
     android:layout_width="match_parent"
-    android:layout_height="320dp"
-    android:layout_margin="8dp" />
+    android:layout_height="400dp"
+    android:id="@+id/histogram"
+    android:background="@android:color/white">
+  </com.github.mikephil.charting.charts.BarChart>
 
   <LinearLayout
     android:layout_width="match_parent"
