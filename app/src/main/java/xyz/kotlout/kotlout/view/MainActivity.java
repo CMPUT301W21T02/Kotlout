@@ -17,14 +17,10 @@ import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment.ListType;
 
 public class MainActivity extends AppCompatActivity {
 
-  NameView test;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    test = findViewById(R.id.test_name_view);
-    test.setUserName("7");
     if (savedInstanceState == null) {
       ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.MINE);
       getSupportFragmentManager()
@@ -110,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
       case R.id.show_profile:
         Intent intent = new Intent(this, ProfileActivity.class);
-        intent.putExtra(UserHelper.UUID_INTENT, UserHelper.readUUID());
+        intent.putExtra(UserHelper.UUID_INTENT, UserHelper.readUuid());
         this.startActivity(intent);
         return true;
 

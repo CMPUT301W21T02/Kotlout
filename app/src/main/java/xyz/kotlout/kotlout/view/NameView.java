@@ -29,9 +29,7 @@ public class NameView extends androidx.appcompat.widget.AppCompatTextView implem
     } finally {
       typedArray.recycle();
     }
-    this.setOnClickListener((view) -> {
-      onClick(view);
-    });
+    this.setOnClickListener(this::onClick);
   }
 
   public NameView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {

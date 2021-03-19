@@ -36,9 +36,7 @@ public class UserControllerFirebaseTest {
   @BeforeClass
   public static void storeOldUser() {
     AtomicBoolean done = new AtomicBoolean();
-    FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid()).get().addOnCompleteListener(task -> {
-      oldUser = task.getResult().toObject(User.class);
-    });
+    FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid()).get().addOnCompleteListener(task -> oldUser = task.getResult().toObject(User.class));
   }
 
   @After
@@ -61,7 +59,7 @@ public class UserControllerFirebaseTest {
     UserHelper.initalizeUser();
     SystemClock.sleep(100);
     userDoc.get().addOnCompleteListener(task -> {
-      Assert.assertTrue(UserHelper.readUuid().equals(task.getResult().getString("uuid")));
+      Assert.assertEquals(UserHelper.readUuid(), task.getResult().getString("uuid"));
       done.set(true);
     });
     waitFor(done);
@@ -74,14 +72,12 @@ public class UserControllerFirebaseTest {
     User newUser = new User();
     newUser.setUuid(UserHelper.readUuid());;
     User testUser = new User("FIRST", "LAST", "EMAIL", "PHONE", UserHelper.readUuid());
-    userDoc.set(testUser).addOnSuccessListener(task -> {
-      done.set(true);
-    });
+    userDoc.set(testUser).addOnSuccessListener(task -> done.set(true));
     waitFor(done);
     done.set(false);
     UserHelper.initalizeUser();
     userDoc.get().addOnCompleteListener(task -> {
-      Assert.assertTrue(testUser.getFirstName().equals(task.getResult().toObject(User.class).getFirstName()));
+      Assert.assertEquals(testUser.getFirstName(), task.getResult().toObject(User.class).getFirstName());
       done.set(true);
     });
     waitFor(done);
