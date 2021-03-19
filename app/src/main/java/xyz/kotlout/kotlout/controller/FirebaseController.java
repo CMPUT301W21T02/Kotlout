@@ -15,7 +15,7 @@ public class FirebaseController {
   private static final int EMU_AUTH_PORT = 9099;
 
   /**
-   * @return An instance of firestore
+   * Initialize an instance of firestore
    */
   public static void initFirestore() {
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();

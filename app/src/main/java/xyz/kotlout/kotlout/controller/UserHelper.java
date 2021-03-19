@@ -148,9 +148,8 @@ public final class UserHelper {
     return id;
   }
 
-  public static void initalizeUser() {
+  public static void initializeUser() {
     User user = new User();
-    AtomicBoolean foundUser = new AtomicBoolean();
     user.setUuid(readUUID());
     DocumentReference ref = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION)
         .document(UserHelper.readUUID());

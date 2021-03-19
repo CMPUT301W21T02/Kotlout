@@ -9,7 +9,7 @@ import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
  */
 public class BinomialExperiment extends Experiment {
 
-  public ExperimentType type = ExperimentType.BINOMIAL;
+  public static ExperimentType type = ExperimentType.BINOMIAL;
   private List<BinomialTrial> trials;
 
   /**

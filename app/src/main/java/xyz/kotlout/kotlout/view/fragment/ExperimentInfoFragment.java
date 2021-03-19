@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.model.ExperimentType;
@@ -18,6 +19,7 @@ public class ExperimentInfoFragment extends Fragment {
   Experiment experiment;
   ExperimentType type;
 
+  @NonNull
   public static ExperimentInfoFragment newInstance(Experiment experiment, ExperimentType type) {
     ExperimentInfoFragment fragment = new ExperimentInfoFragment();
     Bundle args = new Bundle();
@@ -37,7 +39,7 @@ public class ExperimentInfoFragment extends Fragment {
   }
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+  public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_experiment_info, container, false);

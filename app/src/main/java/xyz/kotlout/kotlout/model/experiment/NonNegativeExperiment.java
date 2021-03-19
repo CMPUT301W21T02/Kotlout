@@ -9,7 +9,7 @@ import xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial;
  */
 public class NonNegativeExperiment extends Experiment {
 
-  public ExperimentType type = ExperimentType.NON_NEGATIVE_INTEGER;
+  public static ExperimentType type = ExperimentType.NON_NEGATIVE_INTEGER;
   private List<NonNegativeTrial> trials;
 
   public NonNegativeExperiment() {
@@ -17,7 +17,7 @@ public class NonNegativeExperiment extends Experiment {
   }
 
   /**
-   * Creates a new BinomialExperiment with basic fields passed on to the base Experiment constructor.
+   * Creates a new NonNegativeExperiment with basic fields passed on to the base Experiment constructor.
    */
   public NonNegativeExperiment(String description, String region, int minimumTrials) {
     super(description, region, minimumTrials);

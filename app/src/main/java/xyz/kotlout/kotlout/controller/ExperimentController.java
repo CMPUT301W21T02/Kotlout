@@ -82,7 +82,7 @@ public class ExperimentController {
     this.type = type;
   }
 
-  public ExperimentController(DocumentSnapshot experimentDoc) {
+  public ExperimentController(@NonNull DocumentSnapshot experimentDoc) {
     this.experimentId = experimentDoc.getId();
     type = ExperimentType.valueOf((String) experimentDoc.get("type"));
 
@@ -108,7 +108,6 @@ public class ExperimentController {
    * @param description The experiment description.
    * @param region      The region where the experiment is conducted.
    * @param minTrials   The minimum number of trials required for the experiment.
-   * @param type        The type of experiment.
    */
   @NonNull
   public static ExperimentController newInstance(@NonNull String description, String region,
@@ -126,8 +125,9 @@ public class ExperimentController {
       case MEASUREMENT:
         return new ExperimentController(new MeasurementExperiment(description, region, minTrials),
             type);
+      default:
+        throw new UnsupportedOperationException();
     }
-    return null;
   }
 
   /**

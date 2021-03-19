@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     if (id == R.id.my_experiments_view) {
       ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.MINE);
+      fragment.addController();
       getSupportFragmentManager()
           .beginTransaction()
           .replace(R.id.frame_main, fragment)
@@ -98,21 +99,17 @@ public class MainActivity extends AppCompatActivity {
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-      case R.id.sync_experiments:
-        return true;
-
-      case R.id.show_profile:
-        Intent intent = new Intent(this, ProfileActivity.class);
-        this.startActivity(intent);
-        return true;
-
-      case R.id.search_experiments:
-        return true;
-
-      default:
-        return super.onOptionsItemSelected(item);
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    int itemId = item.getItemId();
+    if (itemId == R.id.sync_experiments) {
+      return true;
+    } else if (itemId == R.id.show_profile) {
+      Intent intent = new Intent(this, ProfileActivity.class);
+      this.startActivity(intent);
+      return true;
+    } else if (itemId == R.id.search_experiments) {
+      return true;
     }
+    return super.onOptionsItemSelected(item);
   }
 }

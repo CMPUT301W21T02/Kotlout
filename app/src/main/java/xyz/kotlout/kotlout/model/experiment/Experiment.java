@@ -1,13 +1,15 @@
 package xyz.kotlout.kotlout.model.experiment;
 
 
+import androidx.annotation.NonNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import xyz.kotlout.kotlout.model.ExperimentType;
+import xyz.kotlout.kotlout.model.user.User;
 
 /**
- * Base class for modelling experiments. Child classes should model a particular type of
- * experiment.
+ * Base class for modelling experiments. Child classes should model a particular type of experiment.
  */
 public abstract class Experiment implements Serializable {
 
@@ -27,8 +29,7 @@ public abstract class Experiment implements Serializable {
   }
 
   /**
-   * Creates a new Experiment with some basic details including description, region, and minimum
-   * number of trials.
+   * Creates a new Experiment with some basic details including description, region, and minimum number of trials.
    *
    * @param description   Experiment description.
    * @param region        The region the experiment is conducted in.
@@ -115,4 +116,15 @@ public abstract class Experiment implements Serializable {
   public List<Post> getPosts() {
     return posts;
   }
+
+  public void ignoreUser(@NonNull User user) {
+    ignoredUsers.add(user.getUuid());
+  }
+
+  public List<String> getIgnoredUser() {
+    return ignoredUsers;
+  }
+
+
+  abstract ExperimentType getExperimentType();
 }

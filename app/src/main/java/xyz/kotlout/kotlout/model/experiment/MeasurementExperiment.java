@@ -9,7 +9,7 @@ import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
  */
 public class MeasurementExperiment extends Experiment {
 
-  public ExperimentType type = ExperimentType.MEASUREMENT;
+  public static ExperimentType type = ExperimentType.MEASUREMENT;
   private List<MeasurementTrial> trials;
 
   public MeasurementExperiment() {
@@ -17,10 +17,18 @@ public class MeasurementExperiment extends Experiment {
   }
 
   /**
-   * Creates a new BinomialExperiment with basic fields passed on to the base Experiment
-   * constructor.
+   * Creates a new MeasurementExperiment with basic fields passed on to the base Experiment constructor.
    */
   public MeasurementExperiment(String description, String region, int minimumTrials) {
     super(description, region, minimumTrials);
+  }
+
+  @Override
+  ExperimentType getExperimentType() {
+    return type;
+  }
+
+  public void addTrial(MeasurementTrial newTrial) {
+
   }
 }
