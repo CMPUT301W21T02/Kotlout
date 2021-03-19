@@ -110,8 +110,6 @@ public class ExperimentInfoFragment extends Fragment {
   private void fillData() {
     histogramData.add(new HistogramData("Success", 1));
     histogramData.add(new HistogramData("Success", 1));
-    histogramData.add(new HistogramData("Success", 1));
-    histogramData.add(new HistogramData("Success", 1));
     histogramData.add(new HistogramData("Failure", 1));
     histogramData.add(new HistogramData("Failure", 1));
     histogramData.add(new HistogramData("Failure", 1));
@@ -128,7 +126,7 @@ public class ExperimentInfoFragment extends Fragment {
   /**
    * Merges the counts of all trials with the same results
    * @param histogramData The list of all trial results
-   * @return A list of the results that are merged if they have the same result
+   * @return A list of the trials that are merged on their counts if they have the same result
    */
   public ArrayList<HistogramData> mergeData(ArrayList<HistogramData> histogramData) {
     ArrayList<HistogramData> merged = new ArrayList<>();
