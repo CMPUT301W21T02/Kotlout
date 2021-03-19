@@ -5,7 +5,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.controller.UserHelper;
 
 @RunWith(JUnit4.class)

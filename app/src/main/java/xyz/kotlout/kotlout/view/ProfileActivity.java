@@ -19,8 +19,6 @@ import xyz.kotlout.kotlout.model.user.User;
 public class ProfileActivity extends AppCompatActivity {
 
   private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-  // Getting the user
-  String uuid = UserHelper.readUuid();
   // Declaration of Objects, instantiation of Firestore
   private EditText firstNameText, lastNameText, emailText, phoneText;
   /**
@@ -47,6 +45,7 @@ public class ProfileActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_profile);
+    String uuid = getIntent().getStringExtra(UserHelper.UUID_INTENT);
     controller = new UserController(uuid);
     controller.setUpdateCallback(updateCallback);
 
@@ -69,6 +68,7 @@ public class ProfileActivity extends AppCompatActivity {
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.user_profile_menu, menu);
     optionsMenu = menu;
+    enableEditMenu(menu);
     return true;
   }
 
@@ -162,7 +162,7 @@ public class ProfileActivity extends AppCompatActivity {
         changeEditable();
 
         if (UserHelper.validateEmail(newEmail) && UserHelper.validatePhoneNumber(newPhone)) {
-          controller.updateUserData(new User(newFirstName, newLastName, newEmail, newPhone, uuid));
+          controller.updateUserData(new User(newFirstName, newLastName, newEmail, newPhone, controller.getUser().getUuid()));
         } else {
           // If there are invalid fields, reset them to the firebase value
           updateCallback.accept(controller.getUser());
@@ -171,5 +171,12 @@ public class ProfileActivity extends AppCompatActivity {
         return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  private void enableEditMenu(Menu menu) {
+    if(!controller.isCurrentUser()) {
+      MenuItem edit = menu.findItem(R.id.edit_profile_button).setVisible(false);
+      MenuItem confirm = menu.findItem(R.id.edit_confirm_button).setVisible(false);
+    }
   }
 }

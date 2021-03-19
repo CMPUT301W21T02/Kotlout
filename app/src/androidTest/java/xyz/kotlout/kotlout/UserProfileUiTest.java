@@ -76,7 +76,9 @@ public class UserProfileUiTest {
   @Before
   public void clearUserFields() {
     String uuid = UserHelper.readUuid();
-    FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(uuid).set(new User());
+    User newUser = new User();
+    newUser.setUuid(uuid);
+    FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(uuid).set(newUser);
   }
 
   @Test
