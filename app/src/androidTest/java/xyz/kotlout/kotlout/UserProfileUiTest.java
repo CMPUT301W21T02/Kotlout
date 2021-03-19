@@ -15,13 +15,9 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 
 import android.os.SystemClock;
-import androidx.annotation.NonNull;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -79,7 +75,7 @@ public class UserProfileUiTest {
 
   @Before
   public void clearUserFields() {
-    String uuid = UserHelper.readUUID();
+    String uuid = UserHelper.readUuid();
     FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(uuid).set(new User());
   }
 
@@ -175,7 +171,7 @@ public class UserProfileUiTest {
     onView(withId(R.id.profileEmailEditText)).check(matches(withHint(R.string.profile_email_text)));
     onView(withId(R.id.profilePhoneEditText)).check(matches(withHint(R.string.profile_phone_text)));
 
-    String uuid = UserHelper.readUUID();
+    String uuid = UserHelper.readUuid();
     FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(uuid).set(
         new User(VALID_FIRST_NAME_STRING, VALID_LAST_NAME_STRING, VALID_EMAIL_ADDR_STRING,
             VALID_PHONE_NUM_STRING, uuid));

@@ -20,7 +20,7 @@ public class ProfileActivity extends AppCompatActivity {
 
   private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
   // Getting the user
-  String uuid = UserHelper.readUUID();
+  String uuid = UserHelper.readUuid();
   // Declaration of Objects, instantiation of Firestore
   private EditText firstNameText, lastNameText, emailText, phoneText;
   /**
