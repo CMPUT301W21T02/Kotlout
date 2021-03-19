@@ -7,6 +7,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import xyz.kotlout.kotlout.model.user.User;
 
+/**
+ * A Controller class used to interface with a user given their userId.
+ */
 public class UserController {
 
   private static final String USER_COLLECTION = "users";
