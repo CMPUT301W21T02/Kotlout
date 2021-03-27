@@ -24,4 +24,9 @@ public class BinomialExperiment extends Experiment {
   public BinomialExperiment(String description, String region, int minimumTrials) {
     super(description, region, minimumTrials);
   }
+
+  @Override
+  ExperimentType getExperimentType() {
+    return type;
+  }
 }

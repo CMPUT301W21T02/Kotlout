@@ -125,6 +125,5 @@ public abstract class Experiment implements Serializable {
     return ignoredUsers;
   }
 
-
   abstract ExperimentType getExperimentType();
 }

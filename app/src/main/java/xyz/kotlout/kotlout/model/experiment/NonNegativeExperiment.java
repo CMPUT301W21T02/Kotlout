@@ -22,4 +22,9 @@ public class NonNegativeExperiment extends Experiment {
   public NonNegativeExperiment(String description, String region, int minimumTrials) {
     super(description, region, minimumTrials);
   }
+
+  @Override
+  ExperimentType getExperimentType() {
+    return type;
+  }
 }

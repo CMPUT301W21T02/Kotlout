@@ -130,13 +130,31 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
     TextView type = convertView.findViewById(R.id.tv_experiment_list_type);
 
     MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
+    ExperimentController experimentController = myExperiments.get(experimentGroup).get(childPosition);
 
     description.setText(myExperiments.get(experimentGroup)
         .get(childPosition).getExperimentContext().getDescription());
     region.setText(myExperiments.get(experimentGroup)
         .get(childPosition).getExperimentContext().getRegion());
-    counter.setText(myExperiments.get(experimentGroup).get(childPosition).generateCountText());
-    type.setText("Binomial"); //TODO: Figure out how to get this working
+    counter.setText(experimentController.generateCountText());
+
+    switch (experimentController.getType()) {
+      case BINOMIAL:
+        type.setText("Binomial");
+        break;
+      case NON_NEGATIVE_INTEGER:
+        type.setText("Non-Negative Integer");
+        break;
+      case COUNT:
+        type.setText("Count");
+        break;
+      case MEASUREMENT:
+        type.setText("Measurement");
+        break;
+      case UNKNOWN:
+        type.setText("Unknown");
+        break;
+    }
 
     return convertView;
   }

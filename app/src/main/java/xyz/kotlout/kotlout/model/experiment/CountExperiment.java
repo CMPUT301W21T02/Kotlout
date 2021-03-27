@@ -25,4 +25,9 @@ public class CountExperiment extends Experiment {
   public CountExperiment(String description, String region, int minimumTrials) {
     super(description, region, minimumTrials);
   }
+
+  @Override
+  ExperimentType getExperimentType() {
+    return type;
+  }
 }
