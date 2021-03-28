@@ -4,9 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 import androidx.fragment.app.Fragment;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.model.ExperimentType;
+import xyz.kotlout.kotlout.model.adapter.ExperimentListAdapter;
+import xyz.kotlout.kotlout.model.adapter.TrialListAdapter;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 
 public class ExperimentTrialListFragment extends Fragment {
@@ -40,6 +43,10 @@ public class ExperimentTrialListFragment extends Fragment {
       Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_experiment_trials, container, false);
+    ExpandableListView elv = view.findViewById(R.id.elv_experiment_trials);
+    TrialListAdapter trialListAdapter = new TrialListAdapter(getContext());
+
+    elv.setAdapter(trialListAdapter);
 
     return view;
   }
