@@ -96,9 +96,12 @@
     </LinearLayout>
   </LinearLayout>
 
-  <com.github.mikephil.charting.charts.HorizontalBarChart
-    android:layout_width="match_parent"
-    android:layout_height="320dp"
-    android:layout_margin="8dp" />
+    <com.github.mikephil.charting.charts.BarChart
+      android:layout_width="match_parent"
+      android:layout_height="400dp"
+      android:id="@+id/trialInfo"
+      android:background="@android:color/white"
+      android:layout_marginBottom="50dp">
+    </com.github.mikephil.charting.charts.BarChart>
   </LinearLayout>
 </ScrollView>
