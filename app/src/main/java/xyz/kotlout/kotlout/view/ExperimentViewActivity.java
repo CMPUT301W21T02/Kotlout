@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import java.util.ArrayList;
@@ -30,10 +31,10 @@ public class ExperimentViewActivity extends AppCompatActivity {
   ExperimentViewFragmentsAdapter adapter;
   ViewPager2 viewPager;
   TabLayout tabLayout;
+  FloatingActionButton trialFab;
 
   ExperimentController experimentController;
   String experimentId;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -46,6 +47,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
       adapter = new ExperimentViewFragmentsAdapter(getSupportFragmentManager(), getLifecycle());
       tabLayout = findViewById(R.id.tl_experiment_view);
       viewPager = findViewById(R.id.pager_experiment_view);
+      trialFab = findViewById(R.id.fab_view_add_trial);
 
       experimentController = new ExperimentController(experimentId, () -> {
 
@@ -68,12 +70,15 @@ public class ExperimentViewActivity extends AppCompatActivity {
             (tab, position) -> {
               switch (position) {
                 case 0:
+                  trialFab.hide();
                   tab.setText(R.string.view_info_text);
                   break;
                 case 1:
+                  trialFab.hide();
                   tab.setText(R.string.view_map_text);
                   break;
                 case 2:
+                  trialFab.show();
                   tab.setText(R.string.view_trials_text);
                   break;
               }
@@ -99,6 +104,9 @@ public class ExperimentViewActivity extends AppCompatActivity {
     AlertDialog dialog = builder.create();
 
     dialog.show();
+  }
+
+  public void fabNewTrial(View view) {
   }
 
   public static class ExperimentViewFragmentsAdapter extends FragmentStateAdapter {
