@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -66,19 +67,45 @@ public class ExperimentViewActivity extends AppCompatActivity {
         adapter.addFragment(trialListFragment);
 
         viewPager.setAdapter(adapter);
+
+        OnPageChangeCallback pageChangeCallback = new OnPageChangeCallback() {
+          @Override
+          public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+            if(position == 2) {
+              trialFab.show();
+            } else {
+              trialFab.hide();
+            }
+          }
+
+          @Override
+          public void onPageSelected(int position) {
+            super.onPageSelected(position);
+            if(position == 2) {
+              trialFab.show();
+            } else {
+              trialFab.hide();
+            }
+          }
+
+          @Override
+          public void onPageScrollStateChanged(int state) {
+            super.onPageScrollStateChanged(state);
+          }
+        };
+        viewPager.registerOnPageChangeCallback(pageChangeCallback);
+
         new TabLayoutMediator(tabLayout, viewPager,
             (tab, position) -> {
               switch (position) {
                 case 0:
-                  trialFab.hide();
                   tab.setText(R.string.view_info_text);
                   break;
                 case 1:
-                  trialFab.hide();
                   tab.setText(R.string.view_map_text);
                   break;
                 case 2:
-                  trialFab.show();
                   tab.setText(R.string.view_trials_text);
                   break;
               }
