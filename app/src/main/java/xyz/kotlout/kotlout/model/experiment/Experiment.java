@@ -1,6 +1,7 @@
 package xyz.kotlout.kotlout.model.experiment;
 
 
+import com.google.firebase.firestore.DocumentId;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.List;
  */
 public abstract class Experiment implements Serializable {
 
+  @DocumentId
+  private String id;
   private String ownerUuid;
   private String description;
   private String region;
@@ -41,6 +44,23 @@ public abstract class Experiment implements Serializable {
     this.isOngoing = true;
     ignoredUsers = new ArrayList<>();
     posts = new ArrayList<>();
+  }
+
+  /**
+   * Gets the ID for the experiment set by Firestore.
+   *
+   * @return The ID for the experiment set by Firestore.
+   */
+  public String getId() {
+    return id;
+  }
+
+  /**
+   * Sets the ID for the experiment. Should only be used by Firestore.
+   * @param id The new ID of the experiment.
+   */
+  public void setId(String id) {
+    this.id = id;
   }
 
   /**
