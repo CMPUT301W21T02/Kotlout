@@ -4,6 +4,10 @@ import com.google.firebase.firestore.Exclude;
 import java.util.List;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 
+/**
+ * A class representing a single user of the app. As there is no way to make accounts, this also corresponds directly to a
+ * device on which the app is installed.
+ */
 public class User {
 
   private String firstName;
@@ -80,6 +84,17 @@ public class User {
 
   public void setPhoneNumber(String phoneNumber) {
     this.phoneNumber = phoneNumber;
+  }
+
+  @Exclude
+  public String getDisplayName() {
+    String displayName;
+    if (getFirstName() != null) {
+      displayName = getFirstName();
+    } else {
+      displayName = getUuid();
+    }
+    return displayName;
   }
 
   @Exclude

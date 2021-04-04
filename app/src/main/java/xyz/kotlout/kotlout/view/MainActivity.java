@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment.ListType;
@@ -20,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-
     if (savedInstanceState == null) {
       ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.MINE);
       getSupportFragmentManager()
@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
           .add(R.id.frame_main, fragment)
           .commit();
     }
+
 
     BottomNavigationView bnv = findViewById(R.id.nav_main);
     bnv.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
@@ -105,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
       case R.id.show_profile:
         Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra(UserHelper.UUID_INTENT, UserHelper.readUuid());
         this.startActivity(intent);
         return true;
 

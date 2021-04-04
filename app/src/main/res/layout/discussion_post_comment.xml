@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:paddingTop="10dp"
+  android:paddingBottom="10dp">
+
+  <TextView
+    android:id="@+id/comment_name"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="6dp"
+    android:layout_marginStart="12dp"
+    android:layout_alignParentStart="true"
+    android:layout_alignParentTop="true"
+    android:layout_centerVertical="true"
+    android:clickable="true"
+    android:text="@string/default_author_name"
+    android:textColor="@color/purple_500"
+    android:textSize="14sp" />
+  <TextView
+    android:id="@+id/comment_text"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="6dp"
+    android:layout_below="@+id/comment_name"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:text="@string/default_comment_text"
+    android:textSize="16sp" />
+  <TextView
+    android:id="@+id/comment_date"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="0dp"
+    android:layout_marginEnd="12dp"
+    android:layout_alignParentEnd="true"
+    android:layout_alignTop="@+id/comment_name"
+    android:text="@string/default_comment_date" />
+  <TextView
+    android:id="@+id/comment_reply_count"
+    android:textStyle="italic"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="20dp"
+    android:layout_alignParentStart="true"
+    android:layout_below="@+id/comment_text"
+    android:clickable="true"
+    android:drawablePadding="12dp"
+    android:drawableStart="@android:drawable/stat_notify_chat"
+    android:drawableTint="@color/black"
+    android:text="@string/comment_reply_count"
+    android:visibility="gone" />
+</RelativeLayout>
