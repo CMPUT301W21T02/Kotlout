@@ -147,10 +147,7 @@ public class ExperimentController {
 
               // add published experiment to user subscriptions
               UserController userController = new UserController(UserHelper.readUuid());
-              userController.setUpdateCallback(user -> {
-                // do nothing
-                userController.addSubscription(experimentId);
-              });
+              userController.setUpdateCallback(user -> userController.addSubscription(experimentId));
             }
         )
         .addOnFailureListener(e -> Log.w(TAG, "Experiment not published", e));
