@@ -134,8 +134,7 @@ public class UserController {
    */
   public void addSubscription(String experimentId) {
     userDoc.get().addOnSuccessListener(documentSnapshot -> {
-          User currentUser = documentSnapshot.toObject(User.class);
-          List<String> subscriptions = currentUser.getSubscriptions();
+          List<String> subscriptions = user.getSubscriptions();
 
           // Only subscribe to experiments the user isn't already subscribed to
           if (subscriptions.contains(experimentId)) {
@@ -146,10 +145,5 @@ public class UserController {
           syncUser();
         }
     ).addOnFailureListener(e -> Log.e(TAG, "addSubscription: Could not subscribe to experiment with ID " + experimentId));
-  }
-
-  public void fetchSubscriptions() {
-
-
   }
 }
