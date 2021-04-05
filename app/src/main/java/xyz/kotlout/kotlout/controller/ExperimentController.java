@@ -11,6 +11,7 @@ import xyz.kotlout.kotlout.model.experiment.CountExperiment;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 import xyz.kotlout.kotlout.model.experiment.MeasurementExperiment;
 import xyz.kotlout.kotlout.model.experiment.NonNegativeExperiment;
+import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
 /**
  * Controller for handling interactions with Experiment objects.
@@ -33,13 +34,13 @@ public class ExperimentController {
   /**
    * Initializes the controller and sets the context to a string that refers to the experiment's document ID in Firestore.
    *
-   * @param documentId Firestore DocumentID that refers to the experiment.
+   * @param experimentId Firestore DocumentID that refers to the experiment.
    */
-  public ExperimentController(String documentId, Runnable callback) {
+  public ExperimentController(String experimentId, Runnable callback) {
     FirebaseFirestore db = FirebaseController.getFirestore();
-    this.experimentId = documentId;
+    this.experimentId = experimentId;
 
-    db.collection(EXPERIMENT_COLLECTION).document(documentId).get()
+    db.collection(EXPERIMENT_COLLECTION).document(experimentId).get()
         .addOnSuccessListener(documentSnapshot -> {
           //TODO: This feels jank. There must be a better way. Generics?
           type = ExperimentType.valueOf((String) documentSnapshot.get("type"));
@@ -199,6 +200,11 @@ public class ExperimentController {
     } else {
       return String.format(Locale.CANADA, "%d Trials", currentTrials);
     }
+  }
+
+  public void addTrial(Trial trial) {
+    FirebaseFirestore db = FirebaseController.getFirestore();
+    db.collection(EXPERIMENT_COLLECTION).document(experimentId);
   }
 }
 
