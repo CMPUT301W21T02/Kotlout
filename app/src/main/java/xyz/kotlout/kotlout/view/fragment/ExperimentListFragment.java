@@ -96,6 +96,11 @@ public class ExperimentListFragment extends Fragment {
           .getChild(groupPosition, childPosition);
       Experiment experiment = experimentController.getExperimentContext();
 
+      // Don't give options for experiments not owned by the user
+      if (!experiment.getOwnerUuid().equals(UserHelper.readUuid())) {
+        return false;
+      }
+
       // Show options to user to modify the experiment state
       AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
       builder.setTitle(R.string.experiment_long_click_menu_title)
