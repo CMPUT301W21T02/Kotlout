@@ -52,4 +52,5 @@
   <string name="comment_reply_count">0 Replies</string>
   <string name="comment_date_format">yyyy-MM-dd HH:mm</string>
   <string name="title_activity_experiment_view">Experiment</string>
+  <string name="title_activity_trial_new">New Trial</string>
 </resources>
