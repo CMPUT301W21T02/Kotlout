@@ -358,9 +358,6 @@ public class ExperimentListFragment extends Fragment {
       ExperimentGroup experimentGroup = ExperimentGroup.getByOrder(groupPosition);
       tvGroup.setText(experimentGroup.toString());
 
-      ExpandableListView elv = (ExpandableListView) parent;
-      elv.expandGroup(groupPosition);
-
       return convertView;
     }
 
