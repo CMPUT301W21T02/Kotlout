@@ -88,6 +88,7 @@ public class ExperimentListFragment extends Fragment {
     // https://stackoverflow.com/questions/2353074/android-long-click-on-the-child-views-of-a-expandablelistview/8320128#8320128
     // Accessed 2021-04-04, Author: Nicholas Harlen, License: CC BY-SA 4.0
 
+    // TODO: restrict long click options to My Experiments only
     if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
       int groupPosition = ExpandableListView.getPackedPositionGroup(id);
       int childPosition = ExpandableListView.getPackedPositionChild(id);
@@ -112,11 +113,9 @@ public class ExperimentListFragment extends Fragment {
               // End or Resume
               case 1:
                 if (experiment.isOngoing()) {
-                  // TODO: end the experiment
-//                  experimentController.end();
+                  experimentController.end();
                 } else {
-                  // TODO: resume the experiment
-//                  experimentController.resume();
+                  experimentController.resume();
                 }
                 break;
             }
@@ -130,6 +129,7 @@ public class ExperimentListFragment extends Fragment {
 
   /**
    * Generates menu options for modifying the state of an experiment.
+   *
    * @param experiment An instance of Experiment.
    * @return An array of menu option strings.
    */
