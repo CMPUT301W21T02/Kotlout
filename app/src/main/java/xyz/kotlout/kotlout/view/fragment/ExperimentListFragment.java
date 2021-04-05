@@ -27,7 +27,11 @@ import xyz.kotlout.kotlout.controller.ExperimentGroup;
 import xyz.kotlout.kotlout.controller.ExperimentListController;
 import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.controller.UserHelper;
+import xyz.kotlout.kotlout.model.experiment.BinomialExperiment;
+import xyz.kotlout.kotlout.model.experiment.CountExperiment;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
+import xyz.kotlout.kotlout.model.experiment.MeasurementExperiment;
+import xyz.kotlout.kotlout.model.experiment.NonNegativeExperiment;
 import xyz.kotlout.kotlout.view.ExperimentViewActivity;
 
 /**
@@ -150,8 +154,9 @@ public class ExperimentListFragment extends Fragment {
 
     /**
      * Updates the fragment with all experiments that the user has subscribed to.
+     *
      * @param queryDocumentSnapshots All experiments found in firestore.
-     * @param e A firestore exception
+     * @param e                      A firestore exception
      */
     private void showSubscribedExperiments(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
       clearExperimentGroups();
@@ -185,6 +190,7 @@ public class ExperimentListFragment extends Fragment {
 
     /**
      * Adds an experiment to its corresponding list group.
+     *
      * @param experimentDoc A snapshot of an experiment in firestore.
      */
     private void addExperimentToGroup(QueryDocumentSnapshot experimentDoc) {
@@ -200,8 +206,9 @@ public class ExperimentListFragment extends Fragment {
 
     /**
      * Adds the user's experiments to the list fragment.
+     *
      * @param queryDocumentSnapshots A snapshot of experiments belonging to the user.
-     * @param e A firestore exception.
+     * @param e                      A firestore exception.
      */
     private void showMyExperiments(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
       clearExperimentGroups();
@@ -299,15 +306,38 @@ public class ExperimentListFragment extends Fragment {
       TextView type = convertView.findViewById(R.id.tv_experiment_list_type);
 
       ExperimentGroup experimentGroup = ExperimentGroup.getByOrder(groupPosition);
+      ExperimentController experimentController = experimentGroups.get(experimentGroup).get(childPosition);
 
-      description.setText(experimentGroups.get(experimentGroup)
-          .get(childPosition).getExperimentContext().getDescription());
-      region.setText(experimentGroups.get(experimentGroup)
-          .get(childPosition).getExperimentContext().getRegion());
-      counter.setText(experimentGroups.get(experimentGroup).get(childPosition).generateCountText());
-      type.setText("Binomial"); //TODO: Figure out how to get this working
+      description.setText(experimentController.getExperimentContext().getDescription());
+      region.setText(experimentController.getExperimentContext().getRegion());
+      counter.setText(experimentController.generateCountText());
+
+      type.setText(getExperimentType(experimentController.getExperimentContext()));
 
       return convertView;
+    }
+
+    /**
+     * Gets a string describing the type of experiment.
+     *
+     * @param experiment An instance of Experiment
+     * @return A string with the experiment type.
+     */
+    public String getExperimentType(Experiment experiment) {
+      String experimentType = "unknown";
+      if (experiment instanceof BinomialExperiment) {
+        experimentType = "Binomial";
+      }
+      if (experiment instanceof NonNegativeExperiment) {
+        experimentType = "Non-negative Integer";
+      }
+      if (experiment instanceof CountExperiment) {
+        experimentType = "Count";
+      }
+      if (experiment instanceof MeasurementExperiment) {
+        experimentType = "Measurement";
+      }
+      return experimentType;
     }
 
     @Override
