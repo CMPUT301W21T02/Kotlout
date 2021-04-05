@@ -182,5 +182,51 @@ public class ExperimentController {
       return String.format(Locale.CANADA, "%d Trials", currentTrials);
     }
   }
+
+  /**
+   * Publishes an experiment that already exists in Firebase.
+   */
+  public void publish() {
+    if (experimentContext == null) {
+      return;
+    }
+    if (experimentContext.isPublished()) {
+      return;
+    }
+
+    setExperimentPublished(true);
+  }
+
+  /**
+   * Unpublishes an experiment that already exists in Firebase.
+   */
+  public void unpublish() {
+    if (experimentContext == null) {
+      return;
+    }
+    if (!experimentContext.isPublished()) {
+      return;
+    }
+
+    setExperimentPublished(false);
+  }
+
+  /**
+   * Updates an experiment's publishing status.
+   * @param published True for published. False for unpublished.
+   */
+  private void setExperimentPublished(boolean published) {
+    experimentContext.setPublished(published);
+    FirebaseFirestore db = FirebaseController.getFirestore();
+    db.collection(EXPERIMENT_COLLECTION).document(experimentContext.getId())
+        .update("published", experimentContext.isPublished())
+        .addOnSuccessListener(aVoid ->
+            Log.d(TAG,
+                "setExperimentPublished: Published set to " + published + " for experiment " + experimentContext.getId()))
+        .addOnFailureListener(e ->
+            Log.d(TAG,
+                "setExperimentPublished: Unable to set published set to " + published + " for experiment " +
+                    experimentContext.getId()));
+  }
 }
 
