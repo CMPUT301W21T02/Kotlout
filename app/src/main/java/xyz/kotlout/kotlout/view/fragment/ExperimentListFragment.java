@@ -263,6 +263,11 @@ public class ExperimentListFragment extends Fragment {
       ExperimentController controller = new ExperimentController(experimentDoc);
       Experiment experiment = controller.getExperimentContext();
 
+      // Don't show other users an unpublished experiment
+      if (!experiment.isPublished() && !UserHelper.readUuid().equals(experiment.getOwnerUuid())) {
+        return;
+      }
+
       if (experiment.isOngoing()) {
         experimentGroups.get(ExperimentGroup.OPEN).add(controller);
       } else {
