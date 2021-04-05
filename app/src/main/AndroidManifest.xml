@@ -10,7 +10,6 @@
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
     android:theme="@style/Theme.Kotlout">
-
     <activity
       android:label="@string/app_name"
       android:name=".view.MainActivity">
@@ -19,21 +18,20 @@
 
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
-
     </activity>
-
     <activity
       android:label="@string/title_activity_new"
       android:name=".view.ExperimentNewActivity" />
-
     <activity
       android:label="@string/title_activity_profile"
       android:name=".view.ProfileActivity" />
-
     <activity
-      android:label="@string/title_activity_view"
+      android:exported="true"
+      android:label="Discussion"
+      android:name=".view.DiscussionPostsActivity" />
+    <activity
+      android:label="@string/title_activity_experiment_view"
       android:name=".view.ExperimentViewActivity" />
-
   </application>
 
 </manifest>
