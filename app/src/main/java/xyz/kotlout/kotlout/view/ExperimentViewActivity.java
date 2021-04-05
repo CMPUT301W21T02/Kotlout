@@ -36,6 +36,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
 
   ExperimentController experimentController;
   String experimentId;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -72,7 +73,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
           @Override
           public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             super.onPageScrolled(position, positionOffset, positionOffsetPixels);
-            if(position == 2) {
+            if (position == 2) {
               trialFab.show();
             } else {
               trialFab.hide();
@@ -82,7 +83,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
           @Override
           public void onPageSelected(int position) {
             super.onPageSelected(position);
-            if(position == 2) {
+            if (position == 2) {
               trialFab.show();
             } else {
               trialFab.hide();
@@ -134,6 +135,10 @@ public class ExperimentViewActivity extends AppCompatActivity {
   }
 
   public void fabNewTrial(View view) {
+    Intent intent = new Intent(this, TrialNewActivity.class);
+    intent.putExtra(TrialNewActivity.EXPERIMENT_ID, experimentId);
+
+    startActivityForResult(intent, TrialNewActivity.NEW_TRIAL_REQUEST);
   }
 
   public static class ExperimentViewFragmentsAdapter extends FragmentStateAdapter {
