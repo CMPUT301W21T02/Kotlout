@@ -115,7 +115,7 @@ public abstract class Experiment implements Serializable {
    *
    * @return Returns true if the experiment is ongoing, or false otherwise.
    */
-  public boolean getIsOngoing() {
+  public boolean isOngoing() {
     return isOngoing;
   }
 
