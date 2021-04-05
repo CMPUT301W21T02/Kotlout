@@ -5,6 +5,7 @@ import androidx.core.util.Consumer;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
+import java.util.List;
 import xyz.kotlout.kotlout.model.user.User;
 
 /**
@@ -12,7 +13,7 @@ import xyz.kotlout.kotlout.model.user.User;
  */
 public class UserController {
 
-  private static final String USER_COLLECTION = "users";
+  public static final String USER_COLLECTION = "users";
   private static final String TAG = "USER CONTROLLER";
 
   private final DocumentReference userDoc;
@@ -120,5 +121,35 @@ public class UserController {
    */
   public boolean isCurrentUser() {
     return this.user.getUuid().equals(UserHelper.readUuid());
+  }
+
+  public DocumentReference getUserDoc() {
+    return userDoc;
+  }
+
+  /**
+   * Subscribe to an experiment. Does nothing if the user is already subscribed to the given experiment.
+   *
+   * @param experimentId A string ID for the experiment.
+   */
+  public void addSubscription(String experimentId) {
+    userDoc.get().addOnSuccessListener(documentSnapshot -> {
+          User currentUser = documentSnapshot.toObject(User.class);
+          List<String> subscriptions = currentUser.getSubscriptions();
+
+          // Only subscribe to experiments the user isn't already subscribed to
+          if (subscriptions.contains(experimentId)) {
+            return;
+          }
+          subscriptions.add(experimentId);
+          this.user.setSubscriptions(subscriptions);
+          syncUser();
+        }
+    ).addOnFailureListener(e -> Log.e(TAG, "addSubscription: Could not subscribe to experiment with ID " + experimentId));
+  }
+
+  public void fetchSubscriptions() {
+
+
   }
 }
