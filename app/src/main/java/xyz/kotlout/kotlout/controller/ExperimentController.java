@@ -130,12 +130,13 @@ public class ExperimentController {
   }
 
   /**
-   * Adds a new experiment to the firestore database.
+   * Publishes a new experiment and adds it to firestore.
    */
-  public void publish() {
+  public void publishNewExperiment() {
     if (experimentContext == null) {
       return;
     }
+    experimentContext.setPublished(true);
 
     FirebaseFirestore db = FirebaseController.getFirestore();
     db.collection(EXPERIMENT_COLLECTION)
