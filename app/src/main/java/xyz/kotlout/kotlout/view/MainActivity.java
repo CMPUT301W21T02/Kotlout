@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
           .commit();
     }
 
-
     BottomNavigationView bnv = findViewById(R.id.nav_main);
     bnv.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
   }
@@ -90,9 +89,7 @@ public class MainActivity extends AppCompatActivity {
         return;
       }
 
-      // TODO: set experiment owner
-      newExperiment.setOwnerUuid("0");
-
+      newExperiment.setOwnerUuid(UserHelper.readUuid());
       ExperimentController experimentController = new ExperimentController(newExperiment);
       experimentController.publish();
     }
