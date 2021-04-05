@@ -225,7 +225,53 @@ public class ExperimentController {
                 "setExperimentPublished: Published set to " + published + " for experiment " + experimentContext.getId()))
         .addOnFailureListener(e ->
             Log.d(TAG,
-                "setExperimentPublished: Unable to set published set to " + published + " for experiment " +
+                "setExperimentPublished: Unable to set published to " + published + " for experiment " +
+                    experimentContext.getId()));
+  }
+
+  /**
+   * Ends an experiment.
+   */
+  public void end() {
+    if (experimentContext == null) {
+      return;
+    }
+    if (!experimentContext.isOngoing()) {
+      return;
+    }
+
+    setExperimentOngoing(false);
+  }
+
+  /**
+   * Resumes an experiment that was previously ended.
+   */
+  public void resume() {
+    if (experimentContext == null) {
+      return;
+    }
+    if (experimentContext.isOngoing()) {
+      return;
+    }
+
+    setExperimentOngoing(true);
+  }
+
+  /**
+   * Updates an experiment's ongoing status.
+   * @param ongoing True for ongoing. False for ended.
+   */
+  private void setExperimentOngoing(boolean ongoing) {
+    experimentContext.setOngoing(ongoing);
+    FirebaseFirestore db = FirebaseController.getFirestore();
+    db.collection(EXPERIMENT_COLLECTION).document(experimentContext.getId())
+        .update("ongoing", experimentContext.isOngoing())
+        .addOnSuccessListener(aVoid ->
+            Log.d(TAG,
+                "setExperimentPublished: Ongoing set to " + ongoing + " for experiment " + experimentContext.getId()))
+        .addOnFailureListener(e ->
+            Log.d(TAG,
+                "setExperimentPublished: Unable to set ongoing to " + ongoing + " for experiment " +
                     experimentContext.getId()));
   }
 }
