@@ -66,7 +66,7 @@ public class ExperimentInfoFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_experiment_info, container, false);
 
     InfoHeaderView infoHeader = view.findViewById(R.id.ihv_experiment_info);
-    infoHeader.setExperiment(experiment, type);
+    infoHeader.setExperiment(experiment.getId(), type);
     
     histogram = view.findViewById(R.id.histogram);
     barEntries = new ArrayList<>();

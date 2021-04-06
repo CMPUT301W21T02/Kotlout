@@ -7,19 +7,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.ExperimentController.ExperimentControllerObserver;
+import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
+import xyz.kotlout.kotlout.model.user.User;
 
 /**
  * Custom View for the Experiment Info Fragment's header
  */
-public class InfoHeaderView extends LinearLayout {
+public class InfoHeaderView extends LinearLayout implements ExperimentControllerObserver {
 
   private final TextView tvDescription;
   private final TextView tvOwner;
   private final TextView tvRegion;
   private final TextView tvType;
   private final TextView tvCount;
+
+  private ExperimentController controller;
 
   public InfoHeaderView(Context context) {
     this(context, null);
@@ -43,16 +48,23 @@ public class InfoHeaderView extends LinearLayout {
   }
 
 
-  public void setExperiment(Experiment experiment, ExperimentType type) {
+  public void setExperiment(String experimentId, ExperimentType type) {
+    controller = new ExperimentController(experimentId, this);
+    tvType.setText(type.toString());
+  }
+
+  @Override
+  public void onExperimentLoaded() {
+    Experiment experiment = controller.getExperimentContext();
     tvDescription.setText(experiment.getDescription());
 
-    String ownerName = "SKRUNT DIGDERIDOO";
-    tvOwner.setText(ownerName.toUpperCase());
+    UserController ownerController = new UserController(experiment.getOwnerUuid());
+
+    ownerController.setUpdateCallback((owner) -> {
+      tvOwner.setText(owner.getDisplayName());
+    });
 
     tvRegion.setText(experiment.getRegion());
-    tvType.setText(type.toString());
-
-    ExperimentController exp = new ExperimentController(experiment);
-    tvCount.setText(exp.generateCountText());
+    tvCount.setText(controller.generateCountText());
   }
 }

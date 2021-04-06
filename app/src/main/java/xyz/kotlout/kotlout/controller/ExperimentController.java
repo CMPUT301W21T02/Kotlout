@@ -2,6 +2,7 @@ package xyz.kotlout.kotlout.controller;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Locale;
@@ -25,6 +26,8 @@ public class ExperimentController {
   String experimentId;
   ExperimentType type;
 
+  ExperimentControllerObserver observer;
+
   /**
    * Default constructor. Disabled, because an empty controller is useless.
    */
@@ -36,10 +39,10 @@ public class ExperimentController {
    *
    * @param experimentId Firestore DocumentID that refers to the experiment.
    */
-  public ExperimentController(String experimentId, Runnable callback) {
+  public ExperimentController(String experimentId, @Nullable ExperimentControllerObserver observer) {
     FirebaseFirestore db = FirebaseController.getFirestore();
     this.experimentId = experimentId;
-
+    this.observer = observer;
     db.collection(EXPERIMENT_COLLECTION).document(experimentId).get()
         .addOnSuccessListener(documentSnapshot -> {
           //TODO: This feels jank. There must be a better way. Generics?
@@ -58,7 +61,9 @@ public class ExperimentController {
               experimentContext = documentSnapshot.toObject(MeasurementExperiment.class);
               break;
           }
-          callback.run();
+          if (observer != null) {
+            observer.onExperimentLoaded();
+          }
         });
   }
 
@@ -237,6 +242,7 @@ public class ExperimentController {
 
   /**
    * Updates an experiment's publishing status.
+   *
    * @param published True for published. False for unpublished.
    */
   private void setExperimentPublished(boolean published) {
@@ -283,6 +289,7 @@ public class ExperimentController {
 
   /**
    * Updates an experiment's ongoing status.
+   *
    * @param ongoing True for ongoing. False for ended.
    */
   private void setExperimentOngoing(boolean ongoing) {
@@ -303,5 +310,10 @@ public class ExperimentController {
     FirebaseFirestore db = FirebaseController.getFirestore();
     db.collection(EXPERIMENT_COLLECTION).document(experimentId);
   }
+
+  public interface ExperimentControllerObserver {
+    void onExperimentLoaded();
+  }
+
 }
 
