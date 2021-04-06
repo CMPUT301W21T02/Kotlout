@@ -21,7 +21,7 @@
     </activity>
     <activity
       android:label="@string/title_activity_new"
-      android:name=".view.ExperimentNewActivity" />g
+      android:name=".view.ExperimentNewActivity" />
     <activity
       android:label="@string/title_activity_profile"
       android:name=".view.ProfileActivity" />

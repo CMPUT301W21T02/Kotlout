@@ -1,8 +1,8 @@
 package xyz.kotlout.kotlout.model.user;
 
 import com.google.firebase.firestore.Exclude;
+import java.util.ArrayList;
 import java.util.List;
-import xyz.kotlout.kotlout.model.experiment.Experiment;
 
 /**
  * A class representing a single user of the app. As there is no way to make accounts, this also corresponds directly to a
@@ -14,12 +14,11 @@ public class User {
   private String lastName;
   private String email;
   private String phoneNumber;
+  private List<String> subscriptions;
 
   // UUID doesn't have a no-argument constructor and cannot be deserialized by firestore
   // Maybe we should consider using Firebase ID's instead
   private String uuid;
-  @Exclude
-  private List<Experiment> subscriptions;
 
   // Required for Firebase Serialization
   public User() {
@@ -97,9 +96,22 @@ public class User {
     return displayName;
   }
 
-  @Exclude
-  public List<Experiment> getSubscriptions() {
+  /**
+   * Gets a list of IDs for experiments the user has subscribed to.
+   * @return A list of experiment IDs.
+   */
+  public List<String> getSubscriptions() {
+    if (subscriptions == null) {
+      subscriptions = new ArrayList<>();
+    }
     return subscriptions;
   }
 
+  /**
+   * Sets the user subscriptions to a new list.
+   * @param subscriptions A list of experiment IDs.
+   */
+  public void setSubscriptions(List<String> subscriptions) {
+    this.subscriptions = subscriptions;
+  }
 }

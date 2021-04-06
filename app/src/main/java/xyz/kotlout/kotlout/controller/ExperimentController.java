@@ -144,6 +144,10 @@ public class ExperimentController {
             documentReference -> {
               experimentId = documentReference.getId();
               Log.d(TAG, "Experiment published with id: " + experimentId);
+
+              // add published experiment to user subscriptions
+              UserController userController = new UserController(UserHelper.readUuid());
+              userController.setUpdateCallback(user -> userController.addSubscription(experimentId));
             }
         )
         .addOnFailureListener(e -> Log.w(TAG, "Experiment not published", e));

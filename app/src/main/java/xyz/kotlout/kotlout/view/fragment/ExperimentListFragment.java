@@ -12,15 +12,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.ExperimentGroup;
 import xyz.kotlout.kotlout.controller.ExperimentListController;
-import xyz.kotlout.kotlout.controller.MyExperimentGroup;
+import xyz.kotlout.kotlout.controller.UserController;
+import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 import xyz.kotlout.kotlout.view.ExperimentViewActivity;
 
@@ -58,7 +64,7 @@ public class ExperimentListFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_experiment_list, container, false);
 
     ExpandableListView elv = view.findViewById(R.id.elv_main_experiment_list);
-    experimentListAdapter = new ExperimentListAdapter("0"); // TODO: get current user uuid
+    experimentListAdapter = new ExperimentListAdapter(UserHelper.readUuid());
     elv.setAdapter(experimentListAdapter);
     elv.setOnChildClickListener(this::onChildClick);
 
@@ -97,58 +103,147 @@ public class ExperimentListFragment extends Fragment {
 
     private static final String TAG = "EXP_LIST_ADAPTER";
     private ExperimentListController experimentListController;
-    private Query myExperimentsRef;
-    private Map<MyExperimentGroup, List<ExperimentController>> myExperiments;
+    private Query getMyExperimentsQuery;
+    private Query getSubscribedExperimentsQuery;
+    private Map<ExperimentGroup, List<ExperimentController>> experimentGroups;
 
+    /**
+     * Initializes the adapter for the given user's open and closed experiments.
+     *
+     * @param userUuid User identifier
+     */
     public ExperimentListAdapter(String userUuid) {
+      experimentGroups = initializeExperimentGroups();
       experimentListController = new ExperimentListController(userUuid);
-      myExperiments = experimentListController.initializeMyExperiments();
 
-      myExperimentsRef = experimentListController.getGetUserExperiments();
+      switch (type) {
+        case MINE:
+          getMyExperimentsQuery = experimentListController.getUserExperiments();
+          getMyExperimentsQuery.addSnapshotListener(this::showMyExperiments);
+          break;
 
-      myExperimentsRef.addSnapshotListener((queryDocumentSnapshots, e) -> {
+        case ALL:
+          // TODO
+          break;
 
-        for (Entry<MyExperimentGroup, List<ExperimentController>> pair : myExperiments.entrySet()) {
-          pair.getValue().clear();
+        case SUBSCRIBED:
+          getSubscribedExperimentsQuery = experimentListController.getSubscribedExperiments();
+          getSubscribedExperimentsQuery.addSnapshotListener(this::showSubscribedExperiments);
+          break;
+      }
+    }
+
+    /**
+     * Initialize the list groups for different categories of experiments.
+     *
+     * @return An empty list for user experiments grouped by Open and Closed.
+     */
+    public Map<ExperimentGroup, List<ExperimentController>> initializeExperimentGroups() {
+
+      Map<ExperimentGroup, List<ExperimentController>> experimentGroups = new HashMap<>();
+
+      for (ExperimentGroup group : ExperimentGroup.values()) {
+        experimentGroups.put(group, new ArrayList<>());
+      }
+      return experimentGroups;
+    }
+
+    /**
+     * Updates the fragment with all experiments that the user has subscribed to.
+     * @param queryDocumentSnapshots All experiments found in firestore.
+     * @param e A firestore exception
+     */
+    private void showSubscribedExperiments(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+      clearExperimentGroups();
+
+      UserController userController = new UserController(UserHelper.readUuid());
+      userController.setUpdateCallback(user -> {
+        List<String> subscriptions = user.getSubscriptions();
+
+        // no subscriptions yet
+        if (subscriptions.isEmpty()) {
+          return;
         }
 
+        // Filter experiments by user subscriptions
         for (QueryDocumentSnapshot experimentDoc : queryDocumentSnapshots) {
           Log.d(TAG, experimentDoc.getId() + " => " + experimentDoc.getData());
 
-          ExperimentController controller = new ExperimentController(experimentDoc);
-          Experiment experiment = controller.getExperimentContext();
-
-          if (experiment.getIsOngoing()) {
-            myExperiments.get(MyExperimentGroup.OPEN).add(controller);
-          } else {
-            myExperiments.get(MyExperimentGroup.CLOSED).add(controller);
+          int subscriptionIndex = subscriptions.indexOf(experimentDoc.getId());
+          if (subscriptionIndex == -1) {
+            continue;
+          }
+          addExperimentToGroup(experimentDoc);
+          subscriptions.remove(subscriptionIndex);
+          if (subscriptions.isEmpty()) {
+            break;
           }
         }
         this.notifyDataSetChanged();
       });
     }
 
+    /**
+     * Adds an experiment to its corresponding list group.
+     * @param experimentDoc A snapshot of an experiment in firestore.
+     */
+    private void addExperimentToGroup(QueryDocumentSnapshot experimentDoc) {
+      ExperimentController controller = new ExperimentController(experimentDoc);
+      Experiment experiment = controller.getExperimentContext();
+
+      if (experiment.getIsOngoing()) {
+        experimentGroups.get(ExperimentGroup.OPEN).add(controller);
+      } else {
+        experimentGroups.get(ExperimentGroup.CLOSED).add(controller);
+      }
+    }
+
+    /**
+     * Adds the user's experiments to the list fragment.
+     * @param queryDocumentSnapshots A snapshot of experiments belonging to the user.
+     * @param e A firestore exception.
+     */
+    private void showMyExperiments(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+      clearExperimentGroups();
+
+      for (QueryDocumentSnapshot experimentDoc : queryDocumentSnapshots) {
+        Log.d(TAG, experimentDoc.getId() + " => " + experimentDoc.getData());
+
+        addExperimentToGroup(experimentDoc);
+      }
+      this.notifyDataSetChanged();
+    }
+
+    /**
+     * Clears all experiment list groups.
+     */
+    private void clearExperimentGroups() {
+      for (Entry<ExperimentGroup, List<ExperimentController>> pair : experimentGroups.entrySet()) {
+        pair.getValue().clear();
+      }
+    }
+
     @Override
     public int getGroupCount() {
-      return myExperiments.size();
+      return experimentGroups.size();
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
-      return myExperiments.get(experimentGroup).size();
+      ExperimentGroup experimentGroup = ExperimentGroup.getByOrder(groupPosition);
+      return experimentGroups.get(experimentGroup).size();
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
-      return myExperiments.get(experimentGroup);
+      ExperimentGroup experimentGroup = ExperimentGroup.getByOrder(groupPosition);
+      return experimentGroups.get(experimentGroup);
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
-      return myExperiments.get(experimentGroup).get(childPosition);
+      ExperimentGroup experimentGroup = ExperimentGroup.getByOrder(groupPosition);
+      return experimentGroups.get(experimentGroup).get(childPosition);
     }
 
     @Override
@@ -177,10 +272,10 @@ public class ExperimentListFragment extends Fragment {
 
       TextView tvGroup = convertView.findViewById(R.id.tv_experiment_list_group);
 
-      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
+      ExperimentGroup experimentGroup = ExperimentGroup.getByOrder(groupPosition);
       tvGroup.setText(experimentGroup.toString());
 
-      if (experimentGroup == MyExperimentGroup.OPEN) {
+      if (experimentGroup == ExperimentGroup.OPEN) {
         ExpandableListView elv = (ExpandableListView) parent;
         elv.expandGroup(groupPosition);
       }
@@ -203,13 +298,13 @@ public class ExperimentListFragment extends Fragment {
       TextView counter = convertView.findViewById(R.id.tv_experiment_list_counter);
       TextView type = convertView.findViewById(R.id.tv_experiment_list_type);
 
-      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
+      ExperimentGroup experimentGroup = ExperimentGroup.getByOrder(groupPosition);
 
-      description.setText(myExperiments.get(experimentGroup)
+      description.setText(experimentGroups.get(experimentGroup)
           .get(childPosition).getExperimentContext().getDescription());
-      region.setText(myExperiments.get(experimentGroup)
+      region.setText(experimentGroups.get(experimentGroup)
           .get(childPosition).getExperimentContext().getRegion());
-      counter.setText(myExperiments.get(experimentGroup).get(childPosition).generateCountText());
+      counter.setText(experimentGroups.get(experimentGroup).get(childPosition).generateCountText());
       type.setText("Binomial"); //TODO: Figure out how to get this working
 
       return convertView;
