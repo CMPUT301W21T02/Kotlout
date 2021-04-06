@@ -7,42 +7,43 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.ExperimentController.ExperimentControllerObserver;
+import xyz.kotlout.kotlout.controller.UserHelper;
+import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.CountTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
-public class TrialListAdapter extends BaseExpandableListAdapter {
+public class TrialListAdapter extends BaseExpandableListAdapter implements ExperimentControllerObserver {
 
-  private final List<BinomialTrial> trialList;
+  private List<? extends Trial> trialList;
+  Map<String, ? extends List<? extends Trial>> ByExperimenter;
+
   private final Context context;
-  Map<String, List<BinomialTrial>> ByExperimenter;
+
+  ExperimentType type;
+  String experimentId;
+
+  ExperimentController controller;
+
   List<String> Experimenters;
 
-  public TrialListAdapter(Context context) {
+  public TrialListAdapter(Context context, String experimentId, ExperimentType type) {
     this.context = context;
+    this.experimentId = experimentId;
+    this.type = type;
+
+    controller = new ExperimentController(experimentId, this);
+
     Experimenters = new ArrayList<>();
-
-    trialList = Arrays.asList(
-        new BinomialTrial(true, "Me"),
-        new BinomialTrial(true, "Me"),
-        new BinomialTrial(true, "Anmol"),
-        new BinomialTrial(true, "Amir"),
-        new BinomialTrial(true, "Dillon"),
-        new BinomialTrial(false, "Me"),
-        new BinomialTrial(true, "Tharidu"),
-        new BinomialTrial(false, "Me")
-    );
-
-    ByExperimenter = trialList.parallelStream().collect(Collectors.groupingBy(Trial::getExperimenter));
-    Experimenters = trialList.parallelStream().filter(trial -> !trial.getExperimenter().equals("Me"))
-        .map(BinomialTrial::getExperimenter).sorted().collect(
-            Collectors.toList());
-    Experimenters.remove("Me");
-    Experimenters.add(0, "Me");
+    trialList = new ArrayList<>();
   }
 
   @Override
@@ -106,17 +107,46 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
       convertView = inflater.inflate(R.layout.trial_list_item, parent, false);
     }
 
-    BinomialTrial trial = (BinomialTrial) getChild(groupPosition, childPosition);
-
     TextView trialResult = convertView
         .findViewById(R.id.tv_trial_list_result);
 
-    trialResult.setText(trial.getResult() ? "Pass" : "Fail");
+    switch (type) {
+      case BINOMIAL:
+        BinomialTrial binomialTrial = (BinomialTrial) getChild(groupPosition, childPosition);
+        trialResult.setText(binomialTrial.getResult() ? "Pass" : "Fail");
+        break;
+      case NON_NEGATIVE_INTEGER:
+        NonNegativeTrial nonNegativeTrial = (NonNegativeTrial) getChild(groupPosition, childPosition);
+        trialResult.setText(nonNegativeTrial.getResult());
+        break;
+      case COUNT:
+        CountTrial countTrial = (CountTrial) getChild(groupPosition, childPosition);
+        trialResult.setText(countTrial.getResult());
+        break;
+      case MEASUREMENT:
+        MeasurementTrial measurementTrial = (MeasurementTrial) getChild(groupPosition, childPosition);
+        trialResult.setText(Double.toString(measurementTrial.getResult()));
+        break;
+    }
+
     return convertView;
   }
 
   @Override
   public boolean isChildSelectable(int groupPosition, int childPosition) {
     return false;
+  }
+
+  @Override
+  public void onExperimentLoaded() {
+    trialList = controller.getListTrials();
+
+    ByExperimenter = trialList.parallelStream().collect(Collectors.groupingBy(Trial::getExperimenter));
+    Experimenters = trialList.parallelStream().filter(trial -> !trial.getExperimenter().equals("Me"))
+        .map(Trial::getExperimenter).sorted().collect(
+            Collectors.toList());
+
+    Experimenters.remove(UserHelper.readUuid());
+    Experimenters.add(0, UserHelper.readUuid());
   }
 }

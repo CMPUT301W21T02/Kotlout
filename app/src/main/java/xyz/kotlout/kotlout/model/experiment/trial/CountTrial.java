@@ -7,6 +7,10 @@ public class CountTrial extends Trial {
 
   private int result;
 
+  public CountTrial() {
+
+  }
+
   public CountTrial(int result, String experimenterId) {
     super(experimenterId);
     this.result = result;

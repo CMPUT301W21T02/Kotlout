@@ -9,20 +9,19 @@ import androidx.fragment.app.Fragment;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.adapter.TrialListAdapter;
-import xyz.kotlout.kotlout.model.experiment.Experiment;
 
 public class ExperimentTrialListFragment extends Fragment {
 
-  private static final String ARG_EXPERIMENT = "EXPERIMENT";
+  private static final String ARG_EXPERIMENT_ID = "EXPERIMENT_ID";
   private static final String ARG_EXPERIMENT_TYPE = "EXPERIMENT_TYPE";
 
-  Experiment experiment;
+  String experimentId;
   ExperimentType type;
 
-  public static ExperimentTrialListFragment newInstance(Experiment experiment, ExperimentType type) {
+  public static ExperimentTrialListFragment newInstance(String experimentId, ExperimentType type) {
     ExperimentTrialListFragment fragment = new ExperimentTrialListFragment();
     Bundle args = new Bundle();
-    args.putSerializable(ARG_EXPERIMENT, experiment);
+    args.putString(ARG_EXPERIMENT_ID, experimentId);
     args.putSerializable(ARG_EXPERIMENT_TYPE, type);
     fragment.setArguments(args);
     return fragment;
@@ -32,7 +31,7 @@ public class ExperimentTrialListFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
-      experiment = (Experiment) getArguments().getSerializable(ARG_EXPERIMENT);
+      experimentId = getArguments().getString(ARG_EXPERIMENT_ID);
       type = (ExperimentType) getArguments().getSerializable(ARG_EXPERIMENT_TYPE);
     }
   }
@@ -43,7 +42,7 @@ public class ExperimentTrialListFragment extends Fragment {
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_experiment_trials, container, false);
     ExpandableListView elv = view.findViewById(R.id.elv_experiment_trials);
-    TrialListAdapter trialListAdapter = new TrialListAdapter(getContext());
+    TrialListAdapter trialListAdapter = new TrialListAdapter(getContext(), experimentId, type);
 
     elv.setAdapter(trialListAdapter);
 

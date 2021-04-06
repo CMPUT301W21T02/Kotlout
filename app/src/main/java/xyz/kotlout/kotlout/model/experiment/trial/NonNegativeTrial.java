@@ -7,6 +7,10 @@ public class NonNegativeTrial extends Trial {
 
   private int result;
 
+  public NonNegativeTrial() {
+
+  }
+
   public NonNegativeTrial(int result, String experimenterId) {
     super(experimenterId);
     this.result = result;

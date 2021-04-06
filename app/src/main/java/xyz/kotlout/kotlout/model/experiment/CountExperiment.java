@@ -13,7 +13,11 @@ import xyz.kotlout.kotlout.model.experiment.trial.Trial;
  */
 public class CountExperiment extends Experiment {
 
+  /**
+   * Type of experiment, can't be static due to Firestore model generation
+   */
   public ExperimentType type = ExperimentType.COUNT;
+
   private List<CountTrial> trials = new ArrayList<>();
 
   /**
@@ -39,6 +43,11 @@ public class CountExperiment extends Experiment {
     trials.add((CountTrial) trial);
   }
 
+  /**
+   * Get list of trials done for this experiment
+   *
+   * @return ArrayList of Trials for this experiment
+   */
   public List<CountTrial> getTrials() {
     return trials;
   }

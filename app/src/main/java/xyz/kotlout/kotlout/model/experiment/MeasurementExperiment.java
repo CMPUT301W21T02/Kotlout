@@ -12,7 +12,11 @@ import xyz.kotlout.kotlout.model.experiment.trial.Trial;
  */
 public class MeasurementExperiment extends Experiment {
 
+  /**
+   * Type of experiment, can't be static due to Firestore model generation
+   */
   public ExperimentType type = ExperimentType.MEASUREMENT;
+
   private List<MeasurementTrial> trials = new ArrayList<>();
 
   public MeasurementExperiment() {
@@ -35,6 +39,11 @@ public class MeasurementExperiment extends Experiment {
     trials.add((MeasurementTrial) trial);
   }
 
+  /**
+   * Get list of trials done for this experiment
+   *
+   * @return ArrayList of Trials for this experiment
+   */
   public List<MeasurementTrial> getTrials() {
     return trials;
   }

@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import java.util.List;
 import java.util.Locale;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.BinomialExperiment;
@@ -31,7 +32,7 @@ public class ExperimentController {
   /**
    * Default constructor. Disabled, because an empty controller is useless.
    */
-  private ExperimentController() {
+  public ExperimentController() {
   }
 
   /**
@@ -45,7 +46,6 @@ public class ExperimentController {
     this.observer = observer;
     db.collection(EXPERIMENT_COLLECTION).document(experimentId).get()
         .addOnSuccessListener(documentSnapshot -> {
-          //TODO: This feels jank. There must be a better way. Generics?
           type = ExperimentType.valueOf((String) documentSnapshot.get("type"));
           switch (type) {
             case BINOMIAL:
@@ -184,11 +184,26 @@ public class ExperimentController {
   }
 
   /**
-   * Returns the number of trials that this experiment has completed TODO: This returns 0 all the time at the moment.
+   * Returns the number of trials that this experiment has completed
    *
    * @return integer value representing the count of experiments
    */
   public int getTrialsCompleted() {
+    switch (type) {
+      case BINOMIAL:
+        BinomialExperiment binomialExperiment = (BinomialExperiment) experimentContext;
+        return binomialExperiment.getTrials().size();
+      case NON_NEGATIVE_INTEGER:
+        NonNegativeExperiment nonNegativeExperiment = (NonNegativeExperiment) experimentContext;
+        return nonNegativeExperiment.getTrials().size();
+      case COUNT:
+        CountExperiment countExperiment = (CountExperiment) experimentContext;
+        return countExperiment.getTrials().size();
+      case MEASUREMENT:
+        MeasurementExperiment measurementExperiment = (MeasurementExperiment) experimentContext;
+        return measurementExperiment.getTrials().size();
+    }
+
     return 0;
   }
 
@@ -332,6 +347,25 @@ public class ExperimentController {
         break;
     }
 
+  }
+
+  public List<? extends Trial> getListTrials() {
+    switch (type) {
+      case BINOMIAL:
+        BinomialExperiment binomialExperiment = (BinomialExperiment) experimentContext;
+        return binomialExperiment.getTrials();
+      case NON_NEGATIVE_INTEGER:
+        NonNegativeExperiment nonNegativeExperiment = (NonNegativeExperiment) experimentContext;
+        return nonNegativeExperiment.getTrials();
+      case COUNT:
+        CountExperiment countExperiment = (CountExperiment) experimentContext;
+        return countExperiment.getTrials();
+      case MEASUREMENT:
+        MeasurementExperiment measurementExperiment = (MeasurementExperiment) experimentContext;
+        return measurementExperiment.getTrials();
+    }
+
+    return null;
   }
 
   public interface ExperimentControllerObserver {

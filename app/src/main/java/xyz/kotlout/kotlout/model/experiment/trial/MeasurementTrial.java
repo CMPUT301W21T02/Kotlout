@@ -7,6 +7,10 @@ public class MeasurementTrial extends Trial {
 
   private double result;
 
+  public MeasurementTrial() {
+
+  }
+
   public MeasurementTrial(double result, String experimenterId) {
     super(experimenterId);
     this.result = result;

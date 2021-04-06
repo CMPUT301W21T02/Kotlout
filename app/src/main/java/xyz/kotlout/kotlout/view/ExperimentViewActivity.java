@@ -65,7 +65,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
         adapter.addFragment(mapFragment);
 
         ExperimentTrialListFragment trialListFragment = ExperimentTrialListFragment
-            .newInstance(experimentController.getExperimentContext(),
+            .newInstance(experimentController.getExperimentId(),
                 experimentController.getType());
         adapter.addFragment(trialListFragment);
 

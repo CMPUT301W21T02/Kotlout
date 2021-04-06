@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
-import xyz.kotlout.kotlout.model.experiment.trial.CountTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
 /**
@@ -12,7 +11,11 @@ import xyz.kotlout.kotlout.model.experiment.trial.Trial;
  */
 public class BinomialExperiment extends Experiment {
 
+  /**
+   * Type of experiment, can't be static due to Firestore model generation
+   */
   public ExperimentType type = ExperimentType.BINOMIAL;
+
   private final List<BinomialTrial> trials = new ArrayList<>();
 
   /**
@@ -38,6 +41,11 @@ public class BinomialExperiment extends Experiment {
     trials.add((BinomialTrial) trial);
   }
 
+  /**
+   * Get list of trials done for this experiment
+   *
+   * @return ArrayList of Trials for this experiment
+   */
   public List<BinomialTrial> getTrials() {
     return trials;
   }
