@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
       newExperiment.setOwnerUuid(UserHelper.readUuid());
       ExperimentController experimentController = new ExperimentController(newExperiment);
-      experimentController.publish();
+      experimentController.publishNewExperiment();
     }
   }
 

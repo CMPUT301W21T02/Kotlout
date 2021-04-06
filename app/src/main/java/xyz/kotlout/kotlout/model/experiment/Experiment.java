@@ -18,7 +18,8 @@ public abstract class Experiment implements Serializable {
   private String description;
   private String region;
   private int minimumTrials;
-  private boolean isOngoing;
+  private boolean isPublished; // True if the experiment has been published (i.e. visible to others). False otherwise.
+  private boolean isOngoing; // True if the experiment hasn't been ended (i.e. is still accepting trials). False otherwise.
   private boolean geolocationRequired;
   private List<String> ignoredUsers;
   private List<Post> posts;
@@ -57,6 +58,7 @@ public abstract class Experiment implements Serializable {
 
   /**
    * Sets the ID for the experiment. Should only be used by Firestore.
+   *
    * @param id The new ID of the experiment.
    */
   public void setId(String id) {
@@ -113,8 +115,32 @@ public abstract class Experiment implements Serializable {
    *
    * @return Returns true if the experiment is ongoing, or false otherwise.
    */
-  public boolean getIsOngoing() {
+  public boolean isOngoing() {
     return isOngoing;
+  }
+
+  /**
+   * Opens or closes the experiment. If an experiment is closed, it no longer accepts trials from anyone.
+   * @param ongoing True if experiment is not closed. False otherwise.
+   */
+  public void setOngoing(boolean ongoing) {
+    isOngoing = ongoing;
+  }
+
+  /**
+   * Checks if the experiment is published, making it visible to others in the app.
+   * @return True if published. False otherwise.
+   */
+  public boolean isPublished() {
+    return isPublished;
+  }
+
+  /**
+   * Sets the publishing status of the experiment.
+   * @param published True if the experiment is published. False otherwise.
+   */
+  public void setPublished(boolean published) {
+    isPublished = published;
   }
 
   /**

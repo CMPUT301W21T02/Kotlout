@@ -1,11 +1,13 @@
 package xyz.kotlout.kotlout.view.fragment;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
@@ -27,7 +29,11 @@ import xyz.kotlout.kotlout.controller.ExperimentGroup;
 import xyz.kotlout.kotlout.controller.ExperimentListController;
 import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.controller.UserHelper;
+import xyz.kotlout.kotlout.model.experiment.BinomialExperiment;
+import xyz.kotlout.kotlout.model.experiment.CountExperiment;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
+import xyz.kotlout.kotlout.model.experiment.MeasurementExperiment;
+import xyz.kotlout.kotlout.model.experiment.NonNegativeExperiment;
 import xyz.kotlout.kotlout.view.ExperimentViewActivity;
 
 /**
@@ -67,9 +73,78 @@ public class ExperimentListFragment extends Fragment {
     experimentListAdapter = new ExperimentListAdapter(UserHelper.readUuid());
     elv.setAdapter(experimentListAdapter);
     elv.setOnChildClickListener(this::onChildClick);
+    elv.setOnItemLongClickListener(this::onItemLongClick);
 
     // Inflate the layout for this fragment
     return view;
+  }
+
+  /**
+   * Shows a context menu for experiment list items to modify their state.
+   *
+   * @return True if the event was handled. False otherwise.
+   */
+  private boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+    // https://stackoverflow.com/questions/2353074/android-long-click-on-the-child-views-of-a-expandablelistview/8320128#8320128
+    // Accessed 2021-04-04, Author: Nicholas Harlen, License: CC BY-SA 4.0
+
+    // TODO: restrict long click options to My Experiments only
+    if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+      int groupPosition = ExpandableListView.getPackedPositionGroup(id);
+      int childPosition = ExpandableListView.getPackedPositionChild(id);
+      ExperimentController experimentController = (ExperimentController) experimentListAdapter
+          .getChild(groupPosition, childPosition);
+      Experiment experiment = experimentController.getExperimentContext();
+
+      // Don't give options for experiments not owned by the user
+      if (!experiment.getOwnerUuid().equals(UserHelper.readUuid())) {
+        return false;
+      }
+
+      // Show options to user to modify the experiment state
+      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+      builder.setTitle(R.string.experiment_long_click_menu_title)
+          .setItems(getExperimentMenuOptions(experiment), (dialog, which) -> {
+            switch (which) {
+              // Publish or Unpublish
+              case 0:
+                if (experiment.isPublished()) {
+                  experimentController.unpublish();
+                } else {
+                  experimentController.publish();
+                }
+                break;
+
+              // End or Resume
+              case 1:
+                if (experiment.isOngoing()) {
+                  experimentController.end();
+                } else {
+                  experimentController.resume();
+                }
+                break;
+            }
+          }).show();
+
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Generates menu options for modifying the state of an experiment.
+   *
+   * @param experiment An instance of Experiment.
+   * @return An array of menu option strings.
+   */
+  private CharSequence[] getExperimentMenuOptions(Experiment experiment) {
+    CharSequence[] menuOptions = new CharSequence[]{"", ""};
+    menuOptions[0] = experiment.isPublished() ? getString(R.string.unpublish_experiment_option)
+        : getString(R.string.publish_experiment_option);
+    menuOptions[1] =
+        experiment.isOngoing() ? getString(R.string.end_experiment_option) : getString(R.string.resume_experiment_option);
+    return menuOptions;
   }
 
   @Override
@@ -150,8 +225,9 @@ public class ExperimentListFragment extends Fragment {
 
     /**
      * Updates the fragment with all experiments that the user has subscribed to.
+     *
      * @param queryDocumentSnapshots All experiments found in firestore.
-     * @param e A firestore exception
+     * @param e                      A firestore exception
      */
     private void showSubscribedExperiments(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
       clearExperimentGroups();
@@ -185,13 +261,19 @@ public class ExperimentListFragment extends Fragment {
 
     /**
      * Adds an experiment to its corresponding list group.
+     *
      * @param experimentDoc A snapshot of an experiment in firestore.
      */
     private void addExperimentToGroup(QueryDocumentSnapshot experimentDoc) {
       ExperimentController controller = new ExperimentController(experimentDoc);
       Experiment experiment = controller.getExperimentContext();
 
-      if (experiment.getIsOngoing()) {
+      // Don't show other users an unpublished experiment
+      if (!experiment.isPublished() && !UserHelper.readUuid().equals(experiment.getOwnerUuid())) {
+        return;
+      }
+
+      if (experiment.isOngoing()) {
         experimentGroups.get(ExperimentGroup.OPEN).add(controller);
       } else {
         experimentGroups.get(ExperimentGroup.CLOSED).add(controller);
@@ -200,8 +282,9 @@ public class ExperimentListFragment extends Fragment {
 
     /**
      * Adds the user's experiments to the list fragment.
+     *
      * @param queryDocumentSnapshots A snapshot of experiments belonging to the user.
-     * @param e A firestore exception.
+     * @param e                      A firestore exception.
      */
     private void showMyExperiments(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
       clearExperimentGroups();
@@ -275,11 +358,6 @@ public class ExperimentListFragment extends Fragment {
       ExperimentGroup experimentGroup = ExperimentGroup.getByOrder(groupPosition);
       tvGroup.setText(experimentGroup.toString());
 
-      if (experimentGroup == ExperimentGroup.OPEN) {
-        ExpandableListView elv = (ExpandableListView) parent;
-        elv.expandGroup(groupPosition);
-      }
-
       return convertView;
     }
 
@@ -299,15 +377,38 @@ public class ExperimentListFragment extends Fragment {
       TextView type = convertView.findViewById(R.id.tv_experiment_list_type);
 
       ExperimentGroup experimentGroup = ExperimentGroup.getByOrder(groupPosition);
+      ExperimentController experimentController = experimentGroups.get(experimentGroup).get(childPosition);
 
-      description.setText(experimentGroups.get(experimentGroup)
-          .get(childPosition).getExperimentContext().getDescription());
-      region.setText(experimentGroups.get(experimentGroup)
-          .get(childPosition).getExperimentContext().getRegion());
-      counter.setText(experimentGroups.get(experimentGroup).get(childPosition).generateCountText());
-      type.setText("Binomial"); //TODO: Figure out how to get this working
+      description.setText(experimentController.getExperimentContext().getDescription());
+      region.setText(experimentController.getExperimentContext().getRegion());
+      counter.setText(experimentController.generateCountText());
+
+      type.setText(getExperimentType(experimentController.getExperimentContext()));
 
       return convertView;
+    }
+
+    /**
+     * Gets a string describing the type of experiment.
+     *
+     * @param experiment An instance of Experiment
+     * @return A string with the experiment type.
+     */
+    public String getExperimentType(Experiment experiment) {
+      String experimentType = "unknown";
+      if (experiment instanceof BinomialExperiment) {
+        experimentType = "Binomial";
+      }
+      if (experiment instanceof NonNegativeExperiment) {
+        experimentType = "Non-negative Integer";
+      }
+      if (experiment instanceof CountExperiment) {
+        experimentType = "Count";
+      }
+      if (experiment instanceof MeasurementExperiment) {
+        experimentType = "Measurement";
+      }
+      return experimentType;
     }
 
     @Override

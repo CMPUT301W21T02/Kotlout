@@ -130,12 +130,13 @@ public class ExperimentController {
   }
 
   /**
-   * Adds a new experiment to the firestore database.
+   * Publishes a new experiment and adds it to firestore.
    */
-  public void publish() {
+  public void publishNewExperiment() {
     if (experimentContext == null) {
       return;
     }
+    experimentContext.setPublished(true);
 
     FirebaseFirestore db = FirebaseController.getFirestore();
     db.collection(EXPERIMENT_COLLECTION)
@@ -180,6 +181,98 @@ public class ExperimentController {
     } else {
       return String.format(Locale.CANADA, "%d Trials", currentTrials);
     }
+  }
+
+  /**
+   * Publishes an experiment that already exists in Firebase.
+   */
+  public void publish() {
+    if (experimentContext == null) {
+      return;
+    }
+    if (experimentContext.isPublished()) {
+      return;
+    }
+
+    setExperimentPublished(true);
+  }
+
+  /**
+   * Unpublishes an experiment that already exists in Firebase.
+   */
+  public void unpublish() {
+    if (experimentContext == null) {
+      return;
+    }
+    if (!experimentContext.isPublished()) {
+      return;
+    }
+
+    setExperimentPublished(false);
+  }
+
+  /**
+   * Updates an experiment's publishing status.
+   * @param published True for published. False for unpublished.
+   */
+  private void setExperimentPublished(boolean published) {
+    experimentContext.setPublished(published);
+    FirebaseFirestore db = FirebaseController.getFirestore();
+    db.collection(EXPERIMENT_COLLECTION).document(experimentContext.getId())
+        .update("published", experimentContext.isPublished())
+        .addOnSuccessListener(aVoid ->
+            Log.d(TAG,
+                "setExperimentPublished: Published set to " + published + " for experiment " + experimentContext.getId()))
+        .addOnFailureListener(e ->
+            Log.d(TAG,
+                "setExperimentPublished: Unable to set published to " + published + " for experiment " +
+                    experimentContext.getId()));
+  }
+
+  /**
+   * Ends an experiment.
+   */
+  public void end() {
+    if (experimentContext == null) {
+      return;
+    }
+    if (!experimentContext.isOngoing()) {
+      return;
+    }
+
+    setExperimentOngoing(false);
+  }
+
+  /**
+   * Resumes an experiment that was previously ended.
+   */
+  public void resume() {
+    if (experimentContext == null) {
+      return;
+    }
+    if (experimentContext.isOngoing()) {
+      return;
+    }
+
+    setExperimentOngoing(true);
+  }
+
+  /**
+   * Updates an experiment's ongoing status.
+   * @param ongoing True for ongoing. False for ended.
+   */
+  private void setExperimentOngoing(boolean ongoing) {
+    experimentContext.setOngoing(ongoing);
+    FirebaseFirestore db = FirebaseController.getFirestore();
+    db.collection(EXPERIMENT_COLLECTION).document(experimentContext.getId())
+        .update("ongoing", experimentContext.isOngoing())
+        .addOnSuccessListener(aVoid ->
+            Log.d(TAG,
+                "setExperimentPublished: Ongoing set to " + ongoing + " for experiment " + experimentContext.getId()))
+        .addOnFailureListener(e ->
+            Log.d(TAG,
+                "setExperimentPublished: Unable to set ongoing to " + ongoing + " for experiment " +
+                    experimentContext.getId()));
   }
 }
 
