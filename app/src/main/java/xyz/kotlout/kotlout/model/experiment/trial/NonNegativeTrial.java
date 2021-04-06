@@ -6,4 +6,13 @@ package xyz.kotlout.kotlout.model.experiment.trial;
 public class NonNegativeTrial extends Trial {
 
   private int result;
+
+  public NonNegativeTrial(int result, String experimenterId) {
+    super(experimenterId);
+    this.result = result;
+  }
+  public int getResult() {
+    return result;
+  }
+
 }

@@ -308,10 +308,34 @@ public class ExperimentController {
 
   public void addTrial(Trial trial) {
     FirebaseFirestore db = FirebaseController.getFirestore();
-    db.collection(EXPERIMENT_COLLECTION).document(experimentId);
+
+    switch (type) {
+      case BINOMIAL:
+        BinomialExperiment binomialExperiment = (BinomialExperiment) experimentContext;
+        binomialExperiment.addTrial(trial);
+        db.collection(EXPERIMENT_COLLECTION).document(experimentId).update("trials", binomialExperiment.getTrials());
+        break;
+      case NON_NEGATIVE_INTEGER:
+        NonNegativeExperiment nonNegativeExperiment = (NonNegativeExperiment) experimentContext;
+        nonNegativeExperiment.addTrial(trial);
+        db.collection(EXPERIMENT_COLLECTION).document(experimentId).update("trials", nonNegativeExperiment.getTrials());
+        break;
+      case COUNT:
+        CountExperiment countExperiment = (CountExperiment) experimentContext;
+        countExperiment.addTrial(trial);
+        db.collection(EXPERIMENT_COLLECTION).document(experimentId).update("trials", countExperiment.getTrials());
+        break;
+      case MEASUREMENT:
+        MeasurementExperiment measurementExperiment = (MeasurementExperiment) experimentContext;
+        measurementExperiment.addTrial(trial);
+        db.collection(EXPERIMENT_COLLECTION).document(experimentId).update("trials", measurementExperiment.getTrials());
+        break;
+    }
+
   }
 
   public interface ExperimentControllerObserver {
+
     void onExperimentLoaded();
   }
 

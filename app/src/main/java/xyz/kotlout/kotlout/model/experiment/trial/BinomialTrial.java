@@ -6,22 +6,20 @@ package xyz.kotlout.kotlout.model.experiment.trial;
 public class BinomialTrial extends Trial {
 
   private boolean result;
-  private String experimenter;
 
   public BinomialTrial() {
-
   }
 
-  public BinomialTrial(boolean result, String experimenter) {
+  public BinomialTrial(boolean result, String experimenterId) {
+    super(experimenterId);
     this.result = result;
-    this.experimenter = experimenter;
   }
 
   public boolean getResult() {
     return result;
   }
 
-  public String getExperimenter() {
-    return experimenter;
+  public void setResult(boolean result) {
+    this.result = result;
   }
 }

@@ -27,7 +27,6 @@
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
     android:ems="10"
-    android:inputType="number"
     app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline

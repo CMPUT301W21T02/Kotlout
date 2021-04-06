@@ -11,7 +11,6 @@ import xyz.kotlout.kotlout.controller.ExperimentController.ExperimentControllerO
 import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
-import xyz.kotlout.kotlout.model.user.User;
 
 /**
  * Custom View for the Experiment Info Fragment's header
@@ -40,11 +39,11 @@ public class InfoHeaderView extends LinearLayout implements ExperimentController
     LayoutInflater inflater = LayoutInflater.from(context);
     inflater.inflate(R.layout.view_info_header, this, true);
 
-    tvDescription = (TextView) findViewById(R.id.header_description);
-    tvOwner = (TextView) findViewById(R.id.header_owner);
-    tvRegion = (TextView) findViewById(R.id.header_region);
-    tvType = (TextView) findViewById(R.id.header_type);
-    tvCount = (TextView) findViewById(R.id.header_count);
+    tvDescription = findViewById(R.id.header_description);
+    tvOwner = findViewById(R.id.header_owner);
+    tvRegion = findViewById(R.id.header_region);
+    tvType = findViewById(R.id.header_type);
+    tvCount = findViewById(R.id.header_count);
   }
 
 

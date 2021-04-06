@@ -5,5 +5,15 @@ package xyz.kotlout.kotlout.model.experiment.trial;
  */
 public class MeasurementTrial extends Trial {
 
-  private Double result;
+  private double result;
+
+  public MeasurementTrial(double result, String experimenterId) {
+    super(experimenterId);
+    this.result = result;
+  }
+
+  public double getResult() {
+    return result;
+  }
+
 }

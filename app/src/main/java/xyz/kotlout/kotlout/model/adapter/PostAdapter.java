@@ -15,7 +15,7 @@ import xyz.kotlout.kotlout.model.experiment.Post;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
-  private List<Post> postData;
+  private final List<Post> postData;
   Context appContext;
 
   @NonNull

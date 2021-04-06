@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 import xyz.kotlout.kotlout.view.fragment.ExperimentInfoFragment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentMapFragment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentTrialListFragment;
@@ -113,6 +115,17 @@ public class ExperimentViewActivity extends AppCompatActivity {
             }
         ).attach();
       });
+    }
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == TrialNewActivity.NEW_TRIAL_REQUEST) {
+      if (resultCode == RESULT_OK) {
+        assert data != null;
+        experimentController.addTrial((Trial) data.getSerializableExtra(TrialNewActivity.TRIAL_EXTRA));
+      }
     }
   }
 

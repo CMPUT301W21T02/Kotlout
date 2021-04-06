@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
       case R.id.show_profile:
         Intent intent = new Intent(this, ProfileActivity.class);
         intent.putExtra(UserHelper.UUID_INTENT, UserHelper.readUuid());
-        this.startActivity(intent);
+        startActivity(intent);
         return true;
 
       default:

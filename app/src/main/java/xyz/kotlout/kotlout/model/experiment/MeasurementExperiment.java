@@ -1,19 +1,21 @@
- package xyz.kotlout.kotlout.model.experiment;
+package xyz.kotlout.kotlout.model.experiment;
 
+import java.util.ArrayList;
 import java.util.List;
 import xyz.kotlout.kotlout.model.ExperimentType;
+import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
 /**
  * A specialization of the Experiment class for experiments involving floating point measurements.
  */
 public class MeasurementExperiment extends Experiment {
 
-  public static ExperimentType type = ExperimentType.MEASUREMENT;
-  private List<MeasurementTrial> trials;
+  public ExperimentType type = ExperimentType.MEASUREMENT;
+  private List<MeasurementTrial> trials = new ArrayList<>();
 
   public MeasurementExperiment() {
-
   }
 
   /**
@@ -28,7 +30,12 @@ public class MeasurementExperiment extends Experiment {
     return type;
   }
 
-  public void addTrial(MeasurementTrial newTrial) {
+  @Override
+  public void addTrial(Trial trial) {
+    trials.add((MeasurementTrial) trial);
+  }
 
+  public List<MeasurementTrial> getTrials() {
+    return trials;
   }
 }

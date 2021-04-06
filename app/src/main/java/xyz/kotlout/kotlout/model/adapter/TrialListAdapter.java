@@ -13,10 +13,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
 public class TrialListAdapter extends BaseExpandableListAdapter {
 
-  private List<BinomialTrial> trialList;
+  private final List<BinomialTrial> trialList;
   private final Context context;
   Map<String, List<BinomialTrial>> ByExperimenter;
   List<String> Experimenters;
@@ -36,7 +37,7 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
         new BinomialTrial(false, "Me")
     );
 
-    ByExperimenter = trialList.parallelStream().collect(Collectors.groupingBy(BinomialTrial::getExperimenter));
+    ByExperimenter = trialList.parallelStream().collect(Collectors.groupingBy(Trial::getExperimenter));
     Experimenters = trialList.parallelStream().filter(trial -> !trial.getExperimenter().equals("Me"))
         .map(BinomialTrial::getExperimenter).sorted().collect(
             Collectors.toList());

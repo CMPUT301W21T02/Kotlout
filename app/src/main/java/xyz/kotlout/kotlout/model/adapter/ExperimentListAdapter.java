@@ -35,12 +35,12 @@ import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment.ListType;
 public class ExperimentListAdapter extends BaseExpandableListAdapter {
 
   private static final String TAG = "EXP_LIST_ADAPTER";
-  private ExperimentListController experimentListController;
+  private final ExperimentListController experimentListController;
   private Query getMyExperimentsQuery;
   private Query getSubscribedExperimentsQuery;
-  private Map<ExperimentGroup, List<ExperimentController>> experimentGroups;
+  private final Map<ExperimentGroup, List<ExperimentController>> experimentGroups;
   private final Context context;
-  private ListType listType;
+  private final ListType listType;
 
   /**
    * Initializes the adapter for the given user's open and closed experiments.
