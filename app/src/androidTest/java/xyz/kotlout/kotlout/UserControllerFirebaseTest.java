@@ -29,8 +29,8 @@ import xyz.kotlout.kotlout.model.user.User;
 @RunWith(AndroidJUnit4.class)
 public class UserControllerFirebaseTest {
 
-  private final long TIMEOUT = 1000;
-  private final int NUM_DOC_WRITES = 10;
+  private final static long TIMEOUT = 1000;
+  private final static int NUM_DOC_WRITES = 10;
   private static User oldUser;
 
   @BeforeClass
@@ -70,7 +70,7 @@ public class UserControllerFirebaseTest {
     AtomicBoolean done = new AtomicBoolean();
     DocumentReference userDoc = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid());
     User newUser = new User();
-    newUser.setUuid(UserHelper.readUuid());;
+    newUser.setUuid(UserHelper.readUuid());
     User testUser = new User("FIRST", "LAST", "EMAIL", "PHONE", UserHelper.readUuid());
     userDoc.set(testUser).addOnSuccessListener(task -> done.set(true));
     waitFor(done);

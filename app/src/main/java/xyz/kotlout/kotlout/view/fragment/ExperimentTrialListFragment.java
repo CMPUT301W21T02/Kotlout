@@ -8,7 +8,6 @@ import android.widget.ExpandableListView;
 import androidx.fragment.app.Fragment;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.model.ExperimentType;
-import xyz.kotlout.kotlout.model.adapter.ExperimentListAdapter;
 import xyz.kotlout.kotlout.model.adapter.TrialListAdapter;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 

@@ -2,17 +2,17 @@ package xyz.kotlout.kotlout.controller;
 
 import androidx.annotation.NonNull;
 
-public enum MyExperimentGroup {
+public enum ExperimentGroup {
   OPEN("Open Experiments"),
   CLOSED("Closed Experiments");
 
   private final String text;
 
-  MyExperimentGroup(String text) {
+  ExperimentGroup(String text) {
     this.text = text;
   }
 
-  public static MyExperimentGroup getByOrder(int id) {
+  public static ExperimentGroup getByOrder(int id) {
     if (id == 0) {
       return OPEN;
     }

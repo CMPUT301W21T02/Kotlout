@@ -29,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
           .commit();
     }
 
-
     BottomNavigationView bnv = findViewById(R.id.nav_main);
     bnv.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
   }
@@ -91,27 +90,24 @@ public class MainActivity extends AppCompatActivity {
         return;
       }
 
-      // TODO: set experiment owner
-      newExperiment.setOwnerUuid("0");
-
+      newExperiment.setOwnerUuid(UserHelper.readUuid());
       ExperimentController experimentController = new ExperimentController(newExperiment);
-      experimentController.publish();
+      experimentController.publishNewExperiment();
     }
   }
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
+
       case R.id.sync_experiments:
+      case R.id.search_experiments:
         return true;
 
       case R.id.show_profile:
         Intent intent = new Intent(this, ProfileActivity.class);
         intent.putExtra(UserHelper.UUID_INTENT, UserHelper.readUuid());
         this.startActivity(intent);
-        return true;
-
-      case R.id.search_experiments:
         return true;
 
       default:

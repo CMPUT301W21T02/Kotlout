@@ -8,7 +8,6 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import androidx.appcompat.app.AppCompatActivity;
 import xyz.kotlout.kotlout.R;
-import xyz.kotlout.kotlout.controller.ExperimentController;
 import xyz.kotlout.kotlout.model.ExperimentType;
 
 public class TrialNewActivity extends AppCompatActivity {

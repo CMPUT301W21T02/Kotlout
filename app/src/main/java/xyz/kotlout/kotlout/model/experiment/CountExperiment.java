@@ -9,7 +9,7 @@ import xyz.kotlout.kotlout.model.experiment.trial.CountTrial;
  */
 public class CountExperiment extends Experiment {
 
-  public static ExperimentType type = ExperimentType.COUNT;
+  public static final ExperimentType type = ExperimentType.COUNT;
   private List<CountTrial> trials;
 
   /**

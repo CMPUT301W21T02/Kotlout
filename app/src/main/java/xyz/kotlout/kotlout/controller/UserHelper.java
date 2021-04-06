@@ -42,7 +42,7 @@ public final class UserHelper {
    * @return the boolean
    */
   public static boolean validateEmail(String email) {
-    return email == null || email.equals("") || EMAIL_REGEX.matcher(email).matches();
+    return email == null || email.isEmpty() || EMAIL_REGEX.matcher(email).matches();
   }
 
   /**
@@ -52,7 +52,7 @@ public final class UserHelper {
    * @return the boolean
    */
   public static boolean validatePhoneNumber(String phoneNumber) {
-    return phoneNumber == null || phoneNumber.equals("") || PHONE_REGEX.matcher(phoneNumber).matches();
+    return phoneNumber == null || phoneNumber.isEmpty() || PHONE_REGEX.matcher(phoneNumber).matches();
   }
 
 
