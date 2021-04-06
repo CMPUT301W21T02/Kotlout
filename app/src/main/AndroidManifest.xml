@@ -29,6 +29,9 @@
       android:exported="true"
       android:label="Discussion"
       android:name=".view.DiscussionPostsActivity" />
+    <activity
+      android:label="@string/title_activity_experiment_view"
+      android:name=".view.ExperimentViewActivity" />
   </application>
 
 </manifest>
