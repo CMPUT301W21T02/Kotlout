@@ -5,5 +5,21 @@ package xyz.kotlout.kotlout.model.experiment.trial;
  */
 public class BinomialTrial extends Trial {
 
-  private Boolean result;
+  private boolean result;
+
+  public BinomialTrial() {
+  }
+
+  public BinomialTrial(boolean result, String experimenterId) {
+    super(experimenterId);
+    this.result = result;
+  }
+
+  public boolean getResult() {
+    return result;
+  }
+
+  public void setResult(boolean result) {
+    this.result = result;
+  }
 }

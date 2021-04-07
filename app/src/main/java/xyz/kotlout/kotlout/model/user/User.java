@@ -26,16 +26,16 @@ public class User {
 
   public User(String firstName, String lastName, String email, String phoneNumber, String uuid) {
     // If the User is initialized with empty Strings, those fields should be set to null
-    if (firstName.equals("")) {
+    if (firstName.isEmpty()) {
       firstName = null;
     }
-    if (lastName.equals("")) {
+    if (lastName.isEmpty()) {
       lastName = null;
     }
-    if (email.equals("")) {
+    if (email.isEmpty()) {
       email = null;
     }
-    if (phoneNumber.equals("")) {
+    if (phoneNumber.isEmpty()) {
       phoneNumber = null;
     }
     this.firstName = firstName;

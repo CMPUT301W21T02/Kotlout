@@ -30,6 +30,11 @@
   <string name="new_experiment_description">Description</string>
   <string name="btn_new_experiment_add">Add Experiment</string>
   <string name="title_activity_new">New Experiment</string>
+  <string name="share_experiment">Share Experiment</string>
+  <string name="subscribe_to_experiment">Subscribe to Experiment</string>
+  <string name="view_info_text">Info</string>
+  <string name="view_map_text">Map</string>
+  <string name="view_trials_text">Trials</string>
   <string name="title_activity_view">Experiment Info</string>
 
   <string-array name="experiment_types">
@@ -46,11 +51,11 @@
   <string name="default_comment_date">2021–03–16 14:03</string>
   <string name="comment_reply_count">0 Replies</string>
   <string name="comment_date_format">yyyy-MM-dd HH:mm</string>
-  <string name="title_experiment_view">Experiment View</string>
   <string name="experiment_long_click_menu_title">Experiment Options</string>
   <string name="unpublish_experiment_option">Unpublish</string>
   <string name="publish_experiment_option">Publish</string>
   <string name="end_experiment_option">End</string>
   <string name="resume_experiment_option">Resume</string>
+  <string name="title_activity_trial_new">New Trial</string>
   <string name="title_activity_experiment_view">Experiment View</string>
 </resources>

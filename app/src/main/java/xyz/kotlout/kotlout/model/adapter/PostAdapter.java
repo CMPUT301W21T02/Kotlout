@@ -1,4 +1,4 @@
-package xyz.kotlout.kotlout.view.Adaptors;
+package xyz.kotlout.kotlout.model.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,12 +11,11 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import xyz.kotlout.kotlout.R;
-import xyz.kotlout.kotlout.controller.ApplicationContextProvider;
 import xyz.kotlout.kotlout.model.experiment.Post;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
-  private List<Post> postData;
+  private final List<Post> postData;
   Context appContext;
 
   @NonNull

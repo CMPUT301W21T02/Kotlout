@@ -9,7 +9,7 @@ import java.util.Date;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.model.experiment.Post;
 import xyz.kotlout.kotlout.model.user.User;
-import xyz.kotlout.kotlout.view.Adaptors.PostAdapter;
+import xyz.kotlout.kotlout.model.adapter.PostAdapter;
 
 public class DiscussionPostsActivity extends AppCompatActivity {
 

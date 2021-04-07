@@ -1,10 +1,14 @@
 package xyz.kotlout.kotlout.model.experiment;
 
 
+import androidx.annotation.NonNull;
 import com.google.firebase.firestore.DocumentId;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import xyz.kotlout.kotlout.model.ExperimentType;
+import xyz.kotlout.kotlout.model.experiment.trial.Trial;
+import xyz.kotlout.kotlout.model.user.User;
 
 /**
  * Base class for modelling experiments. Child classes should model a particular type of experiment. Which likely contain a list
@@ -121,6 +125,7 @@ public abstract class Experiment implements Serializable {
 
   /**
    * Opens or closes the experiment. If an experiment is closed, it no longer accepts trials from anyone.
+   *
    * @param ongoing True if experiment is not closed. False otherwise.
    */
   public void setOngoing(boolean ongoing) {
@@ -129,6 +134,7 @@ public abstract class Experiment implements Serializable {
 
   /**
    * Checks if the experiment is published, making it visible to others in the app.
+   *
    * @return True if published. False otherwise.
    */
   public boolean isPublished() {
@@ -137,6 +143,7 @@ public abstract class Experiment implements Serializable {
 
   /**
    * Sets the publishing status of the experiment.
+   *
    * @param published True if the experiment is published. False otherwise.
    */
   public void setPublished(boolean published) {
@@ -160,4 +167,16 @@ public abstract class Experiment implements Serializable {
   public List<Post> getPosts() {
     return posts;
   }
+
+  public void ignoreUser(@NonNull User user) {
+    ignoredUsers.add(user.getUuid());
+  }
+
+  public List<String> getIgnoredUser() {
+    return ignoredUsers;
+  }
+
+  abstract ExperimentType getExperimentType();
+
+  abstract void addTrial(Trial trial);
 }

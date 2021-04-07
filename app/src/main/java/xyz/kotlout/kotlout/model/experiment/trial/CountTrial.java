@@ -5,6 +5,18 @@ package xyz.kotlout.kotlout.model.experiment.trial;
  */
 public class CountTrial extends Trial {
 
-  // Unused
-  //private int result;
+  private int result;
+
+  public CountTrial() {
+
+  }
+
+  public CountTrial(int result, String experimenterId) {
+    super(experimenterId);
+    this.result = result;
+  }
+
+  public int getResult() {
+    return result;
+  }
 }

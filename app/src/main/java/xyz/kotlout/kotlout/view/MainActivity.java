@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     if (id == R.id.my_experiments_view) {
       ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.MINE);
+      fragment.addController();
       getSupportFragmentManager()
           .beginTransaction()
           .replace(R.id.frame_main, fragment)
@@ -98,16 +99,15 @@ public class MainActivity extends AppCompatActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
+
       case R.id.sync_experiments:
+      case R.id.search_experiments:
         return true;
 
       case R.id.show_profile:
         Intent intent = new Intent(this, ProfileActivity.class);
         intent.putExtra(UserHelper.UUID_INTENT, UserHelper.readUuid());
-        this.startActivity(intent);
-        return true;
-
-      case R.id.search_experiments:
+        startActivity(intent);
         return true;
 
       default:

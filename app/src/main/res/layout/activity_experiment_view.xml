@@ -5,4 +5,40 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent">
 
+  <androidx.appcompat.widget.Toolbar
+    android:id="@+id/tb_experiment_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent">
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent" />
+  </androidx.appcompat.widget.Toolbar>
+
+  <com.google.android.material.tabs.TabLayout
+    android:id="@+id/tl_experiment_view"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent">
+  </com.google.android.material.tabs.TabLayout>
+
+  <androidx.viewpager2.widget.ViewPager2
+    android:id="@+id/pager_experiment_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    app:layout_constraintTop_toBottomOf="@id/tl_experiment_view" />
+
+  <com.google.android.material.floatingactionbutton.FloatingActionButton
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/fab_margin"
+    android:contentDescription="Create new trial"
+    android:src="@drawable/ic_baseline_add"
+    android:id= "@+id/fab_view_add_trial"
+    android:onClick="fabNewTrial"
+
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintRight_toRightOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
