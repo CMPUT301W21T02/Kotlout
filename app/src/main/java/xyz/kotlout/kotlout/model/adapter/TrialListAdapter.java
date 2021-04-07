@@ -135,11 +135,11 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
         break;
       case NON_NEGATIVE_INTEGER:
         NonNegativeTrial nonNegativeTrial = (NonNegativeTrial) trial;
-        trialResult.setText(nonNegativeTrial.getResult());
+        trialResult.setText(Integer.toString(nonNegativeTrial.getResult()));
         break;
       case COUNT:
         CountTrial countTrial = (CountTrial) trial;
-        trialResult.setText(countTrial.getResult());
+        trialResult.setText(Integer.toString(countTrial.getResult()));
         break;
       case MEASUREMENT:
         MeasurementTrial measurementTrial = (MeasurementTrial) trial;

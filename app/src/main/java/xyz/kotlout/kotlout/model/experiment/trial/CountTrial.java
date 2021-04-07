@@ -19,4 +19,8 @@ public class CountTrial extends Trial {
   public int getResult() {
     return result;
   }
+
+  public void setResult(int result) {
+    this.result = result;
+  }
 }

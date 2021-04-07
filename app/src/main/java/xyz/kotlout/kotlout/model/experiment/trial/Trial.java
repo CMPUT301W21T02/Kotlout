@@ -36,4 +36,11 @@ public abstract class Trial implements Serializable {
     this.timestamp = timestamp;
   }
 
+  public void setLocation(Geolocation location) {
+    this.location = location;
+  }
+
+  public Geolocation getLocation() {
+    return location;
+  }
 }

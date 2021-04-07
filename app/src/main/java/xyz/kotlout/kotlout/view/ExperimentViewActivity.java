@@ -39,8 +39,6 @@ public class ExperimentViewActivity extends AppCompatActivity {
   ExperimentController experimentController;
   String experimentId;
 
-  boolean isFirstBuild = true;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
