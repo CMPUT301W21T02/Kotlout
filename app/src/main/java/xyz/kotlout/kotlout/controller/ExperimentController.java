@@ -47,23 +47,25 @@ public class ExperimentController {
     this.experimentObserver = loadedObserver;
     db.collection(EXPERIMENT_COLLECTION).document(experimentId).get()
         .addOnSuccessListener(documentSnapshot -> {
-          type = ExperimentType.valueOf((String) documentSnapshot.get("type"));
-          switch (type) {
-            case BINOMIAL:
-              experimentContext = documentSnapshot.toObject(BinomialExperiment.class);
-              break;
-            case NON_NEGATIVE_INTEGER:
-              experimentContext = documentSnapshot.toObject(NonNegativeExperiment.class);
-              break;
-            case COUNT:
-              experimentContext = documentSnapshot.toObject(CountExperiment.class);
-              break;
-            case MEASUREMENT:
-              experimentContext = documentSnapshot.toObject(MeasurementExperiment.class);
-              break;
-          }
-          if (loadedObserver != null) {
-            loadedObserver.onExperimentLoaded();
+          if(documentSnapshot != null) {
+            type = ExperimentType.valueOf((String) documentSnapshot.get("type"));
+            switch (type) {
+              case BINOMIAL:
+                experimentContext = documentSnapshot.toObject(BinomialExperiment.class);
+                break;
+              case NON_NEGATIVE_INTEGER:
+                experimentContext = documentSnapshot.toObject(NonNegativeExperiment.class);
+                break;
+              case COUNT:
+                experimentContext = documentSnapshot.toObject(CountExperiment.class);
+                break;
+              case MEASUREMENT:
+                experimentContext = documentSnapshot.toObject(MeasurementExperiment.class);
+                break;
+            }
+            if (loadedObserver != null) {
+              loadedObserver.onExperimentLoaded();
+            }
           }
         });
 
