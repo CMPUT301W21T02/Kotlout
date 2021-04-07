@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Date;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.model.adapter.PostAdapter;
 import xyz.kotlout.kotlout.model.experiment.Post;
 import xyz.kotlout.kotlout.model.user.User;
-import xyz.kotlout.kotlout.model.adapter.PostAdapter;
 
 public class DiscussionPostsActivity extends AppCompatActivity {
 
@@ -25,14 +25,14 @@ public class DiscussionPostsActivity extends AppCompatActivity {
     posts.setLayoutManager(new LinearLayoutManager(this));
 
     ArrayList<Post> postList = new ArrayList<>();
-    for (int i=0; i<100; i++){
-        Post newPost = new Post();
-        User user = new User();
-        user.setFirstName("LOLOLOL");
-        newPost.setPoster(user);
-        newPost.setText("lmao");
-        newPost.setTimestamp(new Date());
-        postList.add(newPost);
+    for (int i = 0; i < 100; i++) {
+      Post newPost = new Post();
+      User user = new User();
+      user.setFirstName("LOLOLOL");
+      newPost.setPoster(user);
+      newPost.setText("lmao");
+      newPost.setTimestamp(new Date());
+      postList.add(newPost);
     }
 
     postAdapter = new PostAdapter(postList, this);

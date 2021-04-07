@@ -92,11 +92,6 @@ public class ExperimentViewActivity extends AppCompatActivity {
               trialFab.hide();
             }
           }
-
-          @Override
-          public void onPageScrollStateChanged(int state) {
-            super.onPageScrollStateChanged(state);
-          }
         });
 
         new TabLayoutMediator(tabLayout, viewPager,
@@ -156,7 +151,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
     startActivityForResult(intent, TrialNewActivity.NEW_TRIAL_REQUEST);
   }
 
-  public static class ExperimentViewFragmentsAdapter extends FragmentStateAdapter {
+  static class ExperimentViewFragmentsAdapter extends FragmentStateAdapter {
 
     List<Fragment> fragmentList = new ArrayList<>();
 
