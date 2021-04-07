@@ -6,8 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import xyz.kotlout.kotlout.R;
@@ -29,8 +32,9 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
 
   ExperimentType type;
   String experimentId;
-
   ExperimentController controller;
+
+  String myUuid;
 
   List<String> Experimenters;
 
@@ -40,7 +44,7 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
     this.type = type;
 
     controller = new ExperimentController(experimentId, this::onExperimentLoaded, this::onExperimentLoaded);
-
+    myUuid = UserHelper.readUuid();
     Experimenters = new ArrayList<>();
     trialList = new ArrayList<>();
   }
@@ -62,8 +66,7 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
 
   @Override
   public Object getGroup(int groupPosition) {
-    String uuid = Experimenters.get(groupPosition);
-    return UserHelper.fetchUser(uuid).getDisplayName();
+    return Experimenters.get(groupPosition);
   }
 
   @Override
@@ -98,7 +101,14 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
 
     TextView tvGroup = convertView.findViewById(R.id.tv_trial_list_group);
 
-    tvGroup.setText(Experimenters.get(groupPosition));
+    String groupUuid = (String) getGroup(groupPosition);
+
+    if(groupUuid == myUuid) {
+      tvGroup.setText("Me");
+    } else {
+      tvGroup.setText(UserHelper.fetchUser(groupUuid).getDisplayName());
+    }
+
     return convertView;
   }
 
@@ -113,25 +123,29 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
 
     TextView trialResult = convertView
         .findViewById(R.id.tv_trial_list_result);
-
+    Trial trial = (Trial) getChild(groupPosition, childPosition);
     switch (type) {
       case BINOMIAL:
-        BinomialTrial binomialTrial = (BinomialTrial) getChild(groupPosition, childPosition);
+        BinomialTrial binomialTrial = (BinomialTrial) trial;
         trialResult.setText(binomialTrial.getResult() ? "Pass" : "Fail");
         break;
       case NON_NEGATIVE_INTEGER:
-        NonNegativeTrial nonNegativeTrial = (NonNegativeTrial) getChild(groupPosition, childPosition);
+        NonNegativeTrial nonNegativeTrial = (NonNegativeTrial) trial;
         trialResult.setText(nonNegativeTrial.getResult());
         break;
       case COUNT:
-        CountTrial countTrial = (CountTrial) getChild(groupPosition, childPosition);
+        CountTrial countTrial = (CountTrial) trial;
         trialResult.setText(countTrial.getResult());
         break;
       case MEASUREMENT:
-        MeasurementTrial measurementTrial = (MeasurementTrial) getChild(groupPosition, childPosition);
+        MeasurementTrial measurementTrial = (MeasurementTrial) trial;
         trialResult.setText(Double.toString(measurementTrial.getResult()));
         break;
     }
+
+    TextView trialDate = convertView.findViewById(R.id.tv_trial_list_date);
+    DateFormat local = new SimpleDateFormat("yyyy-MM-dd @ HH:mm", Locale.getDefault());
+    trialDate.setText(local.format(trial.getTimestamp()));
 
     return convertView;
   }
@@ -143,8 +157,6 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
 
   public void onExperimentLoaded() {
     trialList = controller.getListTrials();
-
-    String myUuid = UserHelper.readUuid();
 
     ByExperimenter = trialList.parallelStream().collect(Collectors.groupingBy(Trial::getExperimenterId));
     Experimenters = trialList.parallelStream().map(Trial::getExperimenterId).distinct().sorted().collect(Collectors.toList());

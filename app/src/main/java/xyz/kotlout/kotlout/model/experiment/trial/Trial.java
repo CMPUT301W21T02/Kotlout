@@ -3,9 +3,7 @@ package xyz.kotlout.kotlout.model.experiment.trial;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-import xyz.kotlout.kotlout.model.experiment.Experiment;
 import xyz.kotlout.kotlout.model.geolocation.Geolocation;
-import xyz.kotlout.kotlout.model.user.User;
 
 public abstract class Trial implements Serializable {
 
@@ -28,6 +26,14 @@ public abstract class Trial implements Serializable {
 
   public void setExperimenterId(String experimenterId) {
     this.experimenterId = experimenterId;
+  }
+
+  public Date getTimestamp() {
+    return timestamp;
+  }
+
+  public void setTimestamp(Date timestamp) {
+    this.timestamp = timestamp;
   }
 
 }
