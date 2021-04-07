@@ -1,5 +1,6 @@
 package xyz.kotlout.kotlout.model.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
@@ -61,7 +63,7 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
       return 0;
     }
 
-    return ByExperimenter.get(experimenterName).size();
+    return Objects.requireNonNull(ByExperimenter.get(experimenterName)).size();
   }
 
   @Override
@@ -72,7 +74,7 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
   @Override
   public Object getChild(int groupPosition, int childPosition) {
     String experimenterName = Experimenters.get(groupPosition);
-    return ByExperimenter.get(experimenterName).get(childPosition);
+    return Objects.requireNonNull(ByExperimenter.get(experimenterName)).get(childPosition);
   }
 
   @Override
@@ -90,6 +92,7 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
     return true;
   }
 
+  @SuppressLint("SetTextI18n")
   @Override
   public View getGroupView(int groupPosition, boolean isExpanded, View convertView,
       ViewGroup parent) {
@@ -103,7 +106,7 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
 
     String groupUuid = (String) getGroup(groupPosition);
 
-    if(groupUuid == myUuid) {
+    if(groupUuid.equals(myUuid)) {
       tvGroup.setText("Me");
     } else {
       tvGroup.setText(UserHelper.fetchUser(groupUuid).getDisplayName());
@@ -112,6 +115,7 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
     return convertView;
   }
 
+  @SuppressLint("SetTextI18n")
   @Override
   public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
       View convertView, ViewGroup parent) {
