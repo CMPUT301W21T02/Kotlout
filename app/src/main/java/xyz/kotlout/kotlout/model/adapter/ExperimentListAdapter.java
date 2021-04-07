@@ -36,11 +36,11 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
 
   private static final String TAG = "EXP_LIST_ADAPTER";
   private final ExperimentListController experimentListController;
-  private Query getMyExperimentsQuery;
-  private Query getSubscribedExperimentsQuery;
   private final Map<ExperimentGroup, List<ExperimentController>> experimentGroups;
   private final Context context;
   private final ListType listType;
+  private Query getMyExperimentsQuery;
+  private Query getSubscribedExperimentsQuery;
 
   /**
    * Initializes the adapter for the given user's open and closed experiments.

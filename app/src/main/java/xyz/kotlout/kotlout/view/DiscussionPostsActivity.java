@@ -13,8 +13,8 @@ import xyz.kotlout.kotlout.model.adapter.PostAdapter;
 
 public class DiscussionPostsActivity extends AppCompatActivity {
 
-  RecyclerView posts;
-  PostAdapter postAdapter;
+  private RecyclerView posts;
+  private PostAdapter postAdapter;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

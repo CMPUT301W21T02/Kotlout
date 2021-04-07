@@ -31,15 +31,13 @@ public class ExperimentViewActivity extends AppCompatActivity {
   public static final int VIEW_EXPERIMENT_REQUEST = 0;
   public static final String EXPERIMENT_ID = "EXPERIMENT";
 
-  ExperimentViewFragmentsAdapter adapter;
-  ViewPager2 viewPager;
-  TabLayout tabLayout;
-  FloatingActionButton trialFab;
+  private ExperimentViewFragmentsAdapter adapter;
+  private ViewPager2 viewPager;
+  private TabLayout tabLayout;
+  private FloatingActionButton trialFab;
 
-  ExperimentController experimentController;
-  String experimentId;
-
-  boolean isFirstBuild = true;
+  private ExperimentController experimentController;
+  private String experimentId;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

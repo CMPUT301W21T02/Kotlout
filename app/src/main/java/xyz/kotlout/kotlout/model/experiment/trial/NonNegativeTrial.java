@@ -15,6 +15,7 @@ public class NonNegativeTrial extends Trial {
     super(experimenterId);
     this.result = result;
   }
+
   public int getResult() {
     return result;
   }

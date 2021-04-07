@@ -24,10 +24,10 @@ public class TrialNewActivity extends AppCompatActivity {
   public static final String EXPERIMENT_TYPE = "TYPE";
   public static final String TRIAL_EXTRA = "TRIAL";
 
-  ExperimentType type;
+  private ExperimentType type;
 
-  RadioGroup radioButtons;
-  EditText textEntry;
+  private RadioGroup radioButtons;
+  private EditText textEntry;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

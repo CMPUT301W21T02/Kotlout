@@ -27,18 +27,17 @@ import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
 public class TrialListAdapter extends BaseExpandableListAdapter {
 
-  private List<? extends Trial> trialList;
-  Map<String, ? extends List<? extends Trial>> ByExperimenter;
-
   private final Context context;
 
-  ExperimentType type;
-  String experimentId;
-  ExperimentController controller;
+  private List<? extends Trial> trialList;
+  private Map<String, ? extends List<? extends Trial>> ByExperimenter;
+  private List<String> Experimenters;
 
-  String myUuid;
+  private ExperimentType type;
+  private ExperimentController controller;
 
-  List<String> Experimenters;
+  private String experimentId;
+  private String myUuid;
 
   public TrialListAdapter(Context context, String experimentId, ExperimentType type) {
     this.context = context;
@@ -106,7 +105,7 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
 
     String groupUuid = (String) getGroup(groupPosition);
 
-    if(groupUuid.equals(myUuid)) {
+    if (groupUuid.equals(myUuid)) {
       tvGroup.setText("Me");
     } else {
       tvGroup.setText(UserHelper.fetchUser(groupUuid).getDisplayName());
