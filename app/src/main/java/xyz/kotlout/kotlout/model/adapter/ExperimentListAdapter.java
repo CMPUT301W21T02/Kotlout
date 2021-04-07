@@ -41,6 +41,7 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
   private final ListType listType;
   private Query getMyExperimentsQuery;
   private Query getSubscribedExperimentsQuery;
+  private Query getAllExperimentsQuery;
 
   /**
    * Initializes the adapter for the given user's open and closed experiments.
@@ -61,11 +62,12 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
         break;
 
       case ALL:
-        // TODO
+        getAllExperimentsQuery = experimentListController.getAllExperiments();
+        getAllExperimentsQuery.addSnapshotListener(this::showAllExperiments);
         break;
 
       case SUBSCRIBED:
-        getSubscribedExperimentsQuery = experimentListController.getSubscribedExperiments();
+        getSubscribedExperimentsQuery = experimentListController.getAllExperiments();
         getSubscribedExperimentsQuery.addSnapshotListener(this::showSubscribedExperiments);
         break;
     }
@@ -120,6 +122,18 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
       }
       this.notifyDataSetChanged();
     });
+  }
+
+  private void showAllExperiments(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+    clearExperimentGroups();
+
+    // Filter experiments by user subscriptions
+    for (QueryDocumentSnapshot experimentDoc : queryDocumentSnapshots) {
+      Log.d(TAG, experimentDoc.getId() + " => " + experimentDoc.getData());
+
+      addExperimentToGroup(experimentDoc);
+    }
+    this.notifyDataSetChanged();
   }
 
   /**
