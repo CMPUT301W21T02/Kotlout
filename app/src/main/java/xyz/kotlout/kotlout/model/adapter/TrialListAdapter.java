@@ -48,18 +48,23 @@ public class TrialListAdapter extends BaseExpandableListAdapter implements Exper
 
   @Override
   public int getGroupCount() {
-    return ByExperimenter.size();
+    return Experimenters.size();
   }
 
   @Override
   public int getChildrenCount(int groupPosition) {
     String experimenterName = Experimenters.get(groupPosition);
+    if (Experimenters.size() == 0) {
+      return 0;
+    }
+
     return ByExperimenter.get(experimenterName).size();
   }
 
   @Override
   public Object getGroup(int groupPosition) {
-    return Experimenters.get(groupPosition);
+    String uuid = Experimenters.get(groupPosition);
+    return UserHelper.fetchUser(uuid).getDisplayName();
   }
 
   @Override
@@ -141,12 +146,17 @@ public class TrialListAdapter extends BaseExpandableListAdapter implements Exper
   public void onExperimentLoaded() {
     trialList = controller.getListTrials();
 
-    ByExperimenter = trialList.parallelStream().collect(Collectors.groupingBy(Trial::getExperimenter));
-    Experimenters = trialList.parallelStream().filter(trial -> !trial.getExperimenter().equals("Me"))
-        .map(Trial::getExperimenter).sorted().collect(
-            Collectors.toList());
+    String myUuid = UserHelper.readUuid();
 
-    Experimenters.remove(UserHelper.readUuid());
-    Experimenters.add(0, UserHelper.readUuid());
+    ByExperimenter = trialList.parallelStream().collect(Collectors.groupingBy(Trial::getExperimenterId));
+    Experimenters = trialList.parallelStream().map(Trial::getExperimenterId).distinct().sorted().collect(Collectors.toList());
+
+    if (Experimenters.contains(myUuid)) {
+      Experimenters.remove(myUuid);
+      Experimenters.add(0, myUuid);
+    }
+
+    this.notifyDataSetInvalidated();
+    this.notifyDataSetChanged();
   }
 }

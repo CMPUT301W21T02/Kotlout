@@ -9,7 +9,6 @@ import xyz.kotlout.kotlout.model.user.User;
 
 public abstract class Trial implements Serializable {
 
-  private int trialId;
   private String experimenterId;
   private Date timestamp;
   private Geolocation location;
@@ -23,8 +22,12 @@ public abstract class Trial implements Serializable {
     this.timestamp = Calendar.getInstance().getTime();
   }
 
-  public String getExperimenter() {
+  public String getExperimenterId() {
     return experimenterId;
+  }
+
+  public void setExperimenterId(String experimenterId) {
+    this.experimenterId = experimenterId;
   }
 
 }
