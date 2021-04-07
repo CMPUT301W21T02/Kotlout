@@ -7,7 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
-import xyz.kotlout.kotlout.controller.ExperimentController.ExperimentControllerObserver;
+import xyz.kotlout.kotlout.controller.ExperimentController.ExperimentLoadedObserver;
 import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
@@ -15,7 +15,7 @@ import xyz.kotlout.kotlout.model.experiment.Experiment;
 /**
  * Custom View for the Experiment Info Fragment's header
  */
-public class InfoHeaderView extends LinearLayout implements ExperimentControllerObserver {
+public class InfoHeaderView extends LinearLayout implements ExperimentLoadedObserver {
 
   private final TextView tvDescription;
   private final TextView tvOwner;
@@ -48,7 +48,7 @@ public class InfoHeaderView extends LinearLayout implements ExperimentController
 
 
   public void setExperiment(String experimentId, ExperimentType type) {
-    controller = new ExperimentController(experimentId, this);
+    controller = new ExperimentController(experimentId, this, null);
     tvType.setText(type.toString());
   }
 

@@ -27,7 +27,7 @@ public class ExperimentController {
   String experimentId;
   ExperimentType type;
 
-  ExperimentControllerObserver observer;
+  ExperimentLoadedObserver experimentObserver;
 
   /**
    * Default constructor. Disabled, because an empty controller is useless.
@@ -40,10 +40,11 @@ public class ExperimentController {
    *
    * @param experimentId Firestore DocumentID that refers to the experiment.
    */
-  public ExperimentController(String experimentId, @Nullable ExperimentControllerObserver observer) {
+  public ExperimentController(String experimentId, @Nullable ExperimentLoadedObserver loadedObserver,
+      @Nullable ExperimentUpdatedObserver updatedObserver) {
     FirebaseFirestore db = FirebaseController.getFirestore();
     this.experimentId = experimentId;
-    this.observer = observer;
+    this.experimentObserver = loadedObserver;
     db.collection(EXPERIMENT_COLLECTION).document(experimentId).get()
         .addOnSuccessListener(documentSnapshot -> {
           type = ExperimentType.valueOf((String) documentSnapshot.get("type"));
@@ -61,10 +62,32 @@ public class ExperimentController {
               experimentContext = documentSnapshot.toObject(MeasurementExperiment.class);
               break;
           }
-          if (observer != null) {
-            observer.onExperimentLoaded();
+          if (loadedObserver != null) {
+            loadedObserver.onExperimentLoaded();
           }
         });
+
+    if (updatedObserver != null) {
+      db.collection(EXPERIMENT_COLLECTION).document(experimentId).addSnapshotListener((documentSnapshot, error) -> {
+        if (documentSnapshot != null && type != null) {
+          switch (type) {
+            case BINOMIAL:
+              experimentContext = documentSnapshot.toObject(BinomialExperiment.class);
+              break;
+            case NON_NEGATIVE_INTEGER:
+              experimentContext = documentSnapshot.toObject(NonNegativeExperiment.class);
+              break;
+            case COUNT:
+              experimentContext = documentSnapshot.toObject(CountExperiment.class);
+              break;
+            case MEASUREMENT:
+              experimentContext = documentSnapshot.toObject(MeasurementExperiment.class);
+              break;
+          }
+          updatedObserver.onExperimentUpdated();
+        }
+      });
+    }
   }
 
   /**
@@ -368,9 +391,14 @@ public class ExperimentController {
     return null;
   }
 
-  public interface ExperimentControllerObserver {
+  public interface ExperimentLoadedObserver {
 
     void onExperimentLoaded();
+  }
+
+  public interface ExperimentUpdatedObserver {
+
+    void onExperimentUpdated();
   }
 
 }

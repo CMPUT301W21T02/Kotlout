@@ -39,6 +39,8 @@ public class ExperimentViewActivity extends AppCompatActivity {
   ExperimentController experimentController;
   String experimentId;
 
+  boolean isFirstBuild = true;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -58,20 +60,21 @@ public class ExperimentViewActivity extends AppCompatActivity {
         ExperimentInfoFragment infoFragment = ExperimentInfoFragment
             .newInstance(experimentController.getExperimentContext(),
                 experimentController.getType());
-        adapter.addFragment(infoFragment);
 
         ExperimentMapFragment mapFragment = ExperimentMapFragment
             .newInstance(experimentController.getExperimentContext());
-        adapter.addFragment(mapFragment);
 
         ExperimentTrialListFragment trialListFragment = ExperimentTrialListFragment
             .newInstance(experimentController.getExperimentId(),
                 experimentController.getType());
+
+        adapter.addFragment(infoFragment);
+        adapter.addFragment(mapFragment);
         adapter.addFragment(trialListFragment);
 
         viewPager.setAdapter(adapter);
 
-        OnPageChangeCallback pageChangeCallback = new OnPageChangeCallback() {
+        viewPager.registerOnPageChangeCallback(new OnPageChangeCallback() {
           @Override
           public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             super.onPageScrolled(position, positionOffset, positionOffsetPixels);
@@ -96,8 +99,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
           public void onPageScrollStateChanged(int state) {
             super.onPageScrollStateChanged(state);
           }
-        };
-        viewPager.registerOnPageChangeCallback(pageChangeCallback);
+        });
 
         new TabLayoutMediator(tabLayout, viewPager,
             (tab, position) -> {
@@ -114,7 +116,9 @@ public class ExperimentViewActivity extends AppCompatActivity {
               }
             }
         ).attach();
-      });
+
+      }, null);
+
     }
   }
 

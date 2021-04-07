@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
-import xyz.kotlout.kotlout.controller.ExperimentController.ExperimentControllerObserver;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
@@ -21,7 +20,7 @@ import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
-public class TrialListAdapter extends BaseExpandableListAdapter implements ExperimentControllerObserver {
+public class TrialListAdapter extends BaseExpandableListAdapter {
 
   private List<? extends Trial> trialList;
   Map<String, ? extends List<? extends Trial>> ByExperimenter;
@@ -40,7 +39,7 @@ public class TrialListAdapter extends BaseExpandableListAdapter implements Exper
     this.experimentId = experimentId;
     this.type = type;
 
-    controller = new ExperimentController(experimentId, this);
+    controller = new ExperimentController(experimentId, this::onExperimentLoaded, this::onExperimentLoaded);
 
     Experimenters = new ArrayList<>();
     trialList = new ArrayList<>();
@@ -142,7 +141,6 @@ public class TrialListAdapter extends BaseExpandableListAdapter implements Exper
     return false;
   }
 
-  @Override
   public void onExperimentLoaded() {
     trialList = controller.getListTrials();
 
