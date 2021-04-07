@@ -5,10 +5,10 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   tools:context=".view.ExperimentViewActivity">
-<ExpandableListView
-  android:id="@+id/elv_main_experiments"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  app:layout_constraintBottom_toBottomOf="parent"
-  app:layout_constraintTop_toTopOf="parent" />
+  <ExpandableListView
+    android:id="@+id/elv_main_experiments"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

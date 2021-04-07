@@ -23,7 +23,7 @@
     android:layout_weight="1"
     app:layout_constraintBottom_toTopOf="@id/nav_main"
     app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0"/>
+    app:layout_constraintVertical_bias="0" />
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
     android:id="@+id/fab_main_add_experiment"
