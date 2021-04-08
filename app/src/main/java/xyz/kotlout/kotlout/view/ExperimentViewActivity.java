@@ -141,6 +141,26 @@ public class ExperimentViewActivity extends AppCompatActivity {
     return true;
   }
 
+  @Override
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    // Set Subscribe and Unsubscribe visibility based on user subscriptions
+    MenuItem subscribeItem = menu.findItem(R.id.subscribe_experiment);
+    MenuItem unsubscribeItem = menu.findItem(R.id.unsubscribe_experiment);
+
+    UserController userController = new UserController(UserHelper.readUuid());
+    userController.setUpdateCallback(user -> {
+      if (user.getSubscriptions().contains(experimentId)) {
+        subscribeItem.setVisible(false);
+        unsubscribeItem.setVisible(true);
+      } else {
+        subscribeItem.setVisible(true);
+        unsubscribeItem.setVisible(false);
+      }
+      userController.unregisterSnapshotListener();
+    });
+    return super.onPrepareOptionsMenu(menu);
+  }
+
   public void showOwner(View view) {
     // TODO: Add actual behavior
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
