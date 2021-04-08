@@ -43,9 +43,11 @@ public class ProfileSheetFragment extends BottomSheetDialogFragment {
     TextView nameView = view.findViewById(R.id.tv_profile_sheet_name);
     TextView emailView = view.findViewById(R.id.tv_profile_sheet_email);
     TextView phoneView = view.findViewById(R.id.tv_profile_sheet_phone_number);
+    TextView uuidView = view.findViewById(R.id.tv_profile_sheet_uuid);
 
     if (user != null) {
-      nameView.setText(user.getDisplayName());
+      nameView.setText(String.format("%s %s", user.getFirstName(), user.getLastName()));
+      uuidView.setText(user.getUuid());
       emailView.setText(user.getEmail());
       phoneView.setText(user.getPhoneNumber());
     }
