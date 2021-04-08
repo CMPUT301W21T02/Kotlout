@@ -143,6 +143,7 @@ public class UserController {
           subscriptions.add(experimentId);
           this.user.setSubscriptions(subscriptions);
           syncUser();
+          this.unregisterSnapshotListener();
         }
     ).addOnFailureListener(e -> Log.e(TAG, "addSubscription: Could not subscribe to experiment with ID " + experimentId));
   }

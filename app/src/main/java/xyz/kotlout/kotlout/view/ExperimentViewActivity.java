@@ -3,6 +3,7 @@ package xyz.kotlout.kotlout.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.UserController;
+import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 import xyz.kotlout.kotlout.view.fragment.ExperimentInfoFragment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentMapFragment;
@@ -30,6 +33,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
 
   public static final int VIEW_EXPERIMENT_REQUEST = 0;
   public static final String EXPERIMENT_ID = "EXPERIMENT";
+  public static final String TAG = "EXPERIMENT_VIEW";
 
   ExperimentViewFragmentsAdapter adapter;
   ViewPager2 viewPager;
@@ -181,4 +185,18 @@ public class ExperimentViewActivity extends AppCompatActivity {
     }
   }
 
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    int itemId = item.getItemId();
+
+    // subscribe to experiment
+    // TODO: unsubscribe to experiment
+    if (itemId == R.id.subscribe_experiment) {
+      UserController userController = new UserController(UserHelper.readUuid());
+      userController.setUpdateCallback(user -> userController.addSubscription(experimentId));
+    } else {
+      return super.onOptionsItemSelected(item);
+    }
+    return true;
+  }
 }
