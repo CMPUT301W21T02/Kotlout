@@ -23,11 +23,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     this.appContext = context;
   }
 
-  public PostAdapter(List<Post> posts, Context context) {
-    this.postData = posts;
-    this.appContext = context;
-  }
-
   @NonNull
   @Override
   public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
