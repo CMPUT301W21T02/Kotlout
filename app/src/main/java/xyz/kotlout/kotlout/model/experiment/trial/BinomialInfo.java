@@ -1,7 +1,5 @@
 package xyz.kotlout.kotlout.model.experiment.trial;
 
-import androidx.annotation.Nullable;
-
 public class BinomialInfo {
 
   private String date;

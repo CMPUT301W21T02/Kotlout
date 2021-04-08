@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.model.ExperimentType;
-import xyz.kotlout.kotlout.model.experiment.Experiment;
 
 public class ExperimentMapFragment extends Fragment {
 
