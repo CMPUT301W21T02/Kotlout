@@ -3,7 +3,9 @@ package xyz.kotlout.kotlout.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -137,6 +139,21 @@ public class ExperimentViewActivity extends AppCompatActivity {
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.experiment_view_menu, menu);
     return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    int i = item.getItemId();
+    if (i == R.id.open_discussion_posts){
+
+      Intent intent = new Intent(this, DiscussionPostsActivity.class);
+      intent.putExtra(DiscussionPostsActivity.ON_EXPERIMENT_INTENT, experimentId);
+      startActivity(intent);
+      return true;
+
+    } else {
+      return super.onOptionsItemSelected(item);
+    }
   }
 
   public void showOwner(View view) {

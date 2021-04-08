@@ -8,6 +8,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
  */
 public class FirebaseController {
 
+  public static final String POSTS_COLLECTION = "posts";
+
   private static final boolean USE_EMU = true;
 
   private static final String EMU_HOST = "10.0.2.2";
@@ -23,6 +25,7 @@ public class FirebaseController {
    */
   public static void initFirestore() {
     if (isInitialized) return;
+    isInitialized = true;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     if (USE_EMU) {
       firestore.useEmulator(EMU_HOST, EMU_FIREBASE_PORT);
@@ -40,6 +43,5 @@ public class FirebaseController {
     if (!isInitialized) initFirestore();
     return FirebaseFirestore.getInstance();
   }
-
 
 }

@@ -1,5 +1,6 @@
 package xyz.kotlout.kotlout.model.experiment;
 
+import com.google.firebase.firestore.DocumentId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,43 +11,58 @@ import xyz.kotlout.kotlout.model.user.User;
  */
 public class Post {
 
-  private User poster;
-  private final List<Post> children = new ArrayList<>();
-  private Post parent;
+  @DocumentId
+  private String postId;
+  private String poster;
+  private String parent;
   private String text;
   private Date timestamp;
 
+  public Post() {
+  }
 
-  public User getPoster() {
+  public Post(String postId, String poster, String parent, String text, Date timestamp) {
+    this.postId = postId;
+    this.poster = poster;
+    this.parent = parent;
+    this.text = text;
+    this.timestamp = timestamp;
+  }
+
+  public String getPostId() {
+    return postId;
+  }
+
+  public void setPostId(String postId) {
+    this.postId = postId;
+  }
+
+  public String getPoster() {
     return poster;
   }
 
-  public List<Post> getChildren() {
-    return children;
+  public void setPoster(String poster) {
+    this.poster = poster;
   }
 
-  public Post getParent() {
+  public String getParent() {
     return parent;
+  }
+
+  public void setParent(String parent) {
+    this.parent = parent;
   }
 
   public String getText() {
     return text;
   }
 
-  public Date getTimestamp() {
-    return timestamp;
-  }
-
-  public void setPoster(User poster) {
-    this.poster = poster;
-  }
-
-  public void setParent(Post parent) {
-    this.parent = parent;
-  }
-
   public void setText(String text) {
     this.text = text;
+  }
+
+  public Date getTimestamp() {
+    return timestamp;
   }
 
   public void setTimestamp(Date timestamp) {

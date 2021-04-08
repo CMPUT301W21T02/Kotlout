@@ -58,4 +58,5 @@
   <string name="resume_experiment_option">Resume</string>
   <string name="title_activity_trial_new">New Trial</string>
   <string name="title_activity_experiment_view">Experiment View</string>
+  <string name="discussion_option_menu_name">Discussion</string>
 </resources>
