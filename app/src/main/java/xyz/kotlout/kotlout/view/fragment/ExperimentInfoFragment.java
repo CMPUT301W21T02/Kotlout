@@ -31,7 +31,7 @@ public class ExperimentInfoFragment extends Fragment {
   private static final String ARG_EXPERIMENT_TYPE = "EXPERIMENT_TYPE";
 
   // Declaration of objects
-  Experiment experiment;
+  String experimentId;
   ExperimentType type;
   BarChart histogram, trialInfo;
   ArrayList<BarEntry> barEntries, trialEntries;
@@ -41,10 +41,10 @@ public class ExperimentInfoFragment extends Fragment {
   ArrayList<HistogramData> trialData = new ArrayList<>();
 
   @NonNull
-  public static ExperimentInfoFragment newInstance(Experiment experiment, ExperimentType type) {
+  public static ExperimentInfoFragment newInstance(String experimentId, ExperimentType type) {
     ExperimentInfoFragment fragment = new ExperimentInfoFragment();
     Bundle args = new Bundle();
-    args.putSerializable(ARG_EXPERIMENT, experiment);
+    args.putString(ARG_EXPERIMENT, experimentId);
     args.putSerializable(ARG_EXPERIMENT_TYPE, type);
     fragment.setArguments(args);
     return fragment;
@@ -54,7 +54,7 @@ public class ExperimentInfoFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
-      experiment = (Experiment) getArguments().getSerializable(ARG_EXPERIMENT);
+      experimentId = getArguments().getString(ARG_EXPERIMENT);
       type = (ExperimentType) getArguments().getSerializable(ARG_EXPERIMENT_TYPE);
     }
   }
@@ -66,8 +66,8 @@ public class ExperimentInfoFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_experiment_info, container, false);
 
     InfoHeaderView infoHeader = view.findViewById(R.id.ihv_experiment_info);
-    infoHeader.setExperiment(experiment.getId(), type);
-
+    infoHeader.setExperiment(experimentId, type);
+    
     histogram = view.findViewById(R.id.histogram);
     barEntries = new ArrayList<>();
     labels = new ArrayList<>();
