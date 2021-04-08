@@ -90,11 +90,11 @@ public class TrialNewActivity extends AppCompatActivity {
         intent.putExtra(TRIAL_EXTRA, newBinomialTrial);
         break;
       case NON_NEGATIVE_INTEGER:
-        NonNegativeTrial newNonNegativeTrial = new NonNegativeTrial(Integer.parseInt(userInput), uuid);
+        NonNegativeTrial newNonNegativeTrial = new NonNegativeTrial(Long.parseLong(userInput), uuid);
         intent.putExtra(TRIAL_EXTRA, newNonNegativeTrial);
         break;
       case COUNT:
-        CountTrial newCountTrial = new CountTrial(Integer.parseInt(userInput), uuid);
+        CountTrial newCountTrial = new CountTrial(Long.parseLong(userInput), uuid);
         intent.putExtra(TRIAL_EXTRA, newCountTrial);
         break;
       case MEASUREMENT:
