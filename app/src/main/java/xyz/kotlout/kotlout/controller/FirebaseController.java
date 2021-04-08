@@ -30,7 +30,7 @@ public class FirebaseController {
     isInitialized = true;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     if (USE_EMU) {
-      firestore.useEmulator(EMU_HOST, EMU_FIREBASE_PORT);
+      firestore.useEmulator(NON_EMU_HOST, EMU_FIREBASE_PORT);
     }
   }
 

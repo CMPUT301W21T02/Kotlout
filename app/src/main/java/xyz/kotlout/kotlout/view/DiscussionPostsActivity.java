@@ -41,6 +41,8 @@ public class DiscussionPostsActivity extends AppCompatActivity {
   private List<Post> postList = new ArrayList<>();
   private String experimentUUID;
   private CollectionReference postsCollection;
+  private RecyclerView postsView;
+  private LinearLayoutManager layoutManager;
 
 
   @Override
@@ -56,8 +58,8 @@ public class DiscussionPostsActivity extends AppCompatActivity {
         .document(experimentUUID)
         .collection(FirebaseController.POSTS_COLLECTION);
 
-    RecyclerView postsView = findViewById(R.id.discussion_recycler_list);
-    LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+    postsView = findViewById(R.id.discussion_recycler_list);
+    layoutManager = new LinearLayoutManager(this);
 
     layoutManager.setStackFromEnd(true);
     postsView.setLayoutManager(layoutManager);
@@ -80,7 +82,7 @@ public class DiscussionPostsActivity extends AppCompatActivity {
 //      postAdapter.notifyDataSetChanged();
 //    });
 
-    postsCollection.addSnapshotListener(this, this::snapShotListener);
+    sortedPosts.addSnapshotListener(this, this::snapShotListener);
 
   }
 
@@ -97,7 +99,7 @@ public class DiscussionPostsActivity extends AppCompatActivity {
         .document(experimentUUID)
         .collection(FirebaseController.POSTS_COLLECTION);
 
-    Toast.makeText(this, "Posting comment...", Toast.LENGTH_LONG).show();
+    Toast.makeText(this, "Posting comment...", Toast.LENGTH_SHORT).show();
     posts.add(newPost).addOnSuccessListener( documentReference -> {
         Toast.makeText(this, "Posted!", Toast.LENGTH_SHORT).show();
       }
@@ -110,37 +112,58 @@ public class DiscussionPostsActivity extends AppCompatActivity {
         return;
     }
 
-    postList.clear();
-    postList.addAll(
-    value.getDocuments().parallelStream()
-        .map(documentSnapshot -> {return documentSnapshot.toObject(Post.class);}).collect(Collectors.toList()));
-    postAdapter.notifyDataSetChanged();
+//    postList.clear();
+//    postList.addAll(
+//    value.getDocuments().parallelStream()
+//        .map(documentSnapshot -> {return documentSnapshot.toObject(Post.class);}).collect(Collectors.toList()));
+//    postAdapter.notifyDataSetChanged();
 
     // Being smart doesnt work at all, TODO: Why is this completely borked?
-//    for (DocumentChange doc: value.getDocumentChanges()){
-//      switch (doc.getType()){
-//        case ADDED:
-//          postList.add(doc.getDocument().toObject(Post.class));
-//          postAdapter.notifyItemInserted(postList.size()-1);
-//          break;
-//        case REMOVED:
-//          postList.remove(doc.getOldIndex());
-//          postAdapter.notifyItemRemoved(doc.getOldIndex());
-//          break;
-//        case MODIFIED:
-//          Post post = doc.getDocument().toObject(Post.class);
-//          if(doc.getOldIndex() == doc.getNewIndex()){
-//            postList.set(doc.getNewIndex(), post);
-//          } else {
-//            postList.remove(doc.getOldIndex());
-//            postList.add(doc.getNewIndex(), post);
-//            postAdapter.notifyItemMoved(doc.getOldIndex(), doc.getNewIndex());
-//          }
-//          postAdapter.notifyItemChanged(doc.getNewIndex());
-//          break;
-//      }
-//    }
+    for (DocumentChange doc: value.getDocumentChanges()){
+      switch (doc.getType()){
+        case ADDED:
+          boolean wasBottomed = isLastItemDisplaying();
+          postList.add(doc.getDocument().toObject(Post.class));
+          postAdapter.notifyItemInserted(postList.size()-1);
+          if (wasBottomed)
+            postsView.smoothScrollToPosition(postList.size()-1);
+          break;
+        case REMOVED:
+          postList.remove(doc.getOldIndex());
+          postAdapter.notifyItemRemoved(doc.getOldIndex());
+          break;
+        case MODIFIED:
+          Post post = doc.getDocument().toObject(Post.class);
+          if(doc.getOldIndex() == doc.getNewIndex()){
+            postList.set(doc.getNewIndex(), post);
+          } else {
+            postList.remove(doc.getOldIndex());
+            postList.add(doc.getNewIndex(), post);
+            postAdapter.notifyItemMoved(doc.getOldIndex(), doc.getNewIndex());
+          }
+          postAdapter.notifyItemChanged(doc.getNewIndex());
+          break;
+      }
+    }
   }
 
 
+  /**
+   * Check whether the last item in RecyclerView is being displayed or not
+   *
+   * @param recyclerView which you would like to check
+   * @return true if last position was Visible and false Otherwise
+   */
+  private boolean isLastItemDisplaying() {
+    // By Sheraz Ahmad Khilji accessed 04-08.
+    // https://stackoverflow.com/a/33515549
+    RecyclerView recyclerView = this.postsView;
+
+    if (recyclerView.getAdapter().getItemCount() != 0) {
+      int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
+      return lastVisibleItemPosition != RecyclerView.NO_POSITION
+          && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1;
+    }
+    return false;
+  }
 }
