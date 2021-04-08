@@ -17,5 +17,6 @@
     android:id="@+id/unsubscribe_experiment"
     android:enabled="true"
     android:icon="@drawable/ic_baseline_bookmark_border"
-    android:title="@string/unsubscribe_from_experiment"/>
+    android:title="@string/unsubscribe_from_experiment"
+    app:showAsAction="ifRoom" />
 </menu>
