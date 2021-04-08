@@ -75,8 +75,8 @@ public class ExperimentNewActivity extends AppCompatActivity {
     int typeId = (int) ((Spinner) this.findViewById(R.id.sp_experiment_new_type))
         .getSelectedItemId();
 
-//    boolean geolocationRequired = ((CheckBox) this.findViewById(R.id.cb_new_trial_location)).isChecked();
-    boolean geolocationRequired = true;
+    boolean geolocationRequired = (boolean) ((CheckBox) this.findViewById(R.id.cb_experiment_new_geolocation)).isChecked();
+
     ExperimentController experimentController = ExperimentController
         .newInstance(description, region, minTrials, geolocationRequired, ExperimentType.values()[typeId]);
 
