@@ -7,14 +7,14 @@ import java.util.Objects;
  */
 public class HistogramData {
   String result;
-  int count;
+  float count;
 
   /**
    * Creates a new data point
    * @param result The result of the trial (e.g. Success, Failure, some measurement)
    * @param count The amount of that specific result
    */
-  public HistogramData(String result, int count) {
+  public HistogramData(String result, float count) {
     this.result = result;
     this.count = count;
   }
@@ -31,8 +31,12 @@ public class HistogramData {
    * Gets the count of the trial
    * @return an integer representing the count of the trial
    */
-  public int getCount() {
+  public float getCount() {
     return count;
+  }
+
+  public void setCount(float count) {
+    this.count = count;
   }
 
   @Override
