@@ -98,6 +98,7 @@ public class User {
 
   /**
    * Gets a list of IDs for experiments the user has subscribed to.
+   *
    * @return A list of experiment IDs.
    */
   public List<String> getSubscriptions() {
@@ -109,6 +110,7 @@ public class User {
 
   /**
    * Sets the user subscriptions to a new list.
+   *
    * @param subscriptions A list of experiment IDs.
    */
   public void setSubscriptions(List<String> subscriptions) {

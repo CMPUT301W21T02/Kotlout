@@ -29,12 +29,12 @@
     android:ems="10"
     app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.Guideline
+  <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:id="@+id/guideline"
     android:orientation="horizontal"
-    app:layout_constraintGuide_percent="0.3"/>
+    app:layout_constraintGuide_percent="0.3" />
 
   <CheckBox
     android:id="@+id/cb_new_trial_location"

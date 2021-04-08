@@ -34,13 +34,13 @@ public class ExperimentListController {
   /**
    * Gets a query for getting all experiments for the given user.
    *
+   * Firestore does not support where-in queries with more than 10 clauses (i.e. only 10 subscriptions would be supported)
+   * So, get all experiments and let the application filter them for subscribed experiments
    * @return A instance of Query for getting all experiments for the given user.
    */
-  public Query getSubscribedExperiments() {
+  public static Query getAllExperiments() {
     FirebaseFirestore db = FirebaseController.getFirestore();
 
-    // Firestore does not support where-in queries with more than 10 clauses (i.e. only 10 subscriptions would be supported).
-    // So, get all experiments and let the application filter them.
     return db.collection(ExperimentController.EXPERIMENT_COLLECTION);
   }
 }

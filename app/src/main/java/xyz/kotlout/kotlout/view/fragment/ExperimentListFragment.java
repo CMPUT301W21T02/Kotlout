@@ -23,12 +23,6 @@ import xyz.kotlout.kotlout.view.ExperimentViewActivity;
  */
 public class ExperimentListFragment extends Fragment {
 
-  public enum ListType {
-    MINE,
-    ALL,
-    SUBSCRIBED
-  }
-
   public static String ARG_TYPE = "TYPE";
   private ExperimentListAdapter experimentListAdapter;
   private ListType type;
@@ -150,8 +144,10 @@ public class ExperimentListFragment extends Fragment {
     return true;
   }
 
-  public void addController() {
-
+  public enum ListType {
+    MINE,
+    ALL,
+    SUBSCRIBED
   }
 }
 
