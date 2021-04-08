@@ -6,7 +6,7 @@
   android:layout_margin="24dp"
   android:gravity="center_horizontal"
   android:orientation="vertical"
-  tools:context=".ProfileSheetFragment">
+  tools:context=".view.fragment.ProfileSheetFragment">
   <TextView
     android:id="@+id/tv_profile_sheet_name"
     android:layout_width="wrap_content"

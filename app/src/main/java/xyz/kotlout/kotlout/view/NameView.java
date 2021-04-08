@@ -1,17 +1,19 @@
 package xyz.kotlout.kotlout.view;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import xyz.kotlout.kotlout.R;
-import xyz.kotlout.kotlout.controller.UserHelper;
+import xyz.kotlout.kotlout.model.user.User;
+import xyz.kotlout.kotlout.view.fragment.ProfileSheetFragment;
 
 public class NameView extends androidx.appcompat.widget.AppCompatTextView implements OnClickListener {
 
+  private User user;
   private String name;
 
   public NameView(Context context, @Nullable AttributeSet attrs) {
@@ -37,8 +39,9 @@ public class NameView extends androidx.appcompat.widget.AppCompatTextView implem
     initNameView();
   }
 
-  public void setUserName(String name) {
-    this.name = name;
+  public void setUser(User user) {
+    this.user = user;
+    this.name = user.getDisplayName();
     initNameView();
   }
 
@@ -47,8 +50,8 @@ public class NameView extends androidx.appcompat.widget.AppCompatTextView implem
   }
 
   public void onClick(View v) {
-    Intent startActivity = new Intent(v.getContext(), ProfileActivity.class).putExtra(UserHelper.UUID_INTENT, name);
-    v.getContext().startActivity(startActivity);
+    ProfileSheetFragment profile = ProfileSheetFragment.newInstance(user);
+    profile.show(((AppCompatActivity) v.getContext()).getSupportFragmentManager(), "NameView");
   }
 
 }
