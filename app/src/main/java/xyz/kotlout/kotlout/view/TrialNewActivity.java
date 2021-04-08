@@ -152,8 +152,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     SelectLocationFragment selectLocationFragment = new SelectLocationFragment();
     if (location != null) {
       Bundle bundle = new Bundle();
-      bundle.putDouble("lat", location.getLatitude());
-      bundle.putDouble("lon", location.getLongitude());
+      bundle.putSerializable("location", location);
       selectLocationFragment.setArguments(bundle);
     }
     selectLocationFragment.show(getSupportFragmentManager(), "SELECT_GEOLOCATION");

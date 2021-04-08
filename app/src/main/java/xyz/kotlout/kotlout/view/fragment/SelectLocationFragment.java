@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -31,6 +32,7 @@ import org.osmdroid.views.overlay.Marker;
 
 import java.util.ArrayList;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.model.adapter.LocationAdapter;
 import xyz.kotlout.kotlout.model.geolocation.Geolocation;
 
 public class SelectLocationFragment extends DialogFragment {
@@ -64,9 +66,7 @@ public class SelectLocationFragment extends DialogFragment {
     super.onCreate(savedInstanceState);
     oldLocation = null;
     if (getArguments() != null) {
-      double lon = savedInstanceState.getDouble("lon");
-      double lat = savedInstanceState.getDouble("lat");
-      oldLocation = new GeoPoint(lat, lon);
+      oldLocation = LocationAdapter.toGeoPoint((Geolocation) getArguments().getSerializable("location"));
     }
 
     requestPermissionsIfNecessary(new String[] {
