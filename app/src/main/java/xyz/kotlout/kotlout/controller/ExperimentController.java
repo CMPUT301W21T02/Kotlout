@@ -47,7 +47,7 @@ public class ExperimentController {
     this.experimentObserver = loadedObserver;
     db.collection(EXPERIMENT_COLLECTION).document(experimentId).get()
         .addOnSuccessListener(documentSnapshot -> {
-          if(documentSnapshot != null) {
+          if (documentSnapshot != null) {
             type = ExperimentType.valueOf((String) documentSnapshot.get("type"));
             switch (type) {
               case BINOMIAL:

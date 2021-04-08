@@ -52,6 +52,29 @@ public abstract class Experiment implements Serializable {
   }
 
   /**
+   * Gets a string describing the type of experiment.
+   *
+   * @param experiment An instance of Experiment
+   * @return A string with the experiment type.
+   */
+  public static String getExperimentType(Experiment experiment) {
+    String experimentType = "unknown";
+    if (experiment instanceof BinomialExperiment) {
+      experimentType = "Binomial";
+    }
+    if (experiment instanceof NonNegativeExperiment) {
+      experimentType = "Non-negative Integer";
+    }
+    if (experiment instanceof CountExperiment) {
+      experimentType = "Count";
+    }
+    if (experiment instanceof MeasurementExperiment) {
+      experimentType = "Measurement";
+    }
+    return experimentType;
+  }
+
+  /**
    * Gets the ID for the experiment set by Firestore.
    *
    * @return The ID for the experiment set by Firestore.
@@ -179,28 +202,5 @@ public abstract class Experiment implements Serializable {
   abstract ExperimentType getExperimentType();
 
   abstract void addTrial(Trial trial);
-
-  /**
-   * Gets a string describing the type of experiment.
-   *
-   * @param experiment An instance of Experiment
-   * @return A string with the experiment type.
-   */
-  public static String getExperimentType(Experiment experiment) {
-    String experimentType = "unknown";
-    if (experiment instanceof BinomialExperiment) {
-      experimentType = "Binomial";
-    }
-    if (experiment instanceof NonNegativeExperiment) {
-      experimentType = "Non-negative Integer";
-    }
-    if (experiment instanceof CountExperiment) {
-      experimentType = "Count";
-    }
-    if (experiment instanceof MeasurementExperiment) {
-      experimentType = "Measurement";
-    }
-    return experimentType;
-  }
 
 }
