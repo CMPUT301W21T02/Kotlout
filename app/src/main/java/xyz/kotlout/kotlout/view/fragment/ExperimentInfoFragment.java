@@ -54,6 +54,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
   ExperimentController controller;
   List<? extends Trial> trialList;
   SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy");
+  String dataType;
 
   ArrayList<HistogramData> histogramData = new ArrayList<>();
   ArrayList<HistogramData> trialData = new ArrayList<>();
@@ -92,34 +93,19 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     barEntries = new ArrayList<>();
     labels = new ArrayList<>();
 
-//    fillData();
-//    merged = mergeData(histogramData);
-//    FormatHistogram(histogram);
-
     //------------------------------------------
     trialInfo = view.findViewById(R.id.trialInfo);
     trialEntries = new ArrayList<>();
     trialLabels = new ArrayList<>();
 
-//    fillEntries();
-//    FormatNonNegMeasurement(trialInfo);
-
     return view;
   }
 
-  private void fillTrialData(){
-
-  }
-
-  private void FormatBinomial (BarChart trialInfo){
-
-  }
-
-  private void FormatPlot (BarChart histogram){
-    BarDataSet barDataSet = new BarDataSet(trialEntries, "Means");
+  private void FormatPlot (BarChart histogram, String dataType){
+    BarDataSet barDataSet = new BarDataSet(trialEntries, dataType);
     barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
     Description description = new Description();
-    description.setText("Means");
+    description.setText(dataType);
     histogram.setDescription(description);
     BarData barData = new BarData(barDataSet);
     histogram.setData(barData);
@@ -178,6 +164,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     if (trialList.size() > 0){
       switch (trialList.get(0).getClass().getName()){
         case "xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial":
+          dataType = "Mean Per Day";
           for (Trial t: trialList) {
             histogramData.add(new HistogramData(String.valueOf(((NonNegativeTrial) t).getResult()), 1));
             trialData.add(new HistogramData(sdf.format(t.getTimestamp()), (float) ((NonNegativeTrial) t).getResult()));
@@ -201,15 +188,11 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
           }
           trialData = meanTrialData;
 
-          Collections.sort(trialData, new Comparator<HistogramData>() {
-            @Override
-            public int compare(HistogramData o1, HistogramData o2) {
-              return o1.getResult().compareTo(o2.getResult());
-            }
-          });
+          Collections.sort(trialData, (o1, o2) -> o1.getResult().compareTo(o2.getResult()));
           break;
 
         case "xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial":
+          dataType = "Success % Per Day";
           ArrayList<BinomialInfo> binomialInfo = new ArrayList<>();
           for (Trial t: trialList) {
             histogramData.add(new HistogramData(String.valueOf(((BinomialTrial) t).getResult()), 1));
@@ -220,7 +203,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
               boolean result = ((BinomialTrial) t).getResult();
               for (BinomialInfo b: binomialInfo) {
                 if (b.getDate().equals(date)){
-                  if (result == true){
+                  if (result){
                     b.incrementSuccess();
                     Log.d("TAG", "Success");
                   } else {
@@ -234,7 +217,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
               boolean result = ((BinomialTrial) t).getResult();
               for (BinomialInfo b: binomialInfo) {
                 if (b.getDate().equals(date)){
-                  if (result == true){
+                  if (result){
                     b.incrementSuccess();
                     Log.d("TAG", "Success");
                   } else {
@@ -248,16 +231,12 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
           for (BinomialInfo b: binomialInfo) {
             trialData.add(new HistogramData(b.getDate(), b.successProportion()));
           }
-          Collections.sort(trialData, new Comparator<HistogramData>() {
-            @Override
-            public int compare(HistogramData o1, HistogramData o2) {
-              return o1.getResult().compareTo(o2.getResult());
-            }
-          });
+          Collections.sort(trialData, (o1, o2) -> o1.getResult().compareTo(o2.getResult()));
 
           break;
 
         case "xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial":
+          dataType = "Mean Per Day";
           for (Trial t: trialList) {
             histogramData.add(new HistogramData(String.valueOf(((MeasurementTrial) t).getResult()), 1));
             trialData.add(new HistogramData(sdf.format(t.getTimestamp()), (float) ((MeasurementTrial) t).getResult()));
@@ -281,26 +260,17 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
           }
           trialData = meanData;
 
-          Collections.sort(trialData, new Comparator<HistogramData>() {
-            @Override
-            public int compare(HistogramData o1, HistogramData o2) {
-              return o1.getResult().compareTo(o2.getResult());
-            }
-          });
+          Collections.sort(trialData, (o1, o2) -> o1.getResult().compareTo(o2.getResult()));
 
           break;
 
         case "xyz.kotlout.kotlout.model.experiment.trial.CountTrial":
+          dataType = "Cumulative Count";
           for (Trial t: trialList) {
             histogramData.add(new HistogramData(String.valueOf(((CountTrial) t).getResult()), 1));
             trialData.add(new HistogramData(sdf.format(t.getTimestamp()), ((CountTrial) t).getResult()));
           }
-          Collections.sort(trialData, new Comparator<HistogramData>() {
-            @Override
-            public int compare(HistogramData o1, HistogramData o2) {
-              return o1.getResult().compareTo(o2.getResult());
-            }
-          });
+          Collections.sort(trialData, (o1, o2) -> o1.getResult().compareTo(o2.getResult()));
           trialData = mergeTrials(trialData);
           if (trialData.size() > 1){
             for (int i = 1; i < trialData.size(); i++){
@@ -322,7 +292,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
         trialEntries.add(new BarEntry(i, amount));
         trialLabels.add(date);
       }
-      FormatPlot(trialInfo);
+      FormatPlot(trialInfo, dataType);
     }
   }
 
