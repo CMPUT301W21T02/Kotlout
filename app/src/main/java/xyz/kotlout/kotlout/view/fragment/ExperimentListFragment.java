@@ -74,7 +74,7 @@ public class ExperimentListFragment extends Fragment {
     // https://stackoverflow.com/questions/2353074/android-long-click-on-the-child-views-of-a-expandablelistview/8320128#8320128
     // Accessed 2021-04-04, Author: Nicholas Harlen, License: CC BY-SA 4.0
 
-    // TODO: restrict long click options to My Experiments only
+    // Only consider child items (not parent groups)
     if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
       int groupPosition = ExpandableListView.getPackedPositionGroup(id);
       int childPosition = ExpandableListView.getPackedPositionChild(id);
