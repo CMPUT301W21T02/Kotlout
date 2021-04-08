@@ -43,6 +43,7 @@ public class TrialNewActivity extends AppCompatActivity {
     switch (type) {
       case BINOMIAL:
         textEntry.setVisibility(View.GONE);
+        radioButtons.setVisibility(View.VISIBLE);
         break;
       case MEASUREMENT:
         textEntry.setHint("Decimal Number");
@@ -50,12 +51,14 @@ public class TrialNewActivity extends AppCompatActivity {
         textEntry.setInputType(InputType.TYPE_CLASS_NUMBER);
         textEntry.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
         radioButtons.setVisibility(View.GONE);
+        textEntry.setVisibility(View.VISIBLE);
         break;
       case NON_NEGATIVE_INTEGER:
         textEntry.setHint("Non Negative Integer");
         textEntry.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
         textEntry.setInputType(InputType.TYPE_CLASS_NUMBER);
         radioButtons.setVisibility(View.GONE);
+        textEntry.setVisibility(View.VISIBLE);
         break;
       case COUNT:
         textEntry.setHint("Any Integer");
@@ -63,6 +66,7 @@ public class TrialNewActivity extends AppCompatActivity {
         textEntry.setInputType(InputType.TYPE_CLASS_NUMBER);
         textEntry.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED);
         radioButtons.setVisibility(View.GONE);
+        textEntry.setVisibility(View.VISIBLE);
         break;
       case UNKNOWN:
         break;
