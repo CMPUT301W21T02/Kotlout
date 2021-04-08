@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -35,39 +36,33 @@ import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment.ListType;
 public class ExperimentListAdapter extends BaseExpandableListAdapter {
 
   private static final String TAG = "EXP_LIST_ADAPTER";
-  private final ExperimentListController experimentListController;
   private final Map<ExperimentGroup, List<ExperimentController>> experimentGroups;
   private final Context context;
-  private final ListType listType;
-  private Query getMyExperimentsQuery;
-  private Query getSubscribedExperimentsQuery;
-  private Query getAllExperimentsQuery;
 
   /**
    * Initializes the adapter for the given user's open and closed experiments.
    *
    * @param userUuid User identifier
    */
-  public ExperimentListAdapter(Context context, String userUuid, ListType listType) {
+  public ExperimentListAdapter(Context context, String userUuid, @NonNull ListType listType) {
     this.context = context;
-    this.listType = listType;
 
     experimentGroups = initializeExperimentGroups();
-    experimentListController = new ExperimentListController(userUuid);
+    ExperimentListController experimentListController = new ExperimentListController(userUuid);
 
     switch (listType) {
       case MINE:
-        getMyExperimentsQuery = experimentListController.getUserExperiments();
+        Query getMyExperimentsQuery = experimentListController.getUserExperiments();
         getMyExperimentsQuery.addSnapshotListener(this::showMyExperiments);
         break;
 
       case ALL:
-        getAllExperimentsQuery = ExperimentListController.getAllExperiments();
+        Query getAllExperimentsQuery = ExperimentListController.getAllExperiments();
         getAllExperimentsQuery.addSnapshotListener(this::showAllExperiments);
         break;
 
       case SUBSCRIBED:
-        getSubscribedExperimentsQuery = ExperimentListController.getAllExperiments();
+        Query getSubscribedExperimentsQuery = ExperimentListController.getAllExperiments();
         getSubscribedExperimentsQuery.addSnapshotListener(this::showSubscribedExperiments);
         break;
     }
@@ -124,7 +119,7 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
     });
   }
 
-  private void showAllExperiments(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+  private void showAllExperiments(@NonNull QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
     clearExperimentGroups();
 
     // Filter experiments by user subscriptions
@@ -163,7 +158,7 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
    * @param queryDocumentSnapshots A snapshot of experiments belonging to the user.
    * @param e                      A firestore exception.
    */
-  private void showMyExperiments(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+  private void showMyExperiments(@NonNull QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
     clearExperimentGroups();
 
     for (QueryDocumentSnapshot experimentDoc : queryDocumentSnapshots) {

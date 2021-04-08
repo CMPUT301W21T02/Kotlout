@@ -3,6 +3,7 @@ package xyz.kotlout.kotlout.controller;
 import android.content.Context;
 import android.provider.Settings.Secure;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -135,7 +136,7 @@ public final class UserHelper {
     return user[0];
   }
 
-  public static void initUserHelper(Context context) {
+  public static void initUserHelper(@NonNull Context context) {
     uuid = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
   }
 

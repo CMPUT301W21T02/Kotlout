@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.UserHelper;
@@ -29,7 +30,7 @@ public class NameView extends androidx.appcompat.widget.AppCompatTextView implem
     } finally {
       typedArray.recycle();
     }
-    this.setOnClickListener(this::onClick);
+    this.setOnClickListener(this);
   }
 
   public NameView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -46,7 +47,7 @@ public class NameView extends androidx.appcompat.widget.AppCompatTextView implem
     setText(this.name);
   }
 
-  public void onClick(View v) {
+  public void onClick(@NonNull View v) {
     Intent startActivity = new Intent(v.getContext(), ProfileActivity.class).putExtra(UserHelper.UUID_INTENT, name);
     v.getContext().startActivity(startActivity);
   }
