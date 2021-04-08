@@ -1,5 +1,6 @@
 package xyz.kotlout.kotlout.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -47,9 +48,23 @@ public class InfoHeaderView extends LinearLayout implements ExperimentLoadedObse
   }
 
 
+  @SuppressLint("SetTextI18n")
   public void setExperiment(String experimentId, ExperimentType type) {
     controller = new ExperimentController(experimentId, this, null);
-    tvType.setText(type.toString());
+    switch(type) {
+      case BINOMIAL:
+        tvType.setText("Binomial");
+        break;
+      case NON_NEGATIVE_INTEGER:
+        tvType.setText("Non-negative Integer");
+        break;
+      case COUNT:
+        tvType.setText("Count");
+        break;
+      case MEASUREMENT:
+        tvType.setText("Measurement");
+        break;
+    }
   }
 
   @Override
