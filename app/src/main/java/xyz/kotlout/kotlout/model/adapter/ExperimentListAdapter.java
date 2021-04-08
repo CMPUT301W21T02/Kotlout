@@ -92,14 +92,15 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
    * @param e                      A firestore exception
    */
   private void showSubscribedExperiments(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
-    clearExperimentGroups();
-
     UserController userController = new UserController(UserHelper.readUuid());
     userController.setUpdateCallback(user -> {
+      clearExperimentGroups();
+
       List<String> subscriptions = user.getSubscriptions();
 
       // no subscriptions yet
       if (subscriptions.isEmpty()) {
+        this.notifyDataSetChanged();
         return;
       }
 

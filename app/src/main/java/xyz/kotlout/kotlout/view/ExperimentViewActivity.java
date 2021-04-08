@@ -3,6 +3,7 @@ package xyz.kotlout.kotlout.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.UserController;
+import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 import xyz.kotlout.kotlout.view.fragment.ExperimentInfoFragment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentMapFragment;
@@ -30,6 +33,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
 
   public static final int VIEW_EXPERIMENT_REQUEST = 0;
   public static final String EXPERIMENT_ID = "EXPERIMENT";
+  public static final String TAG = "EXPERIMENT_VIEW";
 
   private ExperimentViewFragmentsAdapter adapter;
   private ViewPager2 viewPager;
@@ -132,6 +136,23 @@ public class ExperimentViewActivity extends AppCompatActivity {
     return true;
   }
 
+  @Override
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    // Set Subscribe and Unsubscribe visibility based on user subscriptions
+    MenuItem subscribeItem = menu.findItem(R.id.subscribe_experiment);
+
+    UserController userController = new UserController(UserHelper.readUuid());
+    userController.setUpdateCallback(user -> {
+      if (user.getSubscriptions().contains(experimentId)) {
+        subscribeItem.setIcon(R.drawable.ic_baseline_bookmark);
+      } else {
+        subscribeItem.setIcon(R.drawable.ic_baseline_bookmark_border);
+      }
+      userController.unregisterSnapshotListener();
+    });
+    return super.onPrepareOptionsMenu(menu);
+  }
+
   public void showOwner(View view) {
     // TODO: Add actual behavior
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -176,4 +197,25 @@ public class ExperimentViewActivity extends AppCompatActivity {
     }
   }
 
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    int itemId = item.getItemId();
+
+    // subscribe to experiment
+    if (itemId == R.id.subscribe_experiment) {
+      UserController userController = new UserController(UserHelper.readUuid());
+      userController.setUpdateCallback(user -> {
+        if(user.getSubscriptions().contains(experimentId)) {
+          userController.removeSubscription(experimentId);
+          item.setIcon(R.drawable.ic_baseline_bookmark_border);
+        } else {
+          userController.addSubscription(experimentId);
+          item.setIcon(R.drawable.ic_baseline_bookmark);
+        }
+      });
+    } else {
+      return super.onOptionsItemSelected(item);
+    }
+    return true;
+  }
 }
