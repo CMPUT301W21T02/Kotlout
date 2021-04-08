@@ -60,4 +60,14 @@
   <string name="title_activity_experiment_view">Experiment View</string>
   <string name="title_activity_search">Search Experiments</string>
   <string name="search_hint">Experiments</string>
+  <string name="quartile_3">Quartile 3:</string>
+  <string name="quartile_1">Quartile 1:</string>
+  <string name="std_dev">Std. Dev:</string>
+  <string name="median">Median:</string>
+  <string name="mean">Mean:</string>
+  <string name="n_a">N/A</string>
+  <string name="n_a">N/A</string>
+  <string name="n_a">N/A</string>
+  <string name="n_a">N/A</string>
+  <string name="n_a">N/A</string>
 </resources>

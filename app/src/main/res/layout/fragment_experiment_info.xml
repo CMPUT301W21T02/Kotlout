@@ -35,35 +35,40 @@
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:text="Mean: " />
+          android:text="@string/mean" />
 
         <TextView
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:text="2" />
-        <TextView
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:text="Median: " />
+          android:text="@string/n_a"
+          android:id="@+id/mean_text_view"/>
 
         <TextView
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:text="2" />
+          android:text="@string/median" />
 
         <TextView
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:text="Std. Dev: " />
+          android:text="@string/n_a"
+          android:id="@+id/median_text_view"/>
+
         <TextView
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:text="2" />
+          android:text="@string/std_dev" />
+
+        <TextView
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:text="@string/n_a"
+          android:id="@+id/std_dev_text_view"/>
       </LinearLayout>
       <LinearLayout
         android:layout_width="match_parent"
@@ -74,24 +79,27 @@
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:text="Quartile 1:" />
+          android:text="@string/quartile_1" />
 
         <TextView
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:text="2" />
-        <TextView
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_weight="1"
-          android:text="Quartile 3: " />
+          android:text="@string/n_a"
+          android:id="@+id/q1_text_view"/>
 
         <TextView
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:text="2" />
+          android:text="@string/quartile_3" />
+
+        <TextView
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:text="@string/n_a"
+          android:id="@+id/q3_text_view"/>
       </LinearLayout>
     </LinearLayout>
 
@@ -102,4 +110,5 @@
       android:layout_marginBottom="50dp"
       android:background="@android:color/white" />
   </LinearLayout>
+
 </ScrollView>

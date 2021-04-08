@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import com.github.mikephil.charting.charts.BarChart;
@@ -16,6 +17,7 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +30,7 @@ import xyz.kotlout.kotlout.controller.ExperimentController.ExperimentLoadedObser
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 import xyz.kotlout.kotlout.model.experiment.HistogramData;
+import xyz.kotlout.kotlout.model.experiment.StatCalculator;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialInfo;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.CountTrial;
@@ -45,6 +48,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
   private static final String ARG_EXPERIMENT_TYPE = "EXPERIMENT_TYPE";
 
   // Declaration of objects
+  TextView mean, median, stdDev, q1, q3;
   String experimentId;
   ExperimentType type;
   Experiment experiment;
@@ -54,6 +58,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
   ExperimentController controller;
   List<? extends Trial> trialList;
   SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy");
+  DecimalFormat df = new DecimalFormat("#.####");
   String dataType;
 
   ArrayList<HistogramData> histogramData = new ArrayList<>();
@@ -89,6 +94,12 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     InfoHeaderView infoHeader = view.findViewById(R.id.ihv_experiment_info);
     infoHeader.setExperiment(experimentId, type);
 
+    mean = view.findViewById(R.id.mean_text_view);
+    median = view.findViewById(R.id.median_text_view);
+    stdDev = view.findViewById(R.id.std_dev_text_view);
+    q1 = view.findViewById(R.id.q1_text_view);
+    q3 = view.findViewById(R.id.q3_text_view);
+
     histogram = view.findViewById(R.id.histogram);
     barEntries = new ArrayList<>();
     labels = new ArrayList<>();
@@ -101,7 +112,62 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     return view;
   }
 
-  private void FormatPlot(BarChart histogram, String dataType) {
+  public void calculateStats(List<? extends Trial> trialList) {
+    double calcMean, calcMedian, calcStdDev, calcQ1, calcQ3;
+    StatCalculator calculator = new StatCalculator();
+    ArrayList<Double> countList;
+    switch (type) {
+      case COUNT:
+        countList = new ArrayList<>();
+        for (Trial t : trialList) {
+          countList.add((double) ((CountTrial) t).getResult());
+        }
+        setStats(countList, calculator, mean, median, stdDev, q1, q3);
+        break;
+      case BINOMIAL:
+        countList = new ArrayList<>();
+        for (Trial t : trialList) {
+          Boolean result = ((BinomialTrial) t).getResult();
+          if (result) {
+            countList.add((double) 1);
+          } else {
+            countList.add((double) 0);
+          }
+        }
+        setStats(countList, calculator, mean, median, stdDev, q1, q3);
+        break;
+      case MEASUREMENT:
+        countList = new ArrayList<>();
+        for (Trial t : trialList) {
+          countList.add((double) ((MeasurementTrial) t).getResult());
+        }
+        setStats(countList, calculator, mean, median, stdDev, q1, q3);
+        break;
+      case NON_NEGATIVE_INTEGER:
+        countList = new ArrayList<>();
+        for (Trial t : trialList) {
+          countList.add((double) ((NonNegativeTrial) t).getResult());
+        }
+        break;
+    }
+
+  }
+
+  private void setStats(ArrayList<Double> countList, StatCalculator calculator, TextView mean, TextView median, TextView stdDev,
+      TextView q1, TextView q3) {
+    double calcMedian = calculator.getMedian(countList);
+    median.setText(df.format(calcMedian));
+    double calcMean = calculator.getMean(countList);
+    mean.setText(df.format(calcMean));
+    double calcStdDev = calculator.getStdDev(countList);
+    stdDev.setText(df.format(calcStdDev));
+    double calcQ1 = calculator.getQ1(countList);
+    q1.setText(df.format(calcQ1));
+    double calcQ3 = calculator.getQ3(countList);
+    q3.setText(df.format(calcQ3));
+  }
+
+  private void formatPlot(BarChart histogram, String dataType) {
     BarDataSet barDataSet = new BarDataSet(trialEntries, dataType);
     barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
     Description description = new Description();
@@ -132,7 +198,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
    *
    * @param histogram the histogram with the data loaded in
    */
-  private void FormatHistogram(BarChart histogram) {
+  private void formatHistogram(BarChart histogram) {
     BarDataSet barDataSet = new BarDataSet(barEntries, "Answers");
     barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
     Description description = new Description();
@@ -163,6 +229,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     experiment = controller.getExperimentContext();
     trialList = controller.getListTrials();
     if (trialList.size() > 0) {
+      calculateStats(trialList);
       switch (type) {
         case NON_NEGATIVE_INTEGER:
           dataType = "Mean Per Day";
@@ -282,7 +349,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
       }
 
       merged = mergeData(histogramData);
-      FormatHistogram(histogram);
+      formatHistogram(histogram);
 
       //--------------------------------------------
 
@@ -293,7 +360,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
         trialEntries.add(new BarEntry(i, amount));
         trialLabels.add(date);
       }
-      FormatPlot(trialInfo, dataType);
+      formatPlot(trialInfo, dataType);
     }
   }
 
