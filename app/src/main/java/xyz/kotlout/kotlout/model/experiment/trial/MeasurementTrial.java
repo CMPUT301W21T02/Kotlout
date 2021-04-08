@@ -20,4 +20,8 @@ public class MeasurementTrial extends Trial {
     return result;
   }
 
+  public void setResult(double result) {
+    this.result = result;
+  }
+
 }

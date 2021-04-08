@@ -13,13 +13,13 @@ public class ExperimentMapFragment extends Fragment {
 
   private static final String ARG_EXPERIMENT = "EXPERIMENT";
 
-  Experiment experiment;
+  String experimentId;
   ExperimentType type;
 
-  public static ExperimentMapFragment newInstance(Experiment experiment) {
+  public static ExperimentMapFragment newInstance(String experimentId) {
     ExperimentMapFragment fragment = new ExperimentMapFragment();
     Bundle args = new Bundle();
-    args.putSerializable(ARG_EXPERIMENT, experiment);
+    args.putString(ARG_EXPERIMENT, experimentId);
     fragment.setArguments(args);
     return fragment;
   }
@@ -28,7 +28,7 @@ public class ExperimentMapFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
-      experiment = (Experiment) getArguments().getSerializable(ARG_EXPERIMENT);
+      experimentId = getArguments().getString(ARG_EXPERIMENT);
     }
   }
 

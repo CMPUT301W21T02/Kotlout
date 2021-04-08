@@ -39,8 +39,6 @@ public class ExperimentViewActivity extends AppCompatActivity {
   ExperimentController experimentController;
   String experimentId;
 
-  boolean isFirstBuild = true;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -58,11 +56,11 @@ public class ExperimentViewActivity extends AppCompatActivity {
       experimentController = new ExperimentController(experimentId, () -> {
 
         ExperimentInfoFragment infoFragment = ExperimentInfoFragment
-            .newInstance(experimentController.getExperimentContext(),
+            .newInstance(experimentController.getExperimentId(),
                 experimentController.getType());
 
         ExperimentMapFragment mapFragment = ExperimentMapFragment
-            .newInstance(experimentController.getExperimentContext());
+            .newInstance(experimentController.getExperimentId());
 
         ExperimentTrialListFragment trialListFragment = ExperimentTrialListFragment
             .newInstance(experimentController.getExperimentId(),
