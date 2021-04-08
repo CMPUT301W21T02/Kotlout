@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
@@ -74,8 +75,10 @@ public class ExperimentNewActivity extends AppCompatActivity {
     int typeId = (int) ((Spinner) this.findViewById(R.id.sp_experiment_new_type))
         .getSelectedItemId();
 
+//    boolean geolocationRequired = ((CheckBox) this.findViewById(R.id.cb_new_trial_location)).isChecked();
+    boolean geolocationRequired = true;
     ExperimentController experimentController = ExperimentController
-        .newInstance(description, region, minTrials, ExperimentType.values()[typeId]);
+        .newInstance(description, region, minTrials, geolocationRequired, ExperimentType.values()[typeId]);
 
     Intent intent = new Intent();
     intent.putExtra(EXPERIMENT_EXTRA, experimentController.getExperimentContext());

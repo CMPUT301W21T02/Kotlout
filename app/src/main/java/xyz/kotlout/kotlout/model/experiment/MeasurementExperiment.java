@@ -3,7 +3,6 @@ package xyz.kotlout.kotlout.model.experiment;
 import java.util.ArrayList;
 import java.util.List;
 import xyz.kotlout.kotlout.model.ExperimentType;
-import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
@@ -25,8 +24,8 @@ public class MeasurementExperiment extends Experiment {
   /**
    * Creates a new MeasurementExperiment with basic fields passed on to the base Experiment constructor.
    */
-  public MeasurementExperiment(String description, String region, int minimumTrials) {
-    super(description, region, minimumTrials);
+  public MeasurementExperiment(String description, String region, int minimumTrials, boolean geolocationRequired) {
+    super(description, region, minimumTrials, geolocationRequired);
   }
 
   @Override

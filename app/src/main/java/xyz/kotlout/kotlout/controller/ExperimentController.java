@@ -135,26 +135,26 @@ public class ExperimentController {
 
   /**
    * Sets the experiment context with the basic fields needed for a new Experiment.
-   *
-   * @param description The experiment description.
+   *  @param description The experiment description.
    * @param region      The region where the experiment is conducted.
    * @param minTrials   The minimum number of trials required for the experiment.
+   * @param geolocationRequired
    */
   @NonNull
   public static ExperimentController newInstance(@NonNull String description, String region,
-      int minTrials, @NonNull ExperimentType type) {
+      int minTrials, boolean geolocationRequired, @NonNull ExperimentType type) {
 
     switch (type) {
       case BINOMIAL:
-        return new ExperimentController(new BinomialExperiment(description, region, minTrials),
+        return new ExperimentController(new BinomialExperiment(description, region, minTrials, geolocationRequired),
             type);
       case NON_NEGATIVE_INTEGER:
-        return new ExperimentController(new NonNegativeExperiment(description, region, minTrials),
+        return new ExperimentController(new NonNegativeExperiment(description, region, minTrials, geolocationRequired),
             type);
       case COUNT:
-        return new ExperimentController(new CountExperiment(description, region, minTrials), type);
+        return new ExperimentController(new CountExperiment(description, region, minTrials, geolocationRequired), type);
       case MEASUREMENT:
-        return new ExperimentController(new MeasurementExperiment(description, region, minTrials),
+        return new ExperimentController(new MeasurementExperiment(description, region, minTrials, geolocationRequired),
             type);
       default:
         throw new UnsupportedOperationException();
