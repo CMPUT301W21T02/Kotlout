@@ -12,7 +12,9 @@ public class FirebaseController {
 
   private static final boolean USE_EMU = true;
 
-  private static final String EMU_HOST = "10.0.2.2";
+  private static final String EMU_HOST = "192.168.0.80";
+  private static final String NON_EMU_HOST = "192.168.0.80";
+
   private static final int EMU_FIREBASE_PORT = 8080;
   private static final int EMU_AUTH_PORT = 9099;
 
