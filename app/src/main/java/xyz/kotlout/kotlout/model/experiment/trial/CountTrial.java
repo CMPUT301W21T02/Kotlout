@@ -1,22 +1,28 @@
 package xyz.kotlout.kotlout.model.experiment.trial;
 
+import java.util.Comparator;
+
 /**
  * A trial with no (or only a single) outcome
  */
 public class CountTrial extends Trial {
 
-  private int result;
+  private long result;
 
   public CountTrial() {
 
   }
 
-  public CountTrial(int result, String experimenterId) {
+  public CountTrial(long result, String experimenterId) {
     super(experimenterId);
     this.result = result;
   }
 
-  public int getResult() {
+  public long getResult() {
     return result;
+  }
+
+  public void setResult(long result) {
+    this.result = result;
   }
 }

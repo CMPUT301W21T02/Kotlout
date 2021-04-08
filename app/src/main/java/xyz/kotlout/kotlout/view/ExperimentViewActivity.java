@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.UserController;
+import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 import xyz.kotlout.kotlout.view.fragment.ExperimentInfoFragment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentMapFragment;
@@ -32,16 +34,15 @@ public class ExperimentViewActivity extends AppCompatActivity {
 
   public static final int VIEW_EXPERIMENT_REQUEST = 0;
   public static final String EXPERIMENT_ID = "EXPERIMENT";
+  public static final String TAG = "EXPERIMENT_VIEW";
 
-  ExperimentViewFragmentsAdapter adapter;
-  ViewPager2 viewPager;
-  TabLayout tabLayout;
-  FloatingActionButton trialFab;
+  private ExperimentViewFragmentsAdapter adapter;
+  private ViewPager2 viewPager;
+  private TabLayout tabLayout;
+  private FloatingActionButton trialFab;
 
-  ExperimentController experimentController;
-  String experimentId;
-
-  boolean isFirstBuild = true;
+  private ExperimentController experimentController;
+  private String experimentId;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +61,11 @@ public class ExperimentViewActivity extends AppCompatActivity {
       experimentController = new ExperimentController(experimentId, () -> {
 
         ExperimentInfoFragment infoFragment = ExperimentInfoFragment
-            .newInstance(experimentController.getExperimentContext(),
+            .newInstance(experimentController.getExperimentId(),
                 experimentController.getType());
 
         ExperimentMapFragment mapFragment = ExperimentMapFragment
-            .newInstance(experimentController.getExperimentContext());
+            .newInstance(experimentController.getExperimentId());
 
         ExperimentTrialListFragment trialListFragment = ExperimentTrialListFragment
             .newInstance(experimentController.getExperimentId(),
@@ -95,11 +96,6 @@ public class ExperimentViewActivity extends AppCompatActivity {
             } else {
               trialFab.hide();
             }
-          }
-
-          @Override
-          public void onPageScrollStateChanged(int state) {
-            super.onPageScrollStateChanged(state);
           }
         });
 
@@ -151,9 +147,37 @@ public class ExperimentViewActivity extends AppCompatActivity {
       startActivity(intent);
       return true;
 
-    } else {
+    } else if (i == R.id.subscribe_experiment) {
+        UserController userController = new UserController(UserHelper.readUuid());
+        userController.setUpdateCallback(user -> {
+          if(user.getSubscriptions().contains(experimentId)) {
+            userController.removeSubscription(experimentId);
+            item.setIcon(R.drawable.ic_baseline_bookmark_border);
+          } else {
+            userController.addSubscription(experimentId);
+            item.setIcon(R.drawable.ic_baseline_bookmark);
+          }
+        });
+      } else {
       return super.onOptionsItemSelected(item);
     }
+  }
+
+  @Override
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    // Set Subscribe and Unsubscribe visibility based on user subscriptions
+    MenuItem subscribeItem = menu.findItem(R.id.subscribe_experiment);
+
+    UserController userController = new UserController(UserHelper.readUuid());
+    userController.setUpdateCallback(user -> {
+      if (user.getSubscriptions().contains(experimentId)) {
+        subscribeItem.setIcon(R.drawable.ic_baseline_bookmark);
+      } else {
+        subscribeItem.setIcon(R.drawable.ic_baseline_bookmark_border);
+      }
+      userController.unregisterSnapshotListener();
+    });
+    return super.onPrepareOptionsMenu(menu);
   }
 
   public void showOwner(View view) {
@@ -175,7 +199,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
     startActivityForResult(intent, TrialNewActivity.NEW_TRIAL_REQUEST);
   }
 
-  public static class ExperimentViewFragmentsAdapter extends FragmentStateAdapter {
+  static class ExperimentViewFragmentsAdapter extends FragmentStateAdapter {
 
     List<Fragment> fragmentList = new ArrayList<>();
 

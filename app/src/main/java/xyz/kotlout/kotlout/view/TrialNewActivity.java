@@ -24,10 +24,10 @@ public class TrialNewActivity extends AppCompatActivity {
   public static final String EXPERIMENT_TYPE = "TYPE";
   public static final String TRIAL_EXTRA = "TRIAL";
 
-  ExperimentType type;
+  private ExperimentType type;
 
-  RadioGroup radioButtons;
-  EditText textEntry;
+  private RadioGroup radioButtons;
+  private EditText textEntry;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,7 @@ public class TrialNewActivity extends AppCompatActivity {
     switch (type) {
       case BINOMIAL:
         textEntry.setVisibility(View.GONE);
+        radioButtons.setVisibility(View.VISIBLE);
         break;
       case MEASUREMENT:
         textEntry.setHint("Decimal Number");
@@ -50,12 +51,14 @@ public class TrialNewActivity extends AppCompatActivity {
         textEntry.setInputType(InputType.TYPE_CLASS_NUMBER);
         textEntry.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
         radioButtons.setVisibility(View.GONE);
+        textEntry.setVisibility(View.VISIBLE);
         break;
       case NON_NEGATIVE_INTEGER:
         textEntry.setHint("Non Negative Integer");
         textEntry.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
         textEntry.setInputType(InputType.TYPE_CLASS_NUMBER);
         radioButtons.setVisibility(View.GONE);
+        textEntry.setVisibility(View.VISIBLE);
         break;
       case COUNT:
         textEntry.setHint("Any Integer");
@@ -63,6 +66,7 @@ public class TrialNewActivity extends AppCompatActivity {
         textEntry.setInputType(InputType.TYPE_CLASS_NUMBER);
         textEntry.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED);
         radioButtons.setVisibility(View.GONE);
+        textEntry.setVisibility(View.VISIBLE);
         break;
       case UNKNOWN:
         break;
@@ -77,30 +81,36 @@ public class TrialNewActivity extends AppCompatActivity {
     String uuid = UserHelper.readUuid();
     String userInput = textEntry.getText().toString();
     Intent intent = new Intent();
+    try {
+      switch (type) {
 
-    switch (type) {
+        case BINOMIAL:
+          boolean result = radioButtons.getCheckedRadioButtonId() == R.id.radio_success;
+          BinomialTrial newBinomialTrial = new BinomialTrial(result, uuid);
+          intent.putExtra(TRIAL_EXTRA, newBinomialTrial);
+          break;
+        case NON_NEGATIVE_INTEGER:
 
-      case BINOMIAL:
-        boolean result = radioButtons.getCheckedRadioButtonId() == R.id.radio_success;
-        BinomialTrial newBinomialTrial = new BinomialTrial(result, uuid);
-        intent.putExtra(TRIAL_EXTRA, newBinomialTrial);
-        break;
-      case NON_NEGATIVE_INTEGER:
-        NonNegativeTrial newNonNegativeTrial = new NonNegativeTrial(Integer.parseInt(userInput), uuid);
-        intent.putExtra(TRIAL_EXTRA, newNonNegativeTrial);
-        break;
-      case COUNT:
-        CountTrial newCountTrial = new CountTrial(Integer.parseInt(userInput), uuid);
-        intent.putExtra(TRIAL_EXTRA, newCountTrial);
-        break;
-      case MEASUREMENT:
-        MeasurementTrial measurementTrial = new MeasurementTrial(Double.parseDouble(userInput), uuid);
-        intent.putExtra(TRIAL_EXTRA, measurementTrial);
-        break;
-      case UNKNOWN:
-        break;
+          NonNegativeTrial newNonNegativeTrial = new NonNegativeTrial(Long.parseLong(userInput), uuid);
+          intent.putExtra(TRIAL_EXTRA, newNonNegativeTrial);
+          break;
+        case COUNT:
+          CountTrial newCountTrial = new CountTrial(Long.parseLong(userInput), uuid);
+          intent.putExtra(TRIAL_EXTRA, newCountTrial);
+          break;
+        case MEASUREMENT:
+          MeasurementTrial measurementTrial = new MeasurementTrial(Double.parseDouble(userInput), uuid);
+          intent.putExtra(TRIAL_EXTRA, measurementTrial);
+          break;
+        case UNKNOWN:
+          break;
+      }
+
+      setResult(RESULT_OK, intent);
+      finish();
+
+    } catch (NumberFormatException exception) {
+      textEntry.setError("Number too large");
     }
-    setResult(RESULT_OK, intent);
-    finish();
   }
 }
