@@ -140,16 +140,13 @@ public class ExperimentViewActivity extends AppCompatActivity {
   public boolean onPrepareOptionsMenu(Menu menu) {
     // Set Subscribe and Unsubscribe visibility based on user subscriptions
     MenuItem subscribeItem = menu.findItem(R.id.subscribe_experiment);
-    MenuItem unsubscribeItem = menu.findItem(R.id.unsubscribe_experiment);
 
     UserController userController = new UserController(UserHelper.readUuid());
     userController.setUpdateCallback(user -> {
       if (user.getSubscriptions().contains(experimentId)) {
-        subscribeItem.setVisible(false);
-        unsubscribeItem.setVisible(true);
+        subscribeItem.setIcon(R.drawable.ic_baseline_bookmark);
       } else {
-        subscribeItem.setVisible(true);
-        unsubscribeItem.setVisible(false);
+        subscribeItem.setIcon(R.drawable.ic_baseline_bookmark_border);
       }
       userController.unregisterSnapshotListener();
     });
@@ -207,12 +204,15 @@ public class ExperimentViewActivity extends AppCompatActivity {
     // subscribe to experiment
     if (itemId == R.id.subscribe_experiment) {
       UserController userController = new UserController(UserHelper.readUuid());
-      userController.setUpdateCallback(user -> userController.addSubscription(experimentId));
-    }
-    // unsubscribe to experiment
-    else if (itemId == R.id.unsubscribe_experiment) {
-      UserController userController = new UserController(UserHelper.readUuid());
-      userController.setUpdateCallback(user -> userController.removeSubscription(experimentId));
+      userController.setUpdateCallback(user -> {
+        if(user.getSubscriptions().contains(experimentId)) {
+          userController.removeSubscription(experimentId);
+          item.setIcon(R.drawable.ic_baseline_bookmark_border);
+        } else {
+          userController.addSubscription(experimentId);
+          item.setIcon(R.drawable.ic_baseline_bookmark);
+        }
+      });
     } else {
       return super.onOptionsItemSelected(item);
     }
