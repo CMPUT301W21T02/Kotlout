@@ -1,6 +1,7 @@
 package xyz.kotlout.kotlout.view;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -8,8 +9,10 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.zxing.BarcodeFormat;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.ScannableController;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment;
@@ -93,6 +96,14 @@ public class MainActivity extends AppCompatActivity {
       newExperiment.setOwnerUuid(UserHelper.readUuid());
       ExperimentController experimentController = new ExperimentController(newExperiment);
       experimentController.publishNewExperiment();
+    } else if (requestCode == CodeScannerActivity.SCAN_CODE_REQUEST && data != null) {
+      String encoded = data.getStringExtra("code");
+      BarcodeFormat format = (BarcodeFormat) data.getSerializableExtra("format");
+      if (format == BarcodeFormat.QR_CODE) {
+        processQrCode(Uri.parse(encoded));
+      } else {
+        ScannableController.addTrialFromBarcode(this, encoded);
+      }
     }
   }
 
@@ -109,9 +120,23 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(UserHelper.UUID_INTENT, UserHelper.readUuid());
         startActivity(intent);
         return true;
-
+      case R.id.scan_code_menu_button:
+        Intent scanIntent = new Intent(this, CodeScannerActivity.class);
+        startActivityForResult(scanIntent, CodeScannerActivity.SCAN_CODE_REQUEST);
+        return true;
       default:
         return super.onOptionsItemSelected(item);
     }
+  }
+
+  /**
+   * Process Trial result from uri
+   *
+   * @param qrUri Uri describing a trial result
+   */
+  private void processQrCode(Uri qrUri) {
+    Intent addTrialIntent = new Intent(this, ExperimentViewActivity.class);
+    addTrialIntent.setData(qrUri);
+    startActivity(addTrialIntent);
   }
 }

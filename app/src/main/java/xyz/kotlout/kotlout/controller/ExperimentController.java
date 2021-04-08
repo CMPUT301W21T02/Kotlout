@@ -1,5 +1,7 @@
 package xyz.kotlout.kotlout.controller;
 
+import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,6 +15,10 @@ import xyz.kotlout.kotlout.model.experiment.CountExperiment;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 import xyz.kotlout.kotlout.model.experiment.MeasurementExperiment;
 import xyz.kotlout.kotlout.model.experiment.NonNegativeExperiment;
+import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.CountTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
 /**
@@ -47,7 +53,7 @@ public class ExperimentController {
     this.experimentObserver = loadedObserver;
     db.collection(EXPERIMENT_COLLECTION).document(experimentId).get()
         .addOnSuccessListener(documentSnapshot -> {
-          if(documentSnapshot != null) {
+          if (documentSnapshot != null) {
             type = ExperimentType.valueOf((String) documentSnapshot.get("type"));
             switch (type) {
               case BINOMIAL:
@@ -391,6 +397,56 @@ public class ExperimentController {
     }
 
     return null;
+  }
+
+  /**
+   * Creates a trial from a URI and adds it to the current experiment
+   *
+   * @param data Uri which encodes a trial
+   * @return true if the trial is valid, false otherwise
+   */
+  public boolean addTrialFromUri(Uri data) {
+    Trial newTrial;
+    String resultString = data.getQueryParameter("result");
+    ExperimentType currentType = type;
+    if (type == null) {
+      type = ExperimentType.valueOf(data.getQueryParameter("TYPE"));
+    }
+    if (resultString == null) {
+      // Not all parameters are defined
+      Log.e(TAG, "Parameters in uri are missing, URI: " + data.toString());
+      return false;
+    }
+    try {
+      switch (type) {
+        case COUNT:
+          newTrial = new CountTrial(Long.parseLong(resultString), UserHelper.readUuid());
+          break;
+        case BINOMIAL:
+          newTrial = new BinomialTrial(data.getBooleanQueryParameter("result", false), UserHelper.readUuid());
+          break;
+        case MEASUREMENT:
+          newTrial = new MeasurementTrial(Double.parseDouble(resultString), UserHelper.readUuid());
+          break;
+        case NON_NEGATIVE_INTEGER:
+          newTrial = new NonNegativeTrial(Long.parseLong(resultString), UserHelper.readUuid());
+          break;
+        default:
+          // Error
+          Log.e(TAG, "Error: unknown experiment type");
+          return false;
+      }
+    } catch (NumberFormatException e) {
+      Log.e(TAG, "Error: URI trial result is invalid. Result String: " + resultString);
+      return false;
+    }
+    if (experimentContext == null) {
+      Trial finalNewTrial = newTrial;
+      (new Handler()).postDelayed(() -> addTrial(finalNewTrial), 5000);
+    } else {
+      addTrial(newTrial);
+    }
+    return true;
   }
 
   public interface ExperimentLoadedObserver {

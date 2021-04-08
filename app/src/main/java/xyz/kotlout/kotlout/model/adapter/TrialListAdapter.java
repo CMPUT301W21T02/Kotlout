@@ -24,6 +24,7 @@ import xyz.kotlout.kotlout.model.experiment.trial.CountTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
+import xyz.kotlout.kotlout.model.user.User;
 
 public class TrialListAdapter extends BaseExpandableListAdapter {
 
@@ -109,7 +110,8 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
     if(groupUuid.equals(myUuid)) {
       tvGroup.setText("Me");
     } else {
-      tvGroup.setText(UserHelper.fetchUser(groupUuid).getDisplayName());
+      User user = UserHelper.fetchUser(groupUuid);
+      tvGroup.setText(user == null ? groupUuid : user.getDisplayName());
     }
 
     return convertView;

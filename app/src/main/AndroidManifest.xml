@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="xyz.kotlout.kotlout">
 
+  <uses-permission android:name="android.permission.CAMERA" />
+
   <application
     android:allowBackup="true"
     android:icon="@mipmap/ic_launcher"
@@ -31,10 +33,33 @@
       android:name=".view.DiscussionPostsActivity" />
     <activity
       android:label="@string/title_activity_experiment_view"
-      android:name=".view.ExperimentViewActivity" />
+      android:name=".view.ExperimentViewActivity">
+      <intent-filter android:label="@string/scannable_intent_label">
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+
+        <data android:scheme="kotlout" />
+      </intent-filter>
+      <intent-filter android:label="@string/scannable_intent_label_remote">
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+
+        <data
+          android:host="www.kotlout.xyz"
+          android:pathPrefix="/"
+          android:scheme="http" />
+      </intent-filter>
+    </activity>
     <activity
       android:label="@string/title_activity_trial_new"
       android:name=".view.TrialNewActivity" />
+    <activity
+      android:label="@string/title_activity_codescanner"
+      android:name=".view.CodeScannerActivity" />
   </application>
 
 </manifest>

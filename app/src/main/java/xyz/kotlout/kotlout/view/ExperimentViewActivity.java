@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -46,7 +47,12 @@ public class ExperimentViewActivity extends AppCompatActivity {
 
     if (savedInstanceState == null) {
       Intent intent = getIntent();
-      experimentId = intent.getStringExtra(EXPERIMENT_ID);
+      boolean shouldCreateNewTrial = intent.getData() != null;
+      if (shouldCreateNewTrial) {
+        experimentId = intent.getData().getQueryParameter(EXPERIMENT_ID);
+      } else {
+        experimentId = intent.getStringExtra(EXPERIMENT_ID);
+      }
 
       adapter = new ExperimentViewFragmentsAdapter(getSupportFragmentManager(), getLifecycle());
       tabLayout = findViewById(R.id.tl_experiment_view);
@@ -117,6 +123,13 @@ public class ExperimentViewActivity extends AppCompatActivity {
 
       }, null);
 
+      if (shouldCreateNewTrial) {
+        if (!experimentController.addTrialFromUri(intent.getData())) {
+          Toast.makeText(this, "Creating new trial failed", Toast.LENGTH_SHORT).show();
+        } else {
+          Toast.makeText(this, "Trial added to experiment", Toast.LENGTH_SHORT).show();
+        }
+      }
     }
   }
 
