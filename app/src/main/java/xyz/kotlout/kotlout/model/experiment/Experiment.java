@@ -1,20 +1,29 @@
 package xyz.kotlout.kotlout.model.experiment;
 
 
+import androidx.annotation.NonNull;
+import com.google.firebase.firestore.DocumentId;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import xyz.kotlout.kotlout.model.ExperimentType;
+import xyz.kotlout.kotlout.model.experiment.trial.Trial;
+import xyz.kotlout.kotlout.model.user.User;
 
 /**
- * Base class for modelling experiments. Child classes should model a particular type of experiment.
+ * Base class for modelling experiments. Child classes should model a particular type of experiment. Which likely contain a list
+ * of a type of trial.
  */
 public abstract class Experiment implements Serializable {
 
+  @DocumentId
+  private String id;
   private String ownerUuid;
   private String description;
   private String region;
   private int minimumTrials;
-  private boolean isOngoing;
+  private boolean isPublished; // True if the experiment has been published (i.e. visible to others). False otherwise.
+  private boolean isOngoing; // True if the experiment hasn't been ended (i.e. is still accepting trials). False otherwise.
   private boolean geolocationRequired;
   private List<String> ignoredUsers;
   private List<Post> posts;
@@ -40,6 +49,24 @@ public abstract class Experiment implements Serializable {
     this.isOngoing = true;
     ignoredUsers = new ArrayList<>();
     posts = new ArrayList<>();
+  }
+
+  /**
+   * Gets the ID for the experiment set by Firestore.
+   *
+   * @return The ID for the experiment set by Firestore.
+   */
+  public String getId() {
+    return id;
+  }
+
+  /**
+   * Sets the ID for the experiment. Should only be used by Firestore.
+   *
+   * @param id The new ID of the experiment.
+   */
+  public void setId(String id) {
+    this.id = id;
   }
 
   /**
@@ -92,8 +119,35 @@ public abstract class Experiment implements Serializable {
    *
    * @return Returns true if the experiment is ongoing, or false otherwise.
    */
-  public boolean getIsOngoing() {
+  public boolean isOngoing() {
     return isOngoing;
+  }
+
+  /**
+   * Opens or closes the experiment. If an experiment is closed, it no longer accepts trials from anyone.
+   *
+   * @param ongoing True if experiment is not closed. False otherwise.
+   */
+  public void setOngoing(boolean ongoing) {
+    isOngoing = ongoing;
+  }
+
+  /**
+   * Checks if the experiment is published, making it visible to others in the app.
+   *
+   * @return True if published. False otherwise.
+   */
+  public boolean isPublished() {
+    return isPublished;
+  }
+
+  /**
+   * Sets the publishing status of the experiment.
+   *
+   * @param published True if the experiment is published. False otherwise.
+   */
+  public void setPublished(boolean published) {
+    isPublished = published;
   }
 
   /**
@@ -113,4 +167,16 @@ public abstract class Experiment implements Serializable {
   public List<Post> getPosts() {
     return posts;
   }
+
+  public void ignoreUser(@NonNull User user) {
+    ignoredUsers.add(user.getUuid());
+  }
+
+  public List<String> getIgnoredUser() {
+    return ignoredUsers;
+  }
+
+  abstract ExperimentType getExperimentType();
+
+  abstract void addTrial(Trial trial);
 }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:padding="16dp"
+  android:orientation="horizontal"
+  tools:context=".view.MainActivity">
+  <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+      android:id="@+id/tv_trial_list_result"
+      android:layout_width="wrap_content"
+      android:layout_height="0dp"
+      android:ellipsize="end"
+      android:layout_weight="1"
+      android:singleLine="true"
+      android:text="Pass"
+      android:textAppearance="@android:style/TextAppearance.Material.Headline"
+      android:textSize="16sp" />
+    <TextView
+      android:id="@+id/tv_trial_list_date"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="DD/MM/YYYY @ HH:mm"
+      android:textSize="14sp" />
+  </LinearLayout>
+  <RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp">
+    <ImageView
+      android:id="@+id/iv_trial_list_geolocation"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_alignParentEnd="true"
+      android:src="@drawable/ic_baseline_location_on" />
+  </RelativeLayout>
+
+</LinearLayout>

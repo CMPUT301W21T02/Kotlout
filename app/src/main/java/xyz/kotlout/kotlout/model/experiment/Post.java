@@ -5,6 +5,9 @@ import java.util.Date;
 import java.util.List;
 import xyz.kotlout.kotlout.model.user.User;
 
+/**
+ * A Post is a class representing a question or reply posted to an experiment's discussion forum.
+ */
 public class Post {
 
   private User poster;

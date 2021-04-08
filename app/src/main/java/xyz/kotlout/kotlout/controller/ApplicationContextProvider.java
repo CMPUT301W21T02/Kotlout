@@ -17,7 +17,7 @@ public class ApplicationContextProvider extends Application {
     applicationContext = getApplicationContext();
     FirebaseController.initFirestore();
     UserHelper.initUserHelper(applicationContext);
-    UserHelper.initalizeUser();
+    UserHelper.initializeUser();
   }
 
 

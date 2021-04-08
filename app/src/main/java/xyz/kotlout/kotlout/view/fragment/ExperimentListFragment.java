@@ -1,26 +1,20 @@
 package xyz.kotlout.kotlout.view.fragment;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseExpandableListAdapter;
+import android.widget.AdapterView;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
-import xyz.kotlout.kotlout.controller.ExperimentListController;
-import xyz.kotlout.kotlout.controller.MyExperimentGroup;
+import xyz.kotlout.kotlout.controller.UserHelper;
+import xyz.kotlout.kotlout.model.adapter.ExperimentListAdapter;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 import xyz.kotlout.kotlout.view.ExperimentViewActivity;
 
@@ -28,6 +22,12 @@ import xyz.kotlout.kotlout.view.ExperimentViewActivity;
  * A fragment used to represent the user's experiments in a list.
  */
 public class ExperimentListFragment extends Fragment {
+
+  public enum ListType {
+    MINE,
+    ALL,
+    SUBSCRIBED
+  }
 
   public static String ARG_TYPE = "TYPE";
   private ExperimentListAdapter experimentListAdapter;
@@ -38,7 +38,6 @@ public class ExperimentListFragment extends Fragment {
 
     Bundle args = new Bundle();
     args.putSerializable(ARG_TYPE, type);
-
     fragment.setArguments(args);
 
     return fragment;
@@ -57,19 +56,86 @@ public class ExperimentListFragment extends Fragment {
       Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_experiment_list, container, false);
 
-    ExpandableListView elv = view.findViewById(R.id.elv_main_experiment_list);
-    experimentListAdapter = new ExperimentListAdapter("0"); // TODO: get current user uuid
+    ExpandableListView elv = view.findViewById(R.id.elv_main_experiments);
+    experimentListAdapter = new ExperimentListAdapter(getContext(), UserHelper.readUuid(), type);
     elv.setAdapter(experimentListAdapter);
     elv.setOnChildClickListener(this::onChildClick);
+    elv.setOnItemLongClickListener(this::onItemLongClick);
 
-    // Inflate the layout for this fragment
     return view;
+  }
+
+  /**
+   * Shows a context menu for experiment list items to modify their state.
+   *
+   * @return True if the event was handled. False otherwise.
+   */
+  private boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+    // https://stackoverflow.com/questions/2353074/android-long-click-on-the-child-views-of-a-expandablelistview/8320128#8320128
+    // Accessed 2021-04-04, Author: Nicholas Harlen, License: CC BY-SA 4.0
+
+    // TODO: restrict long click options to My Experiments only
+    if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+      int groupPosition = ExpandableListView.getPackedPositionGroup(id);
+      int childPosition = ExpandableListView.getPackedPositionChild(id);
+      ExperimentController experimentController = (ExperimentController) experimentListAdapter
+          .getChild(groupPosition, childPosition);
+      Experiment experiment = experimentController.getExperimentContext();
+
+      // Don't give options for experiments not owned by the user
+      if (!experiment.getOwnerUuid().equals(UserHelper.readUuid())) {
+        return false;
+      }
+
+      // Show options to user to modify the experiment state
+      AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+      builder.setTitle(R.string.experiment_long_click_menu_title)
+          .setItems(getExperimentMenuOptions(experiment), (dialog, which) -> {
+            switch (which) {
+              // Publish or Unpublish
+              case 0:
+                if (experiment.isPublished()) {
+                  experimentController.unpublish();
+                } else {
+                  experimentController.publish();
+                }
+                break;
+
+              // End or Resume
+              case 1:
+                if (experiment.isOngoing()) {
+                  experimentController.end();
+                } else {
+                  experimentController.resume();
+                }
+                break;
+            }
+          }).show();
+
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Generates menu options for modifying the state of an experiment.
+   *
+   * @param experiment An instance of Experiment.
+   * @return An array of menu option strings.
+   */
+  private CharSequence[] getExperimentMenuOptions(Experiment experiment) {
+    CharSequence[] menuOptions = new CharSequence[]{"", ""};
+    menuOptions[0] = experiment.isPublished() ? getString(R.string.unpublish_experiment_option)
+        : getString(R.string.publish_experiment_option);
+    menuOptions[1] =
+        experiment.isOngoing() ? getString(R.string.end_experiment_option) : getString(R.string.resume_experiment_option);
+    return menuOptions;
   }
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
   }
 
   boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition,
@@ -84,141 +150,8 @@ public class ExperimentListFragment extends Fragment {
     return true;
   }
 
-  public enum ListType {
-    MINE,
-    ALL,
-    SUBSCRIBED
-  }
+  public void addController() {
 
-  /**
-   * An adapter that keeps the experiment list up-to-date.
-   */
-  public class ExperimentListAdapter extends BaseExpandableListAdapter {
-
-    private static final String TAG = "EXP_LIST_ADAPTER";
-    private ExperimentListController experimentListController;
-    private Query myExperimentsRef;
-    private Map<MyExperimentGroup, List<ExperimentController>> myExperiments;
-
-    public ExperimentListAdapter(String userUuid) {
-      experimentListController = new ExperimentListController(userUuid);
-      myExperiments = experimentListController.initializeMyExperiments();
-
-      myExperimentsRef = experimentListController.getGetUserExperiments();
-
-      myExperimentsRef.addSnapshotListener((queryDocumentSnapshots, e) -> {
-
-        for (Entry<MyExperimentGroup, List<ExperimentController>> pair : myExperiments.entrySet()) {
-          pair.getValue().clear();
-        }
-
-        for (QueryDocumentSnapshot experimentDoc : queryDocumentSnapshots) {
-          Log.d(TAG, experimentDoc.getId() + " => " + experimentDoc.getData());
-
-          ExperimentController controller = new ExperimentController(experimentDoc);
-          Experiment experiment = controller.getExperimentContext();
-
-          if (experiment.getIsOngoing()) {
-            myExperiments.get(MyExperimentGroup.OPEN).add(controller);
-          } else {
-            myExperiments.get(MyExperimentGroup.CLOSED).add(controller);
-          }
-        }
-        this.notifyDataSetChanged();
-      });
-    }
-
-    @Override
-    public int getGroupCount() {
-      return myExperiments.size();
-    }
-
-    @Override
-    public int getChildrenCount(int groupPosition) {
-      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
-      return myExperiments.get(experimentGroup).size();
-    }
-
-    @Override
-    public Object getGroup(int groupPosition) {
-      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
-      return myExperiments.get(experimentGroup);
-    }
-
-    @Override
-    public Object getChild(int groupPosition, int childPosition) {
-      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
-      return myExperiments.get(experimentGroup).get(childPosition);
-    }
-
-    @Override
-    public long getGroupId(int groupPosition) {
-      return groupPosition;
-    }
-
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-      return childPosition;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-      return true;
-    }
-
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView,
-        ViewGroup parent) {
-
-      if (convertView == null) {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        convertView = inflater.inflate(R.layout.experiment_list_group, parent, false);
-      }
-
-      TextView tvGroup = convertView.findViewById(R.id.tv_experiment_list_group);
-
-      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
-      tvGroup.setText(experimentGroup.toString());
-
-      if (experimentGroup == MyExperimentGroup.OPEN) {
-        ExpandableListView elv = (ExpandableListView) parent;
-        elv.expandGroup(groupPosition);
-      }
-
-      return convertView;
-    }
-
-    @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild,
-        View convertView, ViewGroup parent) {
-
-      if (convertView == null) {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        convertView = inflater.inflate(R.layout.experiment_list_item, parent, false);
-      }
-
-      TextView description = convertView
-          .findViewById(R.id.tv_experiment_list_description);
-      TextView region = convertView.findViewById(R.id.tv_experiment_list_region);
-      TextView counter = convertView.findViewById(R.id.tv_experiment_list_counter);
-      TextView type = convertView.findViewById(R.id.tv_experiment_list_type);
-
-      MyExperimentGroup experimentGroup = MyExperimentGroup.getByOrder(groupPosition);
-
-      description.setText(myExperiments.get(experimentGroup)
-          .get(childPosition).getExperimentContext().getDescription());
-      region.setText(myExperiments.get(experimentGroup)
-          .get(childPosition).getExperimentContext().getRegion());
-      counter.setText(myExperiments.get(experimentGroup).get(childPosition).generateCountText());
-      type.setText("Binomial"); //TODO: Figure out how to get this working
-
-      return convertView;
-    }
-
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-      return true;
-    }
   }
 }
 

@@ -5,11 +5,15 @@ import androidx.core.util.Consumer;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
+import java.util.List;
 import xyz.kotlout.kotlout.model.user.User;
 
+/**
+ * A Controller class used to interface with a user given their userId.
+ */
 public class UserController {
 
-  private static final String USER_COLLECTION = "users";
+  public static final String USER_COLLECTION = "users";
   private static final String TAG = "USER CONTROLLER";
 
   private final DocumentReference userDoc;
@@ -23,6 +27,13 @@ public class UserController {
    * @param userId Id of the userdoc to reference with this controller
    */
   public UserController(String userId) {
+    if (userId == null) {
+      Log.e(TAG, "Error no uuid provided, using local uuid");
+      userId = UserHelper.readUuid();
+    }
+    // Set user to garuntee UUID is valid if firebase is unable to fetch data
+    user = new User();
+    user.setUuid(userId);
     userDoc = FirebaseController.getFirestore().collection(USER_COLLECTION).document(userId);
     registerSnapshotListener();
   }
@@ -101,5 +112,38 @@ public class UserController {
 
   public User getUser() {
     return user;
+  }
+
+  /**
+   * Checks if the controlled user is the same as the device user
+   *
+   * @return True if the given user is the same as the device user, False otherwise
+   */
+  public boolean isCurrentUser() {
+    return this.user.getUuid().equals(UserHelper.readUuid());
+  }
+
+  public DocumentReference getUserDoc() {
+    return userDoc;
+  }
+
+  /**
+   * Subscribe to an experiment. Does nothing if the user is already subscribed to the given experiment.
+   *
+   * @param experimentId A string ID for the experiment.
+   */
+  public void addSubscription(String experimentId) {
+    userDoc.get().addOnSuccessListener(documentSnapshot -> {
+          List<String> subscriptions = user.getSubscriptions();
+
+          // Only subscribe to experiments the user isn't already subscribed to
+          if (subscriptions.contains(experimentId)) {
+            return;
+          }
+          subscriptions.add(experimentId);
+          this.user.setSubscriptions(subscriptions);
+          syncUser();
+        }
+    ).addOnFailureListener(e -> Log.e(TAG, "addSubscription: Could not subscribe to experiment with ID " + experimentId));
   }
 }
