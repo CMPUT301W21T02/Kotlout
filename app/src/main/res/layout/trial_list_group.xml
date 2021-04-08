@@ -8,9 +8,9 @@
     android:id="@+id/tv_trial_list_group"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="Experimenter Name"
-    android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
     android:paddingTop="@dimen/listview_group_text_padding"
     android:paddingBottom="@dimen/listview_group_text_padding"
+    android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
+    android:text="Experimenter Name"
     tools:ignore="RtlHardcoded,RtlSymmetry" />
 </LinearLayout>

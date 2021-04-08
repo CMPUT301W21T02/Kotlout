@@ -59,4 +59,6 @@
   <string name="title_activity_trial_new">New Trial</string>
   <string name="title_activity_experiment_view">Experiment View</string>
   <string name="unsubscribe_from_experiment">Unsubscribe from Experiment</string>
+  <string name="title_activity_search">Search Experiments</string>
+  <string name="search_hint">Experiments</string>
 </resources>

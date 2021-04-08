@@ -35,13 +35,13 @@ public class ExperimentViewActivity extends AppCompatActivity {
   public static final String EXPERIMENT_ID = "EXPERIMENT";
   public static final String TAG = "EXPERIMENT_VIEW";
 
-  ExperimentViewFragmentsAdapter adapter;
-  ViewPager2 viewPager;
-  TabLayout tabLayout;
-  FloatingActionButton trialFab;
+  private ExperimentViewFragmentsAdapter adapter;
+  private ViewPager2 viewPager;
+  private TabLayout tabLayout;
+  private FloatingActionButton trialFab;
 
-  ExperimentController experimentController;
-  String experimentId;
+  private ExperimentController experimentController;
+  private String experimentId;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -95,11 +95,6 @@ public class ExperimentViewActivity extends AppCompatActivity {
             } else {
               trialFab.hide();
             }
-          }
-
-          @Override
-          public void onPageScrollStateChanged(int state) {
-            super.onPageScrollStateChanged(state);
           }
         });
 
@@ -180,7 +175,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
     startActivityForResult(intent, TrialNewActivity.NEW_TRIAL_REQUEST);
   }
 
-  public static class ExperimentViewFragmentsAdapter extends FragmentStateAdapter {
+  static class ExperimentViewFragmentsAdapter extends FragmentStateAdapter {
 
     List<Fragment> fragmentList = new ArrayList<>();
 

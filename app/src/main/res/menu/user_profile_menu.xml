@@ -3,18 +3,17 @@
   xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <item
-    app:showAsAction="ifRoom"
     android:id="@+id/edit_profile_button"
     android:icon="@drawable/ic_baseline_edit"
     android:title="TODO"
     android:visible="true"
-    />
+    app:showAsAction="ifRoom" />
 
   <item
-    app:showAsAction="ifRoom"
     android:id="@+id/edit_confirm_button"
     android:icon="@drawable/ic_baseline_check"
     android:title="CHECK"
-    android:visible="false"/>
+    android:visible="false"
+    app:showAsAction="ifRoom" />
 
 </menu>

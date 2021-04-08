@@ -15,8 +15,8 @@
   <!-- Padding around the group label in ExpandableListView -->
   <dimen name="listview_group_text_padding">10dp</dimen>
 
-    <!-- User Profile Activity variables -->
-    <dimen name="profile_input_text_width">300dp</dimen>
-    <dimen name="profile_input_text_height">45dp</dimen>
-    <dimen name="profile_input_spacing">60dp</dimen>
+  <!-- User Profile Activity variables -->
+  <dimen name="profile_input_text_width">300dp</dimen>
+  <dimen name="profile_input_text_height">45dp</dimen>
+  <dimen name="profile_input_spacing">60dp</dimen>
 </resources>

@@ -3,7 +3,6 @@ package xyz.kotlout.kotlout.model.experiment;
 import java.util.ArrayList;
 import java.util.List;
 import xyz.kotlout.kotlout.model.ExperimentType;
-import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 

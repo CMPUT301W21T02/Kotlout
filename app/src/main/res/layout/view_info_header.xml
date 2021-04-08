@@ -35,7 +35,7 @@
         android:focusable="true"
         android:onClick="showOwner"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        android:textColor="@color/purple_700"/>
+        android:textColor="@color/purple_700" />
     </LinearLayout>
 
     <TextView
