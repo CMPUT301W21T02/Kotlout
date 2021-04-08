@@ -14,10 +14,15 @@ public class FirebaseController {
   private static final int EMU_FIREBASE_PORT = 8080;
   private static final int EMU_AUTH_PORT = 9099;
 
+  private static boolean isInitialized = false;
+
   /**
    * Initialize an instance of firestore
+   *
+   * TODO: Does not need to be public. Initialization checked on first getFireStore call.
    */
   public static void initFirestore() {
+    if (isInitialized) return;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     if (USE_EMU) {
       firestore.useEmulator(EMU_HOST, EMU_FIREBASE_PORT);
@@ -32,7 +37,9 @@ public class FirebaseController {
    * @return Firestore instance
    */
   public static FirebaseFirestore getFirestore() {
+    if (!isInitialized) initFirestore();
     return FirebaseFirestore.getInstance();
   }
+
 
 }
