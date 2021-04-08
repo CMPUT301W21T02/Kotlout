@@ -1,7 +1,5 @@
 package xyz.kotlout.kotlout.model.adapter;
 
-import static xyz.kotlout.kotlout.model.experiment.Experiment.getExperimentType;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -256,12 +254,18 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
     ExperimentGroup experimentGroup = ExperimentGroup.getByOrder(groupPosition);
     ExperimentController experimentController = experimentGroups.get(experimentGroup).get(childPosition);
 
-    if (listType == ListType.ALL || listType == ListType.SUBSCRIBED) {
-      icon.setVisibility(View.GONE);
-    } else {
-      if (experimentController.getExperimentContext().isPublished()) {
+    switch (listType) {
+      case MINE:
+        if (experimentController.getExperimentContext().isPublished()) {
+          icon.setVisibility(View.GONE);
+        } else {
+          icon.setVisibility(View.VISIBLE);
+        }
+        break;
+      case ALL:
+      case SUBSCRIBED:
         icon.setVisibility(View.GONE);
-      }
+        break;
     }
 
     description.setText(experimentController.getExperimentContext().getDescription());
