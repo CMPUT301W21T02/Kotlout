@@ -190,10 +190,14 @@ public class ExperimentViewActivity extends AppCompatActivity {
     int itemId = item.getItemId();
 
     // subscribe to experiment
-    // TODO: unsubscribe to experiment
     if (itemId == R.id.subscribe_experiment) {
       UserController userController = new UserController(UserHelper.readUuid());
       userController.setUpdateCallback(user -> userController.addSubscription(experimentId));
+    }
+    // unsubscribe to experiment
+    else if (itemId == R.id.unsubscribe_experiment) {
+      UserController userController = new UserController(UserHelper.readUuid());
+      userController.setUpdateCallback(user -> userController.removeSubscription(experimentId));
     } else {
       return super.onOptionsItemSelected(item);
     }
