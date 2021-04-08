@@ -36,11 +36,12 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
 
   private static final String TAG = "EXP_LIST_ADAPTER";
   private final ExperimentListController experimentListController;
-  private Query getMyExperimentsQuery;
-  private Query getSubscribedExperimentsQuery;
   private final Map<ExperimentGroup, List<ExperimentController>> experimentGroups;
   private final Context context;
   private final ListType listType;
+  private Query getMyExperimentsQuery;
+  private Query getSubscribedExperimentsQuery;
+  private Query getAllExperimentsQuery;
 
   /**
    * Initializes the adapter for the given user's open and closed experiments.
@@ -61,11 +62,12 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
         break;
 
       case ALL:
-        // TODO
+        getAllExperimentsQuery = ExperimentListController.getAllExperiments();
+        getAllExperimentsQuery.addSnapshotListener(this::showAllExperiments);
         break;
 
       case SUBSCRIBED:
-        getSubscribedExperimentsQuery = experimentListController.getSubscribedExperiments();
+        getSubscribedExperimentsQuery = ExperimentListController.getAllExperiments();
         getSubscribedExperimentsQuery.addSnapshotListener(this::showSubscribedExperiments);
         break;
     }
@@ -120,6 +122,18 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
       }
       this.notifyDataSetChanged();
     });
+  }
+
+  private void showAllExperiments(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
+    clearExperimentGroups();
+
+    // Filter experiments by user subscriptions
+    for (QueryDocumentSnapshot experimentDoc : queryDocumentSnapshots) {
+      Log.d(TAG, experimentDoc.getId() + " => " + experimentDoc.getData());
+
+      addExperimentToGroup(experimentDoc);
+    }
+    this.notifyDataSetChanged();
   }
 
   /**

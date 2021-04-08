@@ -91,19 +91,18 @@ public class ExperimentInfoFragment extends Fragment {
 //      case "BINOMIAL":
 //    }
 
-
     return view;
   }
 
-  private void fillTrialData(){
+  private void fillTrialData() {
 
   }
 
-  private void FormatBinomial (BarChart trialInfo){
+  private void FormatBinomial(BarChart trialInfo) {
 
   }
 
-  private void FormatNonNegMeasurement (BarChart histogram){
+  private void FormatNonNegMeasurement(BarChart histogram) {
     BarDataSet barDataSet = new BarDataSet(trialEntries, "Means");
     barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
     Description description = new Description();
@@ -131,6 +130,7 @@ public class ExperimentInfoFragment extends Fragment {
 
   /**
    * Formats the axes and bars of the histogram
+   *
    * @param histogram the histogram with the data loaded in
    */
   private void FormatHistogram(BarChart histogram) {
@@ -161,6 +161,7 @@ public class ExperimentInfoFragment extends Fragment {
 
   /**
    * Merges the counts of all trials with the same results
+   *
    * @param histogramData The list of all trial results
    * @return A list of the trials that are merged on their counts if they have the same result
    */
@@ -168,7 +169,7 @@ public class ExperimentInfoFragment extends Fragment {
     ArrayList<HistogramData> merged = new ArrayList<>();
     for (HistogramData h : histogramData) {
       int index = merged.indexOf(h);
-      if(index != -1) {
+      if (index != -1) {
         merged.set(index, merged.get(index).merge(h));
       } else {
         merged.add(h);
