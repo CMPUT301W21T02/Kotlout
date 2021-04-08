@@ -3,6 +3,7 @@ package xyz.kotlout.kotlout.model.experiment.trial;
 import androidx.annotation.Nullable;
 
 public class BinomialInfo {
+
   private String date;
   private float success;
   private float failure;
@@ -21,8 +22,8 @@ public class BinomialInfo {
     this.failure++;
   }
 
-  public float successProportion(){
-    return (float) (this.success/(this.success + this.failure))*100;
+  public float successProportion() {
+    return (float) (this.success / (this.success + this.failure)) * 100;
   }
 
   public String getDate() {
@@ -34,7 +35,8 @@ public class BinomialInfo {
     if (obj instanceof BinomialInfo) {
       BinomialInfo b = (BinomialInfo) obj;
       return this.date.equals(b.getDate());
-    } else
+    } else {
       return false;
+    }
   }
 }

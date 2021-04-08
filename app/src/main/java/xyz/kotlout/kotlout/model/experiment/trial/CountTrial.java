@@ -5,7 +5,7 @@ import java.util.Comparator;
 /**
  * A trial with no (or only a single) outcome
  */
-public class CountTrial extends Trial implements Comparable<CountTrial> {
+public class CountTrial extends Trial {
 
   private long result;
 
@@ -24,10 +24,5 @@ public class CountTrial extends Trial implements Comparable<CountTrial> {
 
   public void setResult(long result) {
     this.result = result;
-  }
-
-  @Override
-  public int compareTo(CountTrial o) {
-    return getTimestamp().compareTo(o.getTimestamp());
   }
 }
