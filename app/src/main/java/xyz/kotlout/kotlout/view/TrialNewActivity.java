@@ -17,6 +17,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import org.osmdroid.util.GeoPoint;
@@ -38,6 +39,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
   public static final String EXPERIMENT_ID = "EXPERIMENT";
   public static final String EXPERIMENT_TYPE = "TYPE";
   public static final String TRIAL_EXTRA = "TRIAL";
+  public static final String REQUIRE_LOCATION = "LOCATION";
 
   ExperimentType type;
 
@@ -48,6 +50,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
   private Geolocation location;
   private TextView locationText;
 
+  private boolean requireGeolocation;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -55,12 +58,17 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
 
     Intent intent = getIntent();
     type = (ExperimentType) intent.getSerializableExtra(EXPERIMENT_TYPE);
-
+    requireGeolocation = (Boolean) intent.getSerializableExtra(REQUIRE_LOCATION);
     radioButtons = findViewById(R.id.rg_new_trial);
     textEntry = findViewById(R.id.editTextNumber);
     geolocationCheck = findViewById(R.id.cb_new_trial_location);
     locationText = findViewById(R.id.text_new_trial_location);
     // TODO check geolocation required flag
+    if (requireGeolocation) {
+      geolocationCheck.setChecked(true);
+      geolocationCheck.setEnabled(false);
+      Toast.makeText(this, "Geolocation is required for these trials!", Toast.LENGTH_LONG).show();
+    }
     switch (type) {
       case BINOMIAL:
         textEntry.setVisibility(View.GONE);

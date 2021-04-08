@@ -112,6 +112,9 @@ public class SelectLocationFragment extends DialogFragment {
 
     map.getOverlays().add(middleMark);
 
+    /* https://stackoverflow.com/a/48839860
+     * How to set Drag Start and End listener on my custom osmdroid map?
+     * answered Feb 17 '18 at 9:31 by Ali Zain */
     map.setMapListener(new DelayedMapListener(new MapListener() {
       @Override
       public boolean onScroll(ScrollEvent paramScrollEvent) {
