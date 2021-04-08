@@ -36,5 +36,9 @@
       android:label="@string/title_activity_trial_new"
       android:name=".view.TrialNewActivity" />
   </application>
-
+  <!--  Permissions since the maps need a lot -->
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"  />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

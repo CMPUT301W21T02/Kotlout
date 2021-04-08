@@ -1,5 +1,7 @@
 package xyz.kotlout.kotlout.model.experiment.trial;
 
+import xyz.kotlout.kotlout.model.geolocation.Geolocation;
+
 /**
  * A trial with a real (approximated as a Double) valued outcome
  */
@@ -13,6 +15,11 @@ public class MeasurementTrial extends Trial {
 
   public MeasurementTrial(double result, String experimenterId) {
     super(experimenterId);
+    this.result = result;
+  }
+
+  public MeasurementTrial(double result, String experimenterId, Geolocation location) {
+    super(experimenterId, location);
     this.result = result;
   }
 
