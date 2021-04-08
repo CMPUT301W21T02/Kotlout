@@ -3,9 +3,9 @@ package xyz.kotlout.kotlout.controller;
 import android.util.Log;
 import androidx.core.util.Consumer;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import java.util.List;
 import xyz.kotlout.kotlout.model.user.User;
 
 /**
@@ -133,18 +133,25 @@ public class UserController {
    * @param experimentId A string ID for the experiment.
    */
   public void addSubscription(String experimentId) {
-    userDoc.get().addOnSuccessListener(documentSnapshot -> {
-          List<String> subscriptions = user.getSubscriptions();
+    userDoc.update("subscriptions", FieldValue.arrayUnion(experimentId))
+        .addOnSuccessListener(
+            aVoid -> Log.d(TAG, "addSubscription: Successfully subscribed to experiment with ID " + experimentId))
+        .addOnFailureListener(
+            e -> Log.e(TAG, "addSubscription: Could not subscribe to experiment with ID " + experimentId));
+    this.unregisterSnapshotListener();
+  }
 
-          // Only subscribe to experiments the user isn't already subscribed to
-          if (subscriptions.contains(experimentId)) {
-            return;
-          }
-          subscriptions.add(experimentId);
-          this.user.setSubscriptions(subscriptions);
-          syncUser();
-          this.unregisterSnapshotListener();
-        }
-    ).addOnFailureListener(e -> Log.e(TAG, "addSubscription: Could not subscribe to experiment with ID " + experimentId));
+  /**
+   * Unsubscribe to an experiment. Does nothing if the user is not subscribed to the given experiment.
+   *
+   * @param experimentId A string ID for the experiment.
+   */
+  public void removeSubscription(String experimentId) {
+    userDoc.update("subscriptions", FieldValue.arrayRemove(experimentId))
+        .addOnSuccessListener(
+            aVoid -> Log.d(TAG, "removeSubscription: Successfully unsubscribed from experiment with ID " + experimentId))
+        .addOnFailureListener(
+            e -> Log.e(TAG, "removeSubscription: Could not unsubscribe from experiment with ID " + experimentId));
+    this.unregisterSnapshotListener();
   }
 }
