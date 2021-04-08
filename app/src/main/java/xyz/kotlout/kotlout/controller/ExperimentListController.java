@@ -38,7 +38,7 @@ public class ExperimentListController {
    * So, get all experiments and let the application filter them for subscribed experiments
    * @return A instance of Query for getting all experiments for the given user.
    */
-  public Query getAllExperiments() {
+  public static Query getAllExperiments() {
     FirebaseFirestore db = FirebaseController.getFirestore();
 
     return db.collection(ExperimentController.EXPERIMENT_COLLECTION);

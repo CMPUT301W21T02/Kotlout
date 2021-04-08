@@ -10,11 +10,7 @@
     android:id="@+id/tb_main"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:layout_constraintTop_toTopOf="parent">
-    <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="match_parent" />
-  </androidx.appcompat.widget.Toolbar>
+    app:layout_constraintTop_toTopOf="parent"></androidx.appcompat.widget.Toolbar>
 
   <androidx.viewpager2.widget.ViewPager2
     android:id="@+id/pager_experiment_lists"
@@ -27,30 +23,22 @@
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
     android:id="@+id/fab_main_add_experiment"
-
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/fab_margin"
-
     android:contentDescription="Create new experiment"
     android:onClick="fabNewExperiment"
-
     android:src="@drawable/ic_baseline_add"
-
     app:fabSize="auto"
-
     app:layout_constraintBottom_toTopOf="@id/nav_main"
     app:layout_constraintEnd_toEndOf="parent" />
 
   <com.google.android.material.bottomnavigation.BottomNavigationView
     android:id="@+id/nav_main"
-
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-
     app:layout_constraintBottom_toBottomOf="parent"
-
     app:menu="@menu/bottom_navigation_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

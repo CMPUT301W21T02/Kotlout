@@ -1,5 +1,7 @@
 package xyz.kotlout.kotlout.view;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -7,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
@@ -43,6 +46,14 @@ public class MainActivity extends AppCompatActivity {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.experiment_list_menu, menu);
+
+    SearchManager searchManager =
+        (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+    SearchView searchView =
+        (SearchView) menu.findItem(R.id.search_experiments).getActionView();
+    searchView.setSearchableInfo(
+        searchManager.getSearchableInfo(getComponentName()));
+
     return true;
   }
 
@@ -104,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 }
-
 
 class ExperimentListFragmentsAdapter extends FragmentStateAdapter {
 

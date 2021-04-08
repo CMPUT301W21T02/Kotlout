@@ -2,15 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto">
   <item
-    android:id="@+id/show_profile"
-    android:enabled="true"
-    android:icon="@drawable/ic_baseline_person"
-    android:title="Show user profile"
-    app:showAsAction="ifRoom" />
-  <item
     android:id="@+id/search_experiments"
     android:enabled="true"
     android:icon="@drawable/ic_baseline_search"
     android:title="Search for new experiments"
+    app:showAsAction="collapseActionView|ifRoom"
+    app:actionViewClass="androidx.appcompat.widget.SearchView" />
+  <item
+    android:id="@+id/show_profile"
+    android:enabled="true"
+    android:icon="@drawable/ic_baseline_person"
+    android:title="Show user profile"
     app:showAsAction="ifRoom" />
 </menu>

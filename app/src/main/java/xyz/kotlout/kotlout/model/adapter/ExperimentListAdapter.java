@@ -62,12 +62,12 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
         break;
 
       case ALL:
-        getAllExperimentsQuery = experimentListController.getAllExperiments();
+        getAllExperimentsQuery = ExperimentListController.getAllExperiments();
         getAllExperimentsQuery.addSnapshotListener(this::showAllExperiments);
         break;
 
       case SUBSCRIBED:
-        getSubscribedExperimentsQuery = experimentListController.getAllExperiments();
+        getSubscribedExperimentsQuery = ExperimentListController.getAllExperiments();
         getSubscribedExperimentsQuery.addSnapshotListener(this::showSubscribedExperiments);
         break;
     }
