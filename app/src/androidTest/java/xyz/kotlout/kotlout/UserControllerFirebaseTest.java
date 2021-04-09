@@ -6,7 +6,6 @@ import android.os.SystemClock;
 import androidx.core.util.Consumer;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.firebase.firestore.DocumentReference;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.After;
@@ -31,21 +30,25 @@ public class UserControllerFirebaseTest {
 
   private final static long TIMEOUT = 1000;
   private final static int NUM_DOC_WRITES = 10;
-  private static User oldUser;
+  private static User OLD_USER;
 
   @BeforeClass
   public static void storeOldUser() {
     AtomicBoolean done = new AtomicBoolean();
-    FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid()).get().addOnCompleteListener(task -> oldUser = task.getResult().toObject(User.class));
+    FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid()).get().addOnCompleteListener(task -> {
+      OLD_USER = task.getResult().toObject(User.class);
+      done.set(true);
+    });
+    waitFor(done);
   }
 
   @After
   public void restoreOldUser() {
     DocumentReference userDoc = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid());
-    if(oldUser != null) {
-      userDoc.set(oldUser);
+    if(OLD_USER != null) {
+      userDoc.set(OLD_USER);
     } else {
-      userDoc.delete();
+      deleteUser(userDoc);
     }
   }
 
@@ -53,9 +56,9 @@ public class UserControllerFirebaseTest {
   public void testInitUser() {
     AtomicBoolean done = new AtomicBoolean();
     DocumentReference userDoc = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid());
+    deleteUser(userDoc);
     User newUser = new User();
     newUser.setUuid(UserHelper.readUuid());
-    userDoc.delete();
     UserHelper.initializeUser();
     SystemClock.sleep(100);
     userDoc.get().addOnCompleteListener(task -> {
@@ -86,7 +89,7 @@ public class UserControllerFirebaseTest {
   @Test
   public void testFirebase() {
     AtomicInteger updateCount = new AtomicInteger();
-    String testUuid = UUID.randomUUID().toString();
+    String testUuid = UserHelper.readUuid();
     User testUser = new User();
     testUser.setUuid(testUuid);
     Consumer<User> callback = user -> {
@@ -119,10 +122,16 @@ public class UserControllerFirebaseTest {
     }
   }
 
-  private void waitFor(AtomicBoolean condition) {
+  private static void waitFor(AtomicBoolean condition) {
     while(!condition.get()) {
       SystemClock.sleep(100);
     }
+  }
+
+  private static void deleteUser(DocumentReference userDoc) {
+    AtomicBoolean done = new AtomicBoolean();
+    userDoc.delete().addOnSuccessListener(task -> done.set(true));
+    waitFor(done);
   }
 
 }
