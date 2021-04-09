@@ -28,8 +28,7 @@
       android:label="@string/title_activity_profile"
       android:name=".view.ProfileActivity" />
     <activity
-      android:exported="true"
-      android:label="Discussion"
+      android:label="@string/discussion_title"
       android:name=".view.DiscussionPostsActivity" />
     <activity
       android:label="@string/title_activity_experiment_view"
@@ -55,8 +54,8 @@
     </activity>
   </application>
   <!--  Permissions since the maps need a lot -->
-  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"  />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
