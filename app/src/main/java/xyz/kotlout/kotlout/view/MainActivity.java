@@ -1,5 +1,7 @@
 package xyz.kotlout.kotlout.view;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,6 +10,12 @@ import android.view.MenuItem;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Lifecycle;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.zxing.BarcodeFormat;
 import xyz.kotlout.kotlout.R;
@@ -20,16 +28,18 @@ import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment.ListType;
 
 public class MainActivity extends AppCompatActivity {
 
+  private ExperimentListFragmentsAdapter adapter;
+  private ViewPager2 viewPager;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     if (savedInstanceState == null) {
-      ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.MINE);
-      getSupportFragmentManager()
-          .beginTransaction()
-          .add(R.id.frame_main, fragment)
-          .commit();
+      adapter = new ExperimentListFragmentsAdapter(getSupportFragmentManager(), getLifecycle());
+      viewPager = findViewById(R.id.pager_experiment_lists);
+      viewPager.setAdapter(adapter);
+
     }
 
     BottomNavigationView bnv = findViewById(R.id.nav_main);
@@ -39,6 +49,14 @@ public class MainActivity extends AppCompatActivity {
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.experiment_list_menu, menu);
+
+    SearchManager searchManager =
+        (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+    SearchView searchView =
+        (SearchView) menu.findItem(R.id.search_experiments).getActionView();
+    searchView.setSearchableInfo(
+        searchManager.getSearchableInfo(getComponentName()));
+
     return true;
   }
 
@@ -46,29 +64,13 @@ public class MainActivity extends AppCompatActivity {
     int id = item.getItemId();
 
     if (id == R.id.my_experiments_view) {
-      ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.MINE);
-      fragment.addController();
-      getSupportFragmentManager()
-          .beginTransaction()
-          .replace(R.id.frame_main, fragment)
-          .commit();
-
+      viewPager.setCurrentItem(0);
       return true;
     } else if (id == R.id.all_experiments_view) {
-      ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.ALL);
-      getSupportFragmentManager()
-          .beginTransaction()
-          .replace(R.id.frame_main, fragment)
-          .commit();
-
+      viewPager.setCurrentItem(1);
       return true;
     } else if (id == R.id.subscribed_experiments_view) {
-      ExperimentListFragment fragment = ExperimentListFragment.newInstance(ListType.SUBSCRIBED);
-      getSupportFragmentManager()
-          .beginTransaction()
-          .replace(R.id.frame_main, fragment)
-          .commit();
-
+      viewPager.setCurrentItem(2);
       return true;
     }
 
@@ -111,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
   public boolean onOptionsItemSelected(MenuItem item) {
     switch (item.getItemId()) {
 
-      case R.id.sync_experiments:
       case R.id.search_experiments:
         return true;
 
@@ -138,5 +139,32 @@ public class MainActivity extends AppCompatActivity {
     Intent addTrialIntent = new Intent(this, ExperimentViewActivity.class);
     addTrialIntent.setData(qrUri);
     startActivity(addTrialIntent);
+  }
+}
+
+class ExperimentListFragmentsAdapter extends FragmentStateAdapter {
+
+  ExperimentListFragment[] fragmentList;
+
+  public ExperimentListFragmentsAdapter(@NonNull FragmentManager fragmentManager,
+      @NonNull Lifecycle lifecycle) {
+    super(fragmentManager, lifecycle);
+
+    fragmentList = new ExperimentListFragment[]{
+        ExperimentListFragment.newInstance(ListType.MINE),
+        ExperimentListFragment.newInstance(ListType.ALL),
+        ExperimentListFragment.newInstance(ListType.SUBSCRIBED)
+    };
+  }
+
+  @NonNull
+  @Override
+  public Fragment createFragment(int position) {
+    return fragmentList[position];
+  }
+
+  @Override
+  public int getItemCount() {
+    return fragmentList.length;
   }
 }

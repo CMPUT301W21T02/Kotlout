@@ -33,11 +33,12 @@ public class TrialNewActivity extends AppCompatActivity {
   public static final String EXPERIMENT_TYPE = "TYPE";
   public static final String TRIAL_EXTRA = "TRIAL";
 
+  private ExperimentType type;
 
   ExperimentType type;
 
-  RadioGroup radioButtons;
-  EditText textEntry;
+  private RadioGroup radioButtons;
+  private EditText textEntry;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -220,4 +221,3 @@ public class TrialNewActivity extends AppCompatActivity {
     ScannableController.storeResultAsBarcode(data, barcode);
   }
 }
-
