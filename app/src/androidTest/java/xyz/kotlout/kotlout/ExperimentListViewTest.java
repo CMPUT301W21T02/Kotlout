@@ -50,6 +50,8 @@ public class ExperimentListViewTest {
 
     // Submit
     onView(withId(R.id.btn_experiment_new_add)).perform(click());
+
+    // Open the list group
     onView(withText("Open Experiments")).perform(click());
 
     onView(withId(R.id.tv_experiment_list_description)).check(matches(withText(description)));
