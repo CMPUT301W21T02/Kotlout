@@ -27,7 +27,7 @@ import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.adapter.TrialMarkAdapter;
 
 /**
- * The Experiment info list fragment for displaying the Map
+ * The ExperimentMapFragment, displays a map with markers on where trials have been recorded.
  */
 public class ExperimentMapFragment extends Fragment {
 
@@ -42,9 +42,9 @@ public class ExperimentMapFragment extends Fragment {
 
 
   /**
-   * New instance experiment map fragment.
+   * Creates an experiment map fragment.
    *
-   * @param experimentId the experiment id
+   * @param experimentId the experiment id to get data from
    * @return the experiment map fragment
    */
   public static ExperimentMapFragment newInstance(String experimentId) {
@@ -103,6 +103,16 @@ public class ExperimentMapFragment extends Fragment {
 
   }
 
+  /**
+   * Handles the result of the permissions
+   *
+   * https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
+   * This function is from the open street maps wiki
+   *
+   * @param requestCode
+   * @param permissions
+   * @param grantResults
+   */
   @Override
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     ArrayList<String> permissionsToRequest = new ArrayList<>();
@@ -117,6 +127,14 @@ public class ExperimentMapFragment extends Fragment {
     }
   }
 
+  /**
+   * Request permissions from the user if they have not yet been provided.
+   *
+   * https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
+   * This function is from the open street maps wiki
+   *
+   * @param permissions A list of required permissions to request
+   */
   private void requestPermissionsIfNecessary(String[] permissions) {
     ArrayList<String> permissionsToRequest = new ArrayList<>();
     for (String permission : permissions) {
@@ -151,7 +169,7 @@ public class ExperimentMapFragment extends Fragment {
     tileProvider.getTileRequestCompleteHandlers().add(mTileRequestCompleteHandler);
     map.setTileProvider(tileProvider);
 
-    MapViewRepository mvr = map.getRepository();
+    // Replace the markers since they get removed each time the map is paused.
     trialMarker.placeMarkers();
   }
 }
