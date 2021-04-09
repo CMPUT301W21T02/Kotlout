@@ -199,15 +199,6 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     locationText.setText(newPoint.toDoubleString());
   }
 
-  private final LocationListener locationListener = new LocationListener() {
-    public void onLocationChanged(Location deviceLocation) {
-      if (location == null) {
-        location = new Geolocation(deviceLocation.getLatitude(), deviceLocation.getLongitude());
-        locationText.setText(LocationHelper.toGeoPoint(location).toDoubleString());
-      }
-    }
-  };
-
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);

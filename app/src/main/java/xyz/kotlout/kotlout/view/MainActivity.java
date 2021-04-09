@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
     addTrialIntent.setData(qrUri);
     startActivity(addTrialIntent);
   }
-}
 
   /**
    * Adapter for the ViewPager2 in the MainActivity. This allows for movement and swipe motion.

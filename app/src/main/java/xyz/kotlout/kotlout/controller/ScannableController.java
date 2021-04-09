@@ -130,8 +130,6 @@ public class ScannableController {
         case MEASUREMENT:
           stringResult = result.getDouble("result").toString();
           break;
-        case UNKNOWN:
-          return;
       }
       addTrialIntent.setData(ScannableController
           .createUri(stringResult, experimentId, type.toString(), latitude != null ? latitude.toString() : null,
@@ -157,7 +155,7 @@ public class ScannableController {
     try {
       switch (type) {
         case COUNT:
-          newTrial = new CountTrial(Long.parseLong(resultString), UserHelper.readUuid());
+          newTrial = new CountTrial(Long.parseLong(resultString), UserHelper.readUuid(), null);
           break;
         case BINOMIAL:
           newTrial = new BinomialTrial(trialUri.getBooleanQueryParameter("result", false), UserHelper.readUuid(), null);
