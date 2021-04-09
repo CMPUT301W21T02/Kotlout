@@ -50,7 +50,7 @@
   <string name="default_author_name">Anonymous</string>
   <string name="default_comment_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque nisi tellus, porta eget varius nec, elementum quis nulla. Duis dapibus venenatis est, ut aliquet libero fringilla vitae. Sed at lectus eu lectus blandit dictum sed eu enim. Vestibulum malesuada convallis libero ac tempor. Sed eleifend sit amet nibh vel dictum.</string>
   <string name="default_comment_date">2021–03–16 14:03</string>
-  <string name="comment_reply_count">0 Replies</string>
+  <string name="comment_reply_string">Reply to Anonymous: Pellentesque nisi tellus adipiscing lol this is actual text now</string>
   <string name="comment_date_format">yyyy-MM-dd HH:mm</string>
   <string name="experiment_long_click_menu_title">Experiment Options</string>
   <string name="unpublish_experiment_option">Unpublish</string>
@@ -68,5 +68,5 @@
   <string name="median">Median:</string>
   <string name="mean">Mean:</string>
   <string name="n_a">N/A</string>
-
+  <string name="discussion_option_menu_name">Discussion</string>
 </resources>
