@@ -188,6 +188,8 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
 
   /**
    * Displays the data of trials, arranged by date
+   * Graphs were made using the MPAndroidChart Library under the Apache 2.0 License
+   * https://github.com/PhilJay/MPAndroidChart
    *
    * @param histogram a BarChart object used to display trial data
    * @param dataType  what the bars in the data are representing
@@ -220,6 +222,8 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
 
   /**
    * Formats the axes and bars of the histogram
+   * Graphs were made using the MPAndroidChart Library under the Apache 2.0 License
+   * https://github.com/PhilJay/MPAndroidChart
    *
    * @param histogram the histogram with the data loaded in
    */
