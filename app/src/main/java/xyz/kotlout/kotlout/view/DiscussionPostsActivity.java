@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.Query.Direction;
@@ -33,15 +34,14 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
 
   public static final String ON_EXPERIMENT_INTENT = "ON_EXPERIMENT";
   private static final String TAG = "DISCUSSION";
-
+  private final Pattern pattern = Pattern.compile("(@([\\S]+))?(.*)");
   private PostAdapter postAdapter;
-  private List<Post> postList = new ArrayList<>();
+  private final List<Post> postList = new ArrayList<>();
   private String experimentUUID;
   private CollectionReference postsCollection;
   private RecyclerView postsView;
   private LinearLayoutManager layoutManager;
   private EditText commentText;
-  private final Pattern pattern = Pattern.compile("(@([\\S]+))?(.*)");
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -136,32 +136,41 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
 //    if (wasBottomed)
 //      postsView.smoothScrollToPosition(postList.size()-1);
 
-    // Being smart doesnt work at all, TODO: Why is this completely borked?
-    for (DocumentChange doc : value.getDocumentChanges()) {
-      switch (doc.getType()) {
-        case ADDED:
-          boolean wasBottomed = layoutManager.findLastCompletelyVisibleItemPosition() == postAdapter.getItemCount()-1;
-          postList.add(doc.getNewIndex(), doc.getDocument().toObject(Post.class));
-          postAdapter.notifyItemInserted(doc.getNewIndex());
-          if (wasBottomed) {
-            layoutManager.smoothScrollToPosition(postsView, null, postAdapter.getItemCount() - 1);
-          }
-          break;
-        case REMOVED:
-          postList.remove(doc.getOldIndex());
-          postAdapter.notifyItemRemoved(doc.getOldIndex());
-          break;
-        case MODIFIED:
-          Post post = doc.getDocument().toObject(Post.class);
-          if (doc.getOldIndex() == doc.getNewIndex()) {
-            postList.set(doc.getNewIndex(), post);
-          } else {
+    // Initial
+    if (postList.isEmpty()){
+      for (DocumentSnapshot doc: value.getDocuments()) {
+        postList.add(doc.toObject(Post.class));
+      }
+      postAdapter.notifyDataSetChanged();
+    } else {
+      // Typical
+      // Being smart doesnt work at all, TODO: Why is this completely borked?
+      for (DocumentChange doc : value.getDocumentChanges()) {
+        switch (doc.getType()) {
+          case ADDED:
+            boolean wasBottomed = layoutManager.findLastCompletelyVisibleItemPosition() == postAdapter.getItemCount() - 1;
+            postList.add(doc.getNewIndex(), doc.getDocument().toObject(Post.class));
+            postAdapter.notifyItemInserted(doc.getNewIndex());
+            if (wasBottomed) {
+              layoutManager.smoothScrollToPosition(postsView, null, postAdapter.getItemCount() - 1);
+            }
+            break;
+          case REMOVED:
             postList.remove(doc.getOldIndex());
-            postList.add(doc.getNewIndex(), post);
-            postAdapter.notifyItemMoved(doc.getOldIndex(), doc.getNewIndex());
-          }
-          postAdapter.notifyItemChanged(doc.getNewIndex());
-          break;
+            postAdapter.notifyItemRemoved(doc.getOldIndex());
+            break;
+          case MODIFIED:
+            Post post = doc.getDocument().toObject(Post.class);
+            if (doc.getOldIndex() == doc.getNewIndex()) {
+              postList.set(doc.getNewIndex(), post);
+            } else {
+              postList.remove(doc.getOldIndex());
+              postList.add(doc.getNewIndex(), post);
+              postAdapter.notifyItemMoved(doc.getOldIndex(), doc.getNewIndex());
+            }
+            postAdapter.notifyItemChanged(doc.getNewIndex());
+            break;
+        }
       }
     }
   }
