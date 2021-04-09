@@ -1,11 +1,5 @@
 <resources>
   <string name="app_name">Kotlout</string>
-  <string name="action_settings">Settings</string>
-  <!-- Strings used for fragments for navigation -->
-  <string name="first_fragment_label">First Fragment</string>
-  <string name="second_fragment_label">Second Fragment</string>
-  <string name="next">Next</string>
-  <string name="previous">Previous</string>
 
   <string name="my_experiments">My Experiments</string>
   <string name="explore_experiments">Explore</string>
@@ -69,4 +63,15 @@
   <string name="discussion_fetching">fetching information…</string>
   <string name="discussion_reply_format">%1$s: %2$s</string>
   <string name="discussion_title">Experiment Discussion</string>
+  <string name="fab_new_trial">Create new trial</string>
+  <string name="menu_search">Search for experiments</string>
+  <string name="menu_profile">Show user profile</string>
+  <string name="trial_success">Success</string>
+  <string name="trial_fail">Failure</string>
+  <string name="trial_record_location">Record Location</string>
+  <string name="trial_set_location">Set Location</string>
+  <string name="trial_submit_trial">Submit Trial</string>
+  <string name="trial_register_barcode">Register Barcode</string>
+  <string name="trial_scan_barcode">Scan Barcode</string>
+  <string name="trial_loading_location">Loading location…</string>
 </resources>

@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import xyz.kotlout.kotlout.model.experiment.HistogramComparator;
 import xyz.kotlout.kotlout.model.experiment.HistogramData;
-import xyz.kotlout.kotlout.model.experiment.trial.BinomialInfo;
 
 @RunWith(JUnit4.class)
 public class HistogramComparatorTest {

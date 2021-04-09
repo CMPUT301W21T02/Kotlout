@@ -7,6 +7,5 @@ public enum ExperimentType {
   BINOMIAL,
   NON_NEGATIVE_INTEGER,
   COUNT,
-  MEASUREMENT,
-  UNKNOWN
+  MEASUREMENT
 }

@@ -55,7 +55,7 @@
     android:layout_below="@+id/comment_name"
     android:clickable="true"
     android:drawablePadding="12dp"
-    android:drawableStart="@drawable/reply_24px"
+    android:drawableStart="@drawable/ic_baseline_reply"
     android:drawableTint="@color/design_default_color_on_secondary"
     android:ellipsize="end"
     android:maxLines="1"

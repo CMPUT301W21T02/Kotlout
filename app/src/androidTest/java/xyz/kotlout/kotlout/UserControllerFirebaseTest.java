@@ -21,9 +21,8 @@ import xyz.kotlout.kotlout.model.user.User;
 
 
 /**
- * Firebase needs context, so the testcases are under instrumentation There might be a better way to
- * do this
- *
+ * Firebase needs context, so the testcases are under instrumentation There might be a better way to do this
+ * <p>
  * Can move to Java tests using robotium, but then it won't write to remote firestore
  */
 @RunWith(AndroidJUnit4.class)
@@ -36,13 +35,15 @@ public class UserControllerFirebaseTest {
   @BeforeClass
   public static void storeOldUser() {
     AtomicBoolean done = new AtomicBoolean();
-    FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(UserHelper.readUuid()).get().addOnCompleteListener(task -> oldUser = task.getResult().toObject(User.class));
+    FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(UserHelper.readUuid()).get()
+        .addOnCompleteListener(task -> oldUser = task.getResult().toObject(User.class));
   }
 
   @After
   public void restoreOldUser() {
-    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(UserHelper.readUuid());
-    if(oldUser != null) {
+    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION)
+        .document(UserHelper.readUuid());
+    if (oldUser != null) {
       userDoc.set(oldUser);
     } else {
       userDoc.delete();
@@ -52,7 +53,8 @@ public class UserControllerFirebaseTest {
   @Test
   public void testInitUser() {
     AtomicBoolean done = new AtomicBoolean();
-    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(UserHelper.readUuid());
+    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION)
+        .document(UserHelper.readUuid());
     User newUser = new User();
     newUser.setUuid(UserHelper.readUuid());
     userDoc.delete();
@@ -68,7 +70,8 @@ public class UserControllerFirebaseTest {
   @Test
   public void testInitPreexistingUser() {
     AtomicBoolean done = new AtomicBoolean();
-    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(UserHelper.readUuid());
+    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION)
+        .document(UserHelper.readUuid());
     User newUser = new User();
     newUser.setUuid(UserHelper.readUuid());
     User testUser = new User("FIRST", "LAST", "EMAIL", "PHONE", UserHelper.readUuid());
@@ -120,7 +123,7 @@ public class UserControllerFirebaseTest {
   }
 
   private void waitFor(AtomicBoolean condition) {
-    while(!condition.get()) {
+    while (!condition.get()) {
       SystemClock.sleep(100);
     }
   }

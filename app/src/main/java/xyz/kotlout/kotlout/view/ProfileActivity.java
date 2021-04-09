@@ -10,7 +10,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Consumer;
-import com.google.firebase.firestore.FirebaseFirestore;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.controller.UserHelper;
@@ -18,7 +17,6 @@ import xyz.kotlout.kotlout.model.user.User;
 
 public class ProfileActivity extends AppCompatActivity {
 
-  private final FirebaseFirestore firestore = FirebaseFirestore.getInstance();
   // Declaration of Objects, instantiation of Firestore
   private EditText firstNameText, lastNameText, emailText, phoneText;
   /**
@@ -175,6 +173,7 @@ public class ProfileActivity extends AppCompatActivity {
 
   /**
    * Sets the edit profile button and confirm buttons to invisible
+   *
    * @param menu
    */
   private void enableEditMenu(Menu menu) {

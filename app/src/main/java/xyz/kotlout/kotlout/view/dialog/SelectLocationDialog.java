@@ -11,13 +11,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
-
+import java.util.ArrayList;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
@@ -30,8 +29,6 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.IconOverlay;
-
-import java.util.ArrayList;
 import xyz.kotlout.kotlout.BuildConfig;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.LocationHelper;
@@ -41,6 +38,7 @@ import xyz.kotlout.kotlout.model.geolocation.Geolocation;
  * Dialog box that allows for selecting a geolocation on an android map
  */
 public class SelectLocationDialog extends DialogFragment {
+
   private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
   private MapView map = null;
   private OnFragmentInteractionListener listener;
@@ -48,23 +46,10 @@ public class SelectLocationDialog extends DialogFragment {
   private IconOverlay middleMark;
   private GeoPoint oldLocation;
 
-  /**
-   * Fragment interaction listener for registering the OK button.
-   */
-  public interface OnFragmentInteractionListener {
-
-    /**
-     * Dialog OK button used for confirming selection.
-     *
-     * @param newPoint returns the selected location via a GeoPoint
-     */
-    void onOkPressed(GeoPoint newPoint);
-  }
-
   @Override
   public void onAttach(@NonNull Context context) {
     super.onAttach(context);
-    if (context instanceof OnFragmentInteractionListener){
+    if (context instanceof OnFragmentInteractionListener) {
       listener = (OnFragmentInteractionListener) context;
     } else {
       throw new RuntimeException(context.toString()
@@ -80,7 +65,7 @@ public class SelectLocationDialog extends DialogFragment {
       oldLocation = LocationHelper.toGeoPoint((Geolocation) getArguments().getSerializable("location"));
     }
 
-    requestPermissionsIfNecessary(new String[] {
+    requestPermissionsIfNecessary(new String[]{
         // if you need to show the current location, uncomment the line below
         Manifest.permission.ACCESS_FINE_LOCATION,
         // WRITE_EXTERNAL_STORAGE is required in order to show the map
@@ -107,7 +92,7 @@ public class SelectLocationDialog extends DialogFragment {
     }
 
     // Setup the map view
-    map = (MapView) view.findViewById(R.id.map);
+    map = view.findViewById(R.id.map);
     map.setTileSource(TileSourceFactory.MAPNIK);
     map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS);
     map.setMultiTouchControls(true);
@@ -171,12 +156,11 @@ public class SelectLocationDialog extends DialogFragment {
     return new IconOverlay(selection, icon);
   }
 
-
   /**
    * Handles the result of the permissions
-   *
-   * https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
-   * This function is from the open street maps wiki
+   * <p>
+   * https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java) This function is from the open street maps
+   * wiki
    *
    * @param requestCode
    * @param permissions
@@ -198,9 +182,9 @@ public class SelectLocationDialog extends DialogFragment {
 
   /**
    * Request permissions from the user if they have not yet been provided.
-   *
-   * https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
-   * This function is from the open street maps wiki
+   * <p>
+   * https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java) This function is from the open street maps
+   * wiki
    *
    * @param permissions A list of required permissions to request
    */
@@ -231,6 +215,19 @@ public class SelectLocationDialog extends DialogFragment {
   public void onPause() {
     super.onPause();
     map.onPause();
+  }
+
+  /**
+   * Fragment interaction listener for registering the OK button.
+   */
+  public interface OnFragmentInteractionListener {
+
+    /**
+     * Dialog OK button used for confirming selection.
+     *
+     * @param newPoint returns the selected location via a GeoPoint
+     */
+    void onOkPressed(GeoPoint newPoint);
   }
 
 }

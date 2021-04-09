@@ -36,6 +36,7 @@ import xyz.kotlout.kotlout.view.ProfileActivity;
 @RunWith(AndroidJUnit4.class)
 public class UserProfileUiTest {
 
+  private static User oldUser;
   @Rule
   public ActivityScenarioRule<ProfileActivity> rule = new ActivityScenarioRule<>(
       ProfileActivity.class);
@@ -46,22 +47,19 @@ public class UserProfileUiTest {
   String INVALID_PHONE_NUM_STRING = "0-0-1-1-2-2-";
   String INVALID_EMAIL_ADDR_STRING = "high@iq.gov@";
 
-  private static User oldUser ;
-
-
   @BeforeClass
   public static void setupProfileTest() {
     FirebaseFirestore firestore = FirebaseController.getFirestore();
     AtomicBoolean initalized = new AtomicBoolean();
     User newUser = new User();
     newUser.setUuid(UUID.randomUUID().toString());
-    firestore.collection(FirebaseController.USER_COLLECTION).document(newUser.getUuid()).get().addOnCompleteListener( task -> {
-      if(task.isSuccessful() && task.getResult() != null) {
+    firestore.collection(FirebaseController.USER_COLLECTION).document(newUser.getUuid()).get().addOnCompleteListener(task -> {
+      if (task.isSuccessful() && task.getResult() != null) {
         oldUser = task.getResult().toObject(User.class);
         initalized.set(true);
       }
     });
-    while(!initalized.get()) {
+    while (!initalized.get()) {
       SystemClock.sleep(100);
     }
     firestore.collection(FirebaseController.USER_COLLECTION).document(newUser.getUuid()).set(newUser);

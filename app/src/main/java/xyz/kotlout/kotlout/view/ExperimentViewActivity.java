@@ -174,51 +174,6 @@ public class ExperimentViewActivity extends AppCompatActivity {
     startActivityForResult(intent, TrialNewActivity.NEW_TRIAL_REQUEST);
   }
 
-
-  static class ExperimentViewFragmentsAdapter extends FragmentStateAdapter {
-
-    List<Fragment> fragmentList = new ArrayList<>();
-
-
-    /**
-     * Initializes the adapter
-     * @param fragmentManager Its manager
-     * @param lifecycle Its lifecycle
-     */
-    public ExperimentViewFragmentsAdapter(@NonNull FragmentManager fragmentManager,
-        @NonNull Lifecycle lifecycle) {
-      super(fragmentManager, lifecycle);
-    }
-
-    /**
-     * Add a fragment
-     * @param fragment the fragment
-     */
-    public void addFragment(Fragment fragment) {
-      fragmentList.add(fragment);
-    }
-
-    /**
-     * Remove a fragment
-     * @param fragment the fragment
-     */
-    public void removeFragment(Fragment fragment) {
-      fragmentList.remove(fragment);
-    }
-
-    @NonNull
-    @Override
-    public Fragment createFragment(int position) {
-      return fragmentList.get(position);
-    }
-
-    @Override
-    public int getItemCount() {
-      return fragmentList.size();
-    }
-  }
-
-
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     int i = item.getItemId();
@@ -243,6 +198,35 @@ public class ExperimentViewActivity extends AppCompatActivity {
       return true;
     } else {
       return super.onOptionsItemSelected(item);
+    }
+  }
+
+  static class ExperimentViewFragmentsAdapter extends FragmentStateAdapter {
+
+    List<Fragment> fragmentList = new ArrayList<>();
+
+    public ExperimentViewFragmentsAdapter(@NonNull FragmentManager fragmentManager,
+        @NonNull Lifecycle lifecycle) {
+      super(fragmentManager, lifecycle);
+    }
+
+    public void addFragment(Fragment fragment) {
+      fragmentList.add(fragment);
+    }
+
+    public void removeFragment(Fragment fragment) {
+      fragmentList.remove(fragment);
+    }
+
+    @NonNull
+    @Override
+    public Fragment createFragment(int position) {
+      return fragmentList.get(position);
+    }
+
+    @Override
+    public int getItemCount() {
+      return fragmentList.size();
     }
   }
 }

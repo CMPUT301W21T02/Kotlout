@@ -23,6 +23,9 @@ import xyz.kotlout.kotlout.view.MainActivity;
 @RunWith(AndroidJUnit4.class)
 public class ExperimentListViewTest {
 
+  @Rule
+  public ActivityScenarioRule<MainActivity> activityRule = new ActivityScenarioRule<>(MainActivity.class);
+
   @After
   public void postTest() {
     FirebaseFirestore firestore = FirebaseController.getFirestore();
@@ -33,9 +36,6 @@ public class ExperimentListViewTest {
       e.printStackTrace();
     }
   }
-
-  @Rule
-  public ActivityScenarioRule<MainActivity> activityRule = new ActivityScenarioRule<>(MainActivity.class);
 
   @Test
   public void testAddCountExperiment() {

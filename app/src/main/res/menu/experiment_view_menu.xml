@@ -16,7 +16,7 @@
   <item
     android:id="@+id/open_discussion_posts"
     android:enabled="true"
-    android:icon="@drawable/outline_chat_24"
+    android:icon="@drawable/ic_outline_chat"
     android:title="@string/discussion_option_menu_name"
     app:showAsAction="ifRoom" />
 </menu>

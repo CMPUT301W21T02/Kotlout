@@ -20,7 +20,6 @@ import org.osmdroid.tileprovider.util.SimpleInvalidationHandler;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.MapViewRepository;
 import xyz.kotlout.kotlout.BuildConfig;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.model.ExperimentType;
@@ -33,8 +32,8 @@ public class ExperimentMapFragment extends Fragment {
 
   private static final String ARG_EXPERIMENT = "EXPERIMENT";
   private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
+  private final int trialsMarked = 0;
   private MapView map = null;
-  private int trialsMarked = 0;
   private String experimentId;
   private View view;
   private ExperimentType type;
@@ -72,7 +71,6 @@ public class ExperimentMapFragment extends Fragment {
     Log.d("This msg was called", "onCreateView: ");
     configureMap(view);
 
-
     trialMarker = new TrialMarkAdapter(getContext(), experimentId, map);
     return view;
   }
@@ -87,7 +85,7 @@ public class ExperimentMapFragment extends Fragment {
 
     Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
 
-    map = (MapView) mView.findViewById(R.id.map);
+    map = mView.findViewById(R.id.map);
     map.setTileSource(TileSourceFactory.MAPNIK);
     map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS);
     map.setMultiTouchControls(true);
@@ -105,13 +103,9 @@ public class ExperimentMapFragment extends Fragment {
 
   /**
    * Handles the result of the permissions
-   *
-   * https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
-   * This function is from the open street maps wiki
-   *
-   * @param requestCode
-   * @param permissions
-   * @param grantResults
+   * <p>
+   * https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java) This function is from the open street maps
+   * wiki
    */
   @Override
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -129,9 +123,9 @@ public class ExperimentMapFragment extends Fragment {
 
   /**
    * Request permissions from the user if they have not yet been provided.
-   *
-   * https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
-   * This function is from the open street maps wiki
+   * <p>
+   * https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java) This function is from the open street maps
+   * wiki
    *
    * @param permissions A list of required permissions to request
    */
@@ -164,7 +158,8 @@ public class ExperimentMapFragment extends Fragment {
     map.onResume();
 
     /* https://github.com/osmdroid/osmdroid/issues/277#issuecomment-412099853 */
-    MapTileProviderBasic tileProvider = new MapTileProviderBasic(getContext().getApplicationContext(), TileSourceFactory.MAPNIK);
+    MapTileProviderBasic tileProvider = new MapTileProviderBasic(getContext().getApplicationContext(),
+        TileSourceFactory.MAPNIK);
     SimpleInvalidationHandler mTileRequestCompleteHandler = new SimpleInvalidationHandler(map);
     tileProvider.getTileRequestCompleteHandlers().add(mTileRequestCompleteHandler);
     map.setTileProvider(tileProvider);

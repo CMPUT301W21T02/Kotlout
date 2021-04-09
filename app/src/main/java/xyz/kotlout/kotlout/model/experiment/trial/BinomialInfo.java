@@ -1,13 +1,11 @@
 package xyz.kotlout.kotlout.model.experiment.trial;
 
-import androidx.annotation.Nullable;
-
 /**
  * A class that stores the information stored in binomial trials so that they can be more easily displayed
  */
 public class BinomialInfo {
 
-  private String date;
+  private final String date;
   private float success;
   private float failure;
 
@@ -42,7 +40,7 @@ public class BinomialInfo {
    * @return a float representing the success percentage
    */
   public float successProportion() {
-    return (float) (this.success / (this.success + this.failure)) * 100;
+    return (this.success / (this.success + this.failure)) * 100;
   }
 
   /**

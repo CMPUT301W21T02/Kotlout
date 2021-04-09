@@ -22,9 +22,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import org.osmdroid.util.GeoPoint;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.controller.LocationHelper;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.ExperimentType;
-import xyz.kotlout.kotlout.controller.LocationHelper;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.CountTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
@@ -48,8 +48,15 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
 
   private Geolocation location;
   private TextView locationText;
+  private final LocationListener locationListener = new LocationListener() {
+    public void onLocationChanged(Location deviceLocation) {
+      if (location == null) {
+        location = new Geolocation(deviceLocation.getLatitude(), deviceLocation.getLongitude());
+        locationText.setText(LocationHelper.toGeoPoint(location).toDoubleString());
+      }
+    }
+  };
 
-  private boolean requireGeolocation;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -57,9 +64,9 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
 
     Intent intent = getIntent();
     type = (ExperimentType) intent.getSerializableExtra(EXPERIMENT_TYPE);
-    requireGeolocation = (Boolean) intent.getSerializableExtra(REQUIRE_LOCATION);
+    boolean requireGeolocation = (Boolean) intent.getSerializableExtra(REQUIRE_LOCATION);
     radioButtons = findViewById(R.id.rg_new_trial);
-    textEntry = findViewById(R.id.editTextNumber);
+    textEntry = findViewById(R.id.et_trial_entry_number);
     geolocationCheck = findViewById(R.id.cb_new_trial_location);
     locationText = findViewById(R.id.text_new_trial_location);
 
@@ -97,8 +104,6 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
         radioButtons.setVisibility(View.GONE);
         textEntry.setVisibility(View.VISIBLE);
         break;
-      case UNKNOWN:
-        break;
     }
 
     Button submitTrial = findViewById(R.id.btn_new_trial_submit);
@@ -107,7 +112,9 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     setLocation.setOnClickListener(this::selectGeolocation);
 
     LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+        != PackageManager.PERMISSION_GRANTED) {
       ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 225);
       return;
     }
@@ -122,12 +129,12 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     boolean useGeolocation = geolocationCheck.isChecked();
     if (useGeolocation && location == null) {
       Toast.makeText(this, "No location is selected, if loading your "
-                                    + "local location is taking too long you can "
-                                    + "manually set it with set location", Toast.LENGTH_LONG).show();
+          + "local location is taking too long you can "
+          + "manually set it with set location", Toast.LENGTH_LONG).show();
       return;
     }
 
-    location = (useGeolocation)? location : null;
+    location = (useGeolocation) ? location : null;
 
     try {
       switch (type) {
@@ -149,8 +156,6 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
           MeasurementTrial measurementTrial = new MeasurementTrial(Double.parseDouble(userInput), uuid, location);
           intent.putExtra(TRIAL_EXTRA, measurementTrial);
           break;
-        case UNKNOWN:
-          break;
       }
 
       setResult(RESULT_OK, intent);
@@ -161,7 +166,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     }
   }
 
-  private void selectGeolocation (View v) {
+  private void selectGeolocation(View v) {
     SelectLocationDialog selectLocationDialog = new SelectLocationDialog();
     if (location != null) {
       Bundle bundle = new Bundle();
@@ -177,13 +182,4 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     Log.d("onOkPressed", newPoint.toDoubleString());
     locationText.setText(newPoint.toDoubleString());
   }
-
-  private final LocationListener locationListener = new LocationListener() {
-    public void onLocationChanged(Location deviceLocation) {
-      if(location == null) {
-        location = new Geolocation(deviceLocation.getLatitude(), deviceLocation.getLongitude());
-        locationText.setText(LocationHelper.toGeoPoint(location).toDoubleString());
-      }
-    }
-  };
 }

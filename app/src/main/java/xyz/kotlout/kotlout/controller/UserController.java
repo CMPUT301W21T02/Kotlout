@@ -30,7 +30,7 @@ public class UserController {
       Log.e(TAG, "Error no uuid provided, using local uuid");
       userId = UserHelper.readUuid();
     }
-    // Set user to garuntee UUID is valid if firebase is unable to fetch data
+    // Set user to guarantee UUID is valid if firebase is unable to fetch data
     user = new User();
     user.setUuid(userId);
     userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(userId);
@@ -82,20 +82,6 @@ public class UserController {
     this.user = newUser;
   }
 
-  private void syncUser() {
-    FirebaseFirestore firestore = FirebaseController.getFirestore();
-    firestore.collection(FirebaseController.USER_COLLECTION).document(this.user.getUuid()).set(this.user);
-  }
-
-  public void updateUser(User user) {
-    if (this.user.getUuid().equals(user.getUuid())) {
-      this.user = user; //TODO: This probably needs changed for only updating say user info
-      syncUser();
-    } else {
-      throw new RuntimeException("UUIDs don't match to update user");
-    }
-  }
-
   /**
    * Sets the callback to be run when user document changes
    *
@@ -105,6 +91,11 @@ public class UserController {
     this.updateCallback = updateCallback;
   }
 
+  /**
+   * Update the user date with new user data
+   *
+   * @param newData new data to write to the user
+   */
   public void updateUserData(User newData) {
     userDoc.set(newData);
   }

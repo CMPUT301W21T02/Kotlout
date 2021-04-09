@@ -40,7 +40,12 @@ public class NameView extends androidx.appcompat.widget.AppCompatTextView implem
     initNameView();
   }
 
-  public void setUser(User user) {
+  /**
+   * Set user for this NameView to use
+   *
+   * @param user User to use
+   */
+  public void setUser(@NonNull User user) {
     this.user = user;
     this.name = user.getDisplayName();
     initNameView();

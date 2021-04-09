@@ -21,12 +21,8 @@ public class NonNegativeTrial extends Trial {
    *
    * @param result         Result to store in the trial
    * @param experimenterId Experimenter who did the trial.
+   * @param location       Location of the trial
    */
-  public NonNegativeTrial(long result, String experimenterId) {
-    super(experimenterId);
-    this.result = result;
-  }
-
   public NonNegativeTrial(long result, String experimenterId, Geolocation location) {
     super(experimenterId, location);
     this.result = result;
