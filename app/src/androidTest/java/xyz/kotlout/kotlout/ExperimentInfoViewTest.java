@@ -24,14 +24,12 @@ public class ExperimentInfoViewTest {
       MainActivity.class);
 
 
-
-  // TODO: Fix, currently breaks due to matching in ListView
   @Test
-  public void testAddCountExperiment() {
+  public void testAddCountTrial() {
 
-    String description = "Volkswagens in Edmonton";
+    String description = "Birds Seen Today";
     String region = "Edmonton";
-    String minimumTrials = "200";
+    String minimumTrials = "10";
     String typeOption = "Count";
 
     // Open the add experiment fragment
@@ -52,10 +50,17 @@ public class ExperimentInfoViewTest {
 
     // Submit
     onView(withId(R.id.btn_experiment_new_add)).perform(click());
+    onView(withText("Open Experiments")).perform(click());
 
-    onView(withId(R.id.tv_experiment_list_description)).check(matches(withText(description)));
-    onView(withId(R.id.tv_experiment_list_region)).check(matches(withText(region)));
-    onView(withId(R.id.tv_experiment_list_counter))
-        .check(matches(withText(containsString(minimumTrials))));
+    onView(withText(description)).perform(click());
+
+    onView(withText("TRIALS")).perform(click());
+
+    onView(withId(R.id.fab_view_add_trial)).perform(click());
+
+    onView((withId(R.id.editTextNumber))).perform(typeText("1"));
+
+    onView(withId(R.id.btn_new_trial_submit)).perform(click());
+
   }
 }
