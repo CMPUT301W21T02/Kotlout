@@ -7,6 +7,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.net.Uri;
 import android.net.Uri.Builder;
+import android.os.Handler;
 import android.util.Log;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.zxing.BarcodeFormat;
@@ -18,6 +19,10 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import java.util.HashMap;
 import java.util.Hashtable;
 import xyz.kotlout.kotlout.model.ExperimentType;
+import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.CountTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 import xyz.kotlout.kotlout.view.ExperimentViewActivity;
 import xyz.kotlout.kotlout.view.TrialNewActivity;
@@ -121,4 +126,38 @@ public class ScannableController {
     });
   }
 
+  public static Trial getTrialFromUri(Uri trialUri) {
+    Trial newTrial;
+    String resultString = trialUri.getQueryParameter("result");
+    ExperimentType type = ExperimentType.valueOf(trialUri.getQueryParameter("TYPE"));
+    if (resultString == null) {
+      // Not all parameters are defined
+      Log.e(TAG, "Parameters in uri are missing, URI: " + trialUri.toString());
+      return null;
+    }
+    try {
+      switch (type) {
+        case COUNT:
+          newTrial = new CountTrial(Long.parseLong(resultString), UserHelper.readUuid());
+          break;
+        case BINOMIAL:
+          newTrial = new BinomialTrial(trialUri.getBooleanQueryParameter("result", false), UserHelper.readUuid());
+          break;
+        case MEASUREMENT:
+          newTrial = new MeasurementTrial(Double.parseDouble(resultString), UserHelper.readUuid());
+          break;
+        case NON_NEGATIVE_INTEGER:
+          newTrial = new NonNegativeTrial(Long.parseLong(resultString), UserHelper.readUuid());
+          break;
+        default:
+          // Error
+          Log.e(TAG, "Error: unknown experiment type");
+          return null;
+      }
+    } catch (NumberFormatException e) {
+      Log.e(TAG, "Error: URI trial result is invalid. Result String: " + resultString);
+      return null;
+    }
+    return newTrial;
+  }
 }

@@ -406,47 +406,19 @@ public class ExperimentController {
    * @return true if the trial is valid, false otherwise
    */
   public boolean addTrialFromUri(Uri data) {
-    Trial newTrial;
-    String resultString = data.getQueryParameter("result");
-    ExperimentType currentType = type;
-    if (type == null) {
-      type = ExperimentType.valueOf(data.getQueryParameter("TYPE"));
-    }
-    if (resultString == null) {
-      // Not all parameters are defined
-      Log.e(TAG, "Parameters in uri are missing, URI: " + data.toString());
-      return false;
-    }
-    try {
-      switch (type) {
-        case COUNT:
-          newTrial = new CountTrial(Long.parseLong(resultString), UserHelper.readUuid());
-          break;
-        case BINOMIAL:
-          newTrial = new BinomialTrial(data.getBooleanQueryParameter("result", false), UserHelper.readUuid());
-          break;
-        case MEASUREMENT:
-          newTrial = new MeasurementTrial(Double.parseDouble(resultString), UserHelper.readUuid());
-          break;
-        case NON_NEGATIVE_INTEGER:
-          newTrial = new NonNegativeTrial(Long.parseLong(resultString), UserHelper.readUuid());
-          break;
-        default:
-          // Error
-          Log.e(TAG, "Error: unknown experiment type");
-          return false;
-      }
-    } catch (NumberFormatException e) {
-      Log.e(TAG, "Error: URI trial result is invalid. Result String: " + resultString);
-      return false;
-    }
-    if (experimentContext == null) {
+    Trial newTrial = ScannableController.getTrialFromUri(data);
+    boolean trialAdded = true;
+    if(newTrial == null) {
+      // Error invalid Uri
+      Log.e(TAG, "Error: Invalid Uri received, trial will not be added");
+      trialAdded = false;
+    } else if (experimentContext == null) {
       Trial finalNewTrial = newTrial;
       (new Handler()).postDelayed(() -> addTrial(finalNewTrial), 5000);
     } else {
       addTrial(newTrial);
     }
-    return true;
+    return trialAdded;
   }
 
   public interface ExperimentLoadedObserver {
