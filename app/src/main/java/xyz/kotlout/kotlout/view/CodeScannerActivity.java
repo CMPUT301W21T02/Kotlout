@@ -16,6 +16,10 @@ import com.budiyev.android.codescanner.DecodeCallback;
 import com.google.zxing.Result;
 import xyz.kotlout.kotlout.R;
 
+/**
+ * Activity to Scan barcodes and QR Codes
+ * Code modified from example from: https://github.com/yuriy-budiyev/code-scanner
+ */
 public class CodeScannerActivity extends AppCompatActivity {
 
   public static final int SCAN_CODE_REQUEST = 1;
