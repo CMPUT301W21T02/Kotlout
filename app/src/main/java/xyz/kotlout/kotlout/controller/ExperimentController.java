@@ -4,6 +4,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
 import java.util.Locale;
@@ -348,30 +349,8 @@ public class ExperimentController {
 
   public void addTrial(Trial trial) {
     FirebaseFirestore db = FirebaseController.getFirestore();
-
-    switch (type) {
-      case BINOMIAL:
-        BinomialExperiment binomialExperiment = (BinomialExperiment) experimentContext;
-        binomialExperiment.addTrial(trial);
-        db.collection(EXPERIMENT_COLLECTION).document(experimentId).update("trials", binomialExperiment.getTrials());
-        break;
-      case NON_NEGATIVE_INTEGER:
-        NonNegativeExperiment nonNegativeExperiment = (NonNegativeExperiment) experimentContext;
-        nonNegativeExperiment.addTrial(trial);
-        db.collection(EXPERIMENT_COLLECTION).document(experimentId).update("trials", nonNegativeExperiment.getTrials());
-        break;
-      case COUNT:
-        CountExperiment countExperiment = (CountExperiment) experimentContext;
-        countExperiment.addTrial(trial);
-        db.collection(EXPERIMENT_COLLECTION).document(experimentId).update("trials", countExperiment.getTrials());
-        break;
-      case MEASUREMENT:
-        MeasurementExperiment measurementExperiment = (MeasurementExperiment) experimentContext;
-        measurementExperiment.addTrial(trial);
-        db.collection(EXPERIMENT_COLLECTION).document(experimentId).update("trials", measurementExperiment.getTrials());
-        break;
-    }
-
+    db.collection(EXPERIMENT_COLLECTION).document(experimentId)
+        .update("trials", FieldValue.arrayUnion(trial));
   }
 
   public List<? extends Trial> getListTrials() {
