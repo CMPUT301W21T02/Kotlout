@@ -1,13 +1,14 @@
-package xyz.kotlout.kotlout.view.fragment;
+package xyz.kotlout.kotlout.view.dialog;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Location;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -28,19 +29,20 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.IconOverlay;
 
 import java.util.ArrayList;
+import xyz.kotlout.kotlout.BuildConfig;
 import xyz.kotlout.kotlout.R;
-import xyz.kotlout.kotlout.model.adapter.LocationAdapter;
+import xyz.kotlout.kotlout.controller.LocationHelper;
 import xyz.kotlout.kotlout.model.geolocation.Geolocation;
 
-public class SelectLocationFragment extends DialogFragment {
+public class SelectLocationDialog extends DialogFragment {
   private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
   private MapView map = null;
   private OnFragmentInteractionListener listener;
   private GeoPoint selection;
-  private Marker middleMark;
+  private IconOverlay middleMark;
   private IMapController mapController;
   private GeoPoint oldLocation;
 
@@ -66,7 +68,7 @@ public class SelectLocationFragment extends DialogFragment {
     super.onCreate(savedInstanceState);
     oldLocation = null;
     if (getArguments() != null) {
-      oldLocation = LocationAdapter.toGeoPoint((Geolocation) getArguments().getSerializable("location"));
+      oldLocation = LocationHelper.toGeoPoint((Geolocation) getArguments().getSerializable("location"));
     }
 
     requestPermissionsIfNecessary(new String[] {
@@ -86,7 +88,8 @@ public class SelectLocationFragment extends DialogFragment {
   @NonNull
   @Override
   public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-    View view = LayoutInflater.from(getActivity()).inflate(R.layout.select_geolocation, null);
+    View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_map_view, null);
+    Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
     map = (MapView) view.findViewById(R.id.map);
     map.setTileSource(TileSourceFactory.MAPNIK);
     map.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.ALWAYS);
@@ -95,9 +98,6 @@ public class SelectLocationFragment extends DialogFragment {
     mapController = map.getController();
     mapController.setZoom(15.0);
 
-    middleMark = new Marker(map);
-    middleMark.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-    middleMark.setInfoWindow(null);
 
     GeoPoint startPoint;
     if (oldLocation == null) {
@@ -105,9 +105,10 @@ public class SelectLocationFragment extends DialogFragment {
     } else {
       startPoint = oldLocation;
     }
-
+    Drawable icon = getContext().getResources().getDrawable(R.drawable.ic_baseline_exp_location);
+    IconOverlay middleMark = new IconOverlay(startPoint, icon);
+    middleMark.set(startPoint, icon);
     mapController.setCenter(startPoint);
-    middleMark.setPosition(startPoint);
 
 
     map.getOverlays().add(middleMark);
@@ -143,7 +144,10 @@ public class SelectLocationFragment extends DialogFragment {
   private void updateSelection() {
     IGeoPoint geoPoint = map.getMapCenter();
     selection = new GeoPoint(geoPoint.getLatitude(), geoPoint.getLongitude());
-    middleMark.setPosition(selection);
+    map.getOverlays().clear();
+    Drawable icon = getContext().getResources().getDrawable(R.drawable.ic_baseline_exp_location);
+    middleMark = new IconOverlay(selection, icon);
+    map.getOverlays().add(middleMark);
     map.invalidate();
   }
 

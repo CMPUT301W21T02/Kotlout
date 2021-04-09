@@ -21,19 +21,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import org.osmdroid.util.GeoPoint;
-import org.w3c.dom.Text;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.ExperimentType;
-import xyz.kotlout.kotlout.model.adapter.LocationAdapter;
+import xyz.kotlout.kotlout.controller.LocationHelper;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.CountTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial;
 import xyz.kotlout.kotlout.model.geolocation.Geolocation;
-import xyz.kotlout.kotlout.view.fragment.SelectLocationFragment;
+import xyz.kotlout.kotlout.view.dialog.SelectLocationDialog;
 
-public class TrialNewActivity extends AppCompatActivity implements SelectLocationFragment.OnFragmentInteractionListener {
+public class TrialNewActivity extends AppCompatActivity implements SelectLocationDialog.OnFragmentInteractionListener {
 
   public static final int NEW_TRIAL_REQUEST = 0;
   public static final String EXPERIMENT_ID = "EXPERIMENT";
@@ -63,7 +62,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     textEntry = findViewById(R.id.editTextNumber);
     geolocationCheck = findViewById(R.id.cb_new_trial_location);
     locationText = findViewById(R.id.text_new_trial_location);
-    // TODO check geolocation required flag
+
     if (requireGeolocation) {
       geolocationCheck.setChecked(true);
       geolocationCheck.setEnabled(false);
@@ -73,6 +72,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
       case BINOMIAL:
         textEntry.setVisibility(View.GONE);
         radioButtons.setVisibility(View.VISIBLE);
+        radioButtons.check(R.id.radio_fail);
         break;
       case MEASUREMENT:
         textEntry.setHint("Decimal Number");
@@ -111,7 +111,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
       ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 225);
       return;
     }
-    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
+    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 1, locationListener);
   }
 
   private void submitTrial(View v) {
@@ -120,10 +120,15 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     String userInput = textEntry.getText().toString();
     Intent intent = new Intent();
     boolean useGeolocation = geolocationCheck.isChecked();
-    if (location == null) {
-      location = new Geolocation(53.52290725708008, -113.5255355834961);
+    if (useGeolocation && location == null) {
+      Toast.makeText(this, "No location is selected, if loading your "
+                                    + "local location is taking too long you can "
+                                    + "manually set it with set location", Toast.LENGTH_LONG).show();
+      return;
     }
+
     location = (useGeolocation)? location : null;
+
     try {
       switch (type) {
         case BINOMIAL:
@@ -157,18 +162,18 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
   }
 
   private void selectGeolocation (View v) {
-    SelectLocationFragment selectLocationFragment = new SelectLocationFragment();
+    SelectLocationDialog selectLocationDialog = new SelectLocationDialog();
     if (location != null) {
       Bundle bundle = new Bundle();
       bundle.putSerializable("location", location);
-      selectLocationFragment.setArguments(bundle);
+      selectLocationDialog.setArguments(bundle);
     }
-    selectLocationFragment.show(getSupportFragmentManager(), "SELECT_GEOLOCATION");
+    selectLocationDialog.show(getSupportFragmentManager(), "SELECT_GEOLOCATION");
   }
 
   @Override
   public void onOkPressed(GeoPoint newPoint) {
-    location = LocationAdapter.toGeolocation(newPoint);
+    location = LocationHelper.toGeolocation(newPoint);
     Log.d("onOkPressed", newPoint.toDoubleString());
     locationText.setText(newPoint.toDoubleString());
   }
@@ -177,7 +182,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     public void onLocationChanged(Location deviceLocation) {
       if(location == null) {
         location = new Geolocation(deviceLocation.getLatitude(), deviceLocation.getLongitude());
-        locationText.setText(LocationAdapter.toGeoPoint(location).toDoubleString());
+        locationText.setText(LocationHelper.toGeoPoint(location).toDoubleString());
       }
     }
   };

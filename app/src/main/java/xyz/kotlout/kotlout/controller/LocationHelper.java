@@ -1,9 +1,9 @@
-package xyz.kotlout.kotlout.model.adapter;
+package xyz.kotlout.kotlout.controller;
 
 import org.osmdroid.util.GeoPoint;
 import xyz.kotlout.kotlout.model.geolocation.Geolocation;
 
-public class LocationAdapter {
+public class LocationHelper {
   public static Geolocation toGeolocation(GeoPoint geoPoint) {
     return new Geolocation((Double) geoPoint.getLatitude(), (Double) geoPoint.getLongitude());
   }
