@@ -26,7 +26,6 @@ public abstract class Experiment implements Serializable {
   private boolean isOngoing; // True if the experiment hasn't been ended (i.e. is still accepting trials). False otherwise.
   private boolean geolocationRequired;
   private List<String> ignoredUsers;
-  private List<Post> posts;
 
   /**
    * Default constructor.
@@ -36,19 +35,18 @@ public abstract class Experiment implements Serializable {
 
   /**
    * Creates a new Experiment with some basic details including description, region, and minimum number of trials.
-   *
-   * @param description   Experiment description.
+   *  @param description   Experiment description.
    * @param region        The region the experiment is conducted in.
    * @param minimumTrials The minimum number of trials required for the experiment.
+   * @param geolocationRequired
    */
-  public Experiment(String description, String region, int minimumTrials) {
+  public Experiment(String description, String region, int minimumTrials, boolean geolocationRequired) {
     this.description = description;
     this.region = region;
     this.minimumTrials = minimumTrials;
-    this.geolocationRequired = false; // TODO: implement as part of https://github.com/CMPUT301W21T02/Kotlout/issues/5
+    this.geolocationRequired = geolocationRequired; // TODO: implement as part of https://github.com/CMPUT301W21T02/Kotlout/issues/5
     this.isOngoing = true;
     ignoredUsers = new ArrayList<>();
-    posts = new ArrayList<>();
   }
 
   /**
@@ -180,15 +178,6 @@ public abstract class Experiment implements Serializable {
    */
   public boolean isGeolocationRequired() {
     return geolocationRequired;
-  }
-
-  /**
-   * Gets the posts associated with the experiment.
-   *
-   * @return A list of posts associated with the experiment.
-   */
-  public List<Post> getPosts() {
-    return posts;
   }
 
   public void ignoreUser(@NonNull User user) {

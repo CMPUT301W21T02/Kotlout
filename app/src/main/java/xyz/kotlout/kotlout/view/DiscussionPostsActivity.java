@@ -1,41 +1,183 @@
 package xyz.kotlout.kotlout.view;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.Query.Direction;
+import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.FirebaseController;
+import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.adapter.PostAdapter;
+import xyz.kotlout.kotlout.model.adapter.PostAdapter.OnPostClickListener;
 import xyz.kotlout.kotlout.model.experiment.Post;
-import xyz.kotlout.kotlout.model.user.User;
 
-public class DiscussionPostsActivity extends AppCompatActivity {
+public class DiscussionPostsActivity extends AppCompatActivity implements OnPostClickListener {
 
-  private RecyclerView posts;
+  public static final String ON_EXPERIMENT_INTENT = "ON_EXPERIMENT";
+  private static final String TAG = "DISCUSSION";
+  private final Pattern pattern = Pattern.compile("(@([\\S]+))?(.*)");
   private PostAdapter postAdapter;
+  private final List<Post> postList = new ArrayList<>();
+  private String experimentUUID;
+  private CollectionReference postsCollection;
+  private RecyclerView postsView;
+  private LinearLayoutManager layoutManager;
+  private EditText commentText;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_discussion_posts);
 
-    posts = findViewById(R.id.discussion_recycler_list);
-    posts.setLayoutManager(new LinearLayoutManager(this));
+    Intent intent = getIntent();
+    experimentUUID = intent.getStringExtra(ON_EXPERIMENT_INTENT);
 
-    ArrayList<Post> postList = new ArrayList<>();
-    for (int i = 0; i < 100; i++) {
-      Post newPost = new Post();
-      User user = new User();
-      user.setFirstName("LOLOLOL");
-      newPost.setPoster(user);
-      newPost.setText("lmao");
-      newPost.setTimestamp(new Date());
-      postList.add(newPost);
+    postsCollection = FirebaseController.getFirestore()
+        .collection(ExperimentController.EXPERIMENT_COLLECTION)
+        .document(experimentUUID)
+        .collection(FirebaseController.POSTS_COLLECTION);
+
+    postsView = findViewById(R.id.discussion_recycler_list);
+    layoutManager = new LinearLayoutManager(this);
+
+    layoutManager.setStackFromEnd(true);
+
+    postsView.setLayoutManager(layoutManager);
+
+    postAdapter = new PostAdapter(this, experimentUUID, postList, this);
+    postsView.setAdapter(postAdapter);
+
+    TextInputLayout commentBox = findViewById(R.id.discussion_enter_question);
+    commentText = commentBox.getEditText();
+
+    commentBox.setEndIconOnClickListener((v -> {
+      addComment(this.commentText.getText().toString());
+    }));
+
+    Query sortedPosts = postsCollection.orderBy("timestamp", Direction.ASCENDING);
+
+//    postsCollection.get().addOnSuccessListener(queryDocumentSnapshots -> {
+//      postList.addAll(queryDocumentSnapshots.toObjects(Post.class));
+//      postAdapter.notifyDataSetChanged();
+//    });
+
+    sortedPosts.addSnapshotListener(this, this::snapShotListener);
+  }
+
+
+  void addComment(String commentText) {
+    Matcher matcher = pattern.matcher(commentText);
+
+    String parentUUID = null;
+    String commentBody = "";
+
+    if (matcher.matches()) {
+      parentUUID = matcher.group(2);
+      commentBody = matcher.group(3);
     }
 
-    postAdapter = new PostAdapter(postList, this);
-    posts.setAdapter(postAdapter);
+    if (commentBody == null) {
+      commentBody = "";
+    }
+
+    Post newPost = new Post();
+    newPost.setTimestamp(new Date());
+    newPost.setText(commentBody);
+    newPost.setPoster(UserHelper.readUuid());
+    newPost.setParent(parentUUID);
+
+    // TODO: No empty comments!
+
+    CollectionReference posts = FirebaseController.getFirestore()
+        .collection(ExperimentController.EXPERIMENT_COLLECTION)
+        .document(experimentUUID)
+        .collection(FirebaseController.POSTS_COLLECTION);
+
+    Toast.makeText(this, "Posting comment...", Toast.LENGTH_SHORT).show();
+    posts.add(newPost).addOnSuccessListener(documentReference -> {
+          Toast.makeText(this, "Posted!", Toast.LENGTH_SHORT).show();
+        }
+    );
+
+    this.commentText.setText("");
+  }
+
+  void snapShotListener(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+    if (error != null) {
+      Log.w(TAG, "Listen Failed", error);
+      return;
+    }
+
+//    boolean wasBottomed = isLastItemDisplaying();
+//    postList.clear();
+//    postList.addAll(
+//    value.getDocuments().parallelStream()
+//        .map(documentSnapshot -> {return documentSnapshot.toObject(Post.class);}).collect(Collectors.toList()));
+//    postAdapter.notifyDataSetChanged();
+//    if (wasBottomed)
+//      postsView.smoothScrollToPosition(postList.size()-1);
+
+    // Initial
+    if (postList.isEmpty()){
+      for (DocumentSnapshot doc: value.getDocuments()) {
+        postList.add(doc.toObject(Post.class));
+      }
+      postAdapter.notifyDataSetChanged();
+    } else {
+      // Typical
+      // Being smart doesnt work at all, TODO: Why is this completely borked?
+      for (DocumentChange doc : value.getDocumentChanges()) {
+        switch (doc.getType()) {
+          case ADDED:
+            boolean wasBottomed = layoutManager.findLastCompletelyVisibleItemPosition() == postAdapter.getItemCount() - 1;
+            postList.add(doc.getNewIndex(), doc.getDocument().toObject(Post.class));
+            postAdapter.notifyItemInserted(doc.getNewIndex());
+            if (wasBottomed) {
+              layoutManager.smoothScrollToPosition(postsView, null, postAdapter.getItemCount() - 1);
+            }
+            break;
+          case REMOVED:
+            postList.remove(doc.getOldIndex());
+            postAdapter.notifyItemRemoved(doc.getOldIndex());
+            break;
+          case MODIFIED:
+            Post post = doc.getDocument().toObject(Post.class);
+            if (doc.getOldIndex() == doc.getNewIndex()) {
+              postList.set(doc.getNewIndex(), post);
+            } else {
+              postList.remove(doc.getOldIndex());
+              postList.add(doc.getNewIndex(), post);
+              postAdapter.notifyItemMoved(doc.getOldIndex(), doc.getNewIndex());
+            }
+            postAdapter.notifyItemChanged(doc.getNewIndex());
+            break;
+        }
+      }
+    }
+  }
+
+  @Override
+  public void onPostClick(String postUUID) {
+    commentText.setText("@" + postUUID + " " + commentText.getText().toString());
+    commentText.setSelection(commentText.getText().length());
   }
 }

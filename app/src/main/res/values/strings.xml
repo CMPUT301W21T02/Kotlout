@@ -29,6 +29,7 @@
   <string name="new_experiment_region">Region</string>
   <string name="new_experiment_description">Description</string>
   <string name="btn_new_experiment_add">Add Experiment</string>
+  <string name="new_experiment_geolocation">Require Geolocation?</string>
   <string name="title_activity_new">New Experiment</string>
   <string name="share_experiment">Share Experiment</string>
   <string name="subscribe_to_experiment">Subscribe to Experiment</string>
@@ -49,7 +50,7 @@
   <string name="default_author_name">Anonymous</string>
   <string name="default_comment_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque nisi tellus, porta eget varius nec, elementum quis nulla. Duis dapibus venenatis est, ut aliquet libero fringilla vitae. Sed at lectus eu lectus blandit dictum sed eu enim. Vestibulum malesuada convallis libero ac tempor. Sed eleifend sit amet nibh vel dictum.</string>
   <string name="default_comment_date">2021–03–16 14:03</string>
-  <string name="comment_reply_count">0 Replies</string>
+  <string name="comment_reply_string">Reply to Anonymous: Pellentesque nisi tellus adipiscing lol this is actual text now</string>
   <string name="comment_date_format">yyyy-MM-dd HH:mm</string>
   <string name="experiment_long_click_menu_title">Experiment Options</string>
   <string name="unpublish_experiment_option">Unpublish</string>
@@ -61,4 +62,11 @@
   <string name="unsubscribe_from_experiment">Unsubscribe from Experiment</string>
   <string name="title_activity_search">Search Experiments</string>
   <string name="search_hint">Experiments</string>
+  <string name="quartile_3">Quartile 3:</string>
+  <string name="quartile_1">Quartile 1:</string>
+  <string name="std_dev">Std. Dev:</string>
+  <string name="median">Median:</string>
+  <string name="mean">Mean:</string>
+  <string name="n_a">N/A</string>
+  <string name="discussion_option_menu_name">Discussion</string>
 </resources>

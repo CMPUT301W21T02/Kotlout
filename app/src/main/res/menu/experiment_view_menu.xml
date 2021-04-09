@@ -13,4 +13,10 @@
     android:icon="@drawable/ic_baseline_bookmark_border"
     android:title="@string/subscribe_to_experiment"
     app:showAsAction="ifRoom" />
+  <item
+    android:id="@+id/open_discussion_posts"
+    android:enabled="true"
+    android:icon="@drawable/outline_chat_24"
+    android:title="@string/discussion_option_menu_name"
+    app:showAsAction="ifRoom" />
 </menu>
