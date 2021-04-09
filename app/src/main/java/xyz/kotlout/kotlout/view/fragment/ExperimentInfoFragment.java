@@ -249,6 +249,9 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     histogram.setScaleY(1);
   }
 
+  /**
+   * This method is used to grab the list of trials and display their data in the GUI
+   */
   @Override
   public void onExperimentLoaded() {
     experiment = controller.getExperimentContext();
@@ -391,6 +394,11 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     }
   }
 
+  /**
+   * @param binomialInfo A list of objects representing data points for binomial trials
+   * @param date         A date represented as a formatted string
+   * @return Whether there is a trial with that date in the list of BinomialInfo objects
+   */
   public boolean hasDate(ArrayList<BinomialInfo> binomialInfo, String date) {
     for (BinomialInfo b : binomialInfo) {
       if (b.getDate().equals(date)) {
@@ -400,6 +408,10 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     return false;
   }
 
+  /**
+   * @param trialData the trials which are to have their information displayed
+   * @return a list of trials that have their results merged if they have the same date
+   */
   public ArrayList<HistogramData> mergeTrials(ArrayList<HistogramData> trialData) {
     ArrayList<HistogramData> merged = new ArrayList<>();
     for (HistogramData h : trialData) {

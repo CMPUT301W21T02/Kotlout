@@ -15,7 +15,6 @@ public class StatCalculator {
   }
 
   /**
-   *
    * @param numberArray a list of numbers
    * @return the mean of the numbers in the array
    */
@@ -30,7 +29,6 @@ public class StatCalculator {
   }
 
   /**
-   *
    * @param numberArray a list of numbers
    * @return the median of the numbers in the array
    */
@@ -40,7 +38,6 @@ public class StatCalculator {
   }
 
   /**
-   *
    * @param numberArray a list of numbers
    * @return the standard deviation of the numbers in the array
    */
@@ -62,7 +59,6 @@ public class StatCalculator {
   }
 
   /**
-   *
    * @param numberArray a list of numbers
    * @return the first quartile of the numbers in the array
    */
@@ -74,7 +70,6 @@ public class StatCalculator {
   }
 
   /**
-   *
    * @param numberArray a list of numbers
    * @return the third quartile of the numbers in the array
    */
