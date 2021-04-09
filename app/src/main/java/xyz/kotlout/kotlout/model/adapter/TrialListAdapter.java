@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
@@ -105,11 +106,14 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
 
     String groupUuid = (String) getGroup(groupPosition);
 
-    if (groupUuid.equals(myUuid)) {
-      tvGroup.setText("Me");
-    } else {
-      tvGroup.setText(UserHelper.fetchUser(groupUuid).getDisplayName());
-    }
+    UserController userController = new UserController(groupUuid);
+    userController.setUpdateCallback(user -> {
+      if (user.getUuid().equals(myUuid)) {
+        tvGroup.setText("Me");
+      } else {
+        tvGroup.setText(user.getDisplayName());
+      }
+    });
 
     return convertView;
   }

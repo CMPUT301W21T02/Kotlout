@@ -1,7 +1,5 @@
 package xyz.kotlout.kotlout.model.experiment.trial;
 
-import java.util.Comparator;
-
 /**
  * A trial with no (or only a single) outcome
  */
