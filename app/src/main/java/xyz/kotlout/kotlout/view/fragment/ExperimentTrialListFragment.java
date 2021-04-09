@@ -29,6 +29,7 @@ public class ExperimentTrialListFragment extends Fragment implements OnCreateCon
   SharedPreferences sharedPrefs;
   Set<String> blockList;
   Runnable listener;
+  ExpandableListView elv;
 
   public ExperimentTrialListFragment(String experimentId, ExperimentType type, SharedPreferences sharedPrefs) {
     this.experimentId = experimentId;
@@ -55,7 +56,7 @@ public class ExperimentTrialListFragment extends Fragment implements OnCreateCon
       Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_experiment_trials, container, false);
-    ExpandableListView elv = view.findViewById(R.id.elv_experiment_trials);
+    elv = view.findViewById(R.id.elv_experiment_trials);
     trialListAdapter = new TrialListAdapter(getContext(), experimentId, type);
     elv.setAdapter(trialListAdapter);
     registerForContextMenu(elv);
@@ -82,14 +83,19 @@ public class ExperimentTrialListFragment extends Fragment implements OnCreateCon
     int groupPosition = ExpandableListView.getPackedPositionGroup(info.packedPosition);
     String blockUuid = (String) trialListAdapter.getGroup(groupPosition);
 
+    Editor editor = sharedPrefs.edit();
+
     int itemId = item.getItemId();
     if (itemId == R.id.block_user) {
-      Editor editor = sharedPrefs.edit();
-      blockList.add(blockUuid);
+      if (blockList.contains(blockUuid)) {
+        blockList.remove(blockUuid);
+      } else {
+        blockList.add(blockUuid);
+      }
       editor.putStringSet(experimentId, blockList);
       editor.apply();
+      trialListAdapter.notifyDataSetInvalidated();
       listener.run();
-      trialListAdapter.notifyDataSetChanged();
       return true;
     } else if (itemId == R.id.show_profile) {
       UserController userController = new UserController(blockUuid);

@@ -7,10 +7,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -181,6 +179,10 @@ public class ExperimentViewActivity extends AppCompatActivity {
       fragmentList.add(fragment);
     }
 
+    public void removeFragment(Fragment fragment) {
+      fragmentList.remove(fragment);
+    }
+
     @NonNull
     @Override
     public Fragment createFragment(int position) {
@@ -197,7 +199,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     int i = item.getItemId();
-    if (i == R.id.open_discussion_posts){
+    if (i == R.id.open_discussion_posts) {
 
       Intent intent = new Intent(this, DiscussionPostsActivity.class);
       intent.putExtra(DiscussionPostsActivity.ON_EXPERIMENT_INTENT, experimentId);
@@ -207,7 +209,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
     } else if (i == R.id.subscribe_experiment) {
       UserController userController = new UserController(UserHelper.readUuid());
       userController.setUpdateCallback(user -> {
-        if(user.getSubscriptions().contains(experimentId)) {
+        if (user.getSubscriptions().contains(experimentId)) {
           userController.removeSubscription(experimentId);
           item.setIcon(R.drawable.ic_baseline_bookmark_border);
         } else {

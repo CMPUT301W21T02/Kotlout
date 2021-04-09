@@ -38,28 +38,23 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
   private Map<String, ? extends List<? extends Trial>> ByExperimenter;
   private List<String> Experimenters;
 
-  private ExperimentType type;
-  private ExperimentController controller;
+  private final ExperimentType type;
+  private final ExperimentController controller;
 
-  private final String experimentId;
-  private String myUuid;
+  private final String myUuid;
 
-  private SharedPreferences sharedPrefs;
-  private Set<String> blockList;
+  private final SharedPreferences sharedPrefs;
 
   public TrialListAdapter(Context context, String experimentId, ExperimentType type) {
     this.context = context;
-    this.experimentId = experimentId;
     this.type = type;
 
     controller = new ExperimentController(experimentId, this::onExperimentLoaded, this::onExperimentLoaded);
     myUuid = UserHelper.readUuid();
     Experimenters = new ArrayList<>();
     trialList = new ArrayList<>();
-    sharedPrefs = context.getSharedPreferences(context.getString(R.string.blocklist_file_key), Context.MODE_PRIVATE);
-
-    blockList = new HashSet<>();
-    blockList = sharedPrefs.getStringSet(experimentId, new HashSet<>());
+    sharedPrefs = context
+        .getSharedPreferences(context.getString(R.string.blocklist_file_key), Context.MODE_PRIVATE);
   }
 
   @Override
@@ -108,6 +103,8 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
   public View getGroupView(int groupPosition, boolean isExpanded, View convertView,
       ViewGroup parent) {
 
+    Set<String> blockList = sharedPrefs.getStringSet(controller.getExperimentId(), new HashSet<>());
+
     if (convertView == null) {
       LayoutInflater inflater = LayoutInflater.from(context);
       convertView = inflater.inflate(R.layout.trial_list_group, parent, false);
@@ -129,7 +126,7 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
     if(blockList.contains(groupUuid)) {
       ivBlock.setVisibility(View.VISIBLE);
     } else {
-      ivBlock.setVisibility(View.GONE);
+      ivBlock.setVisibility(View.INVISIBLE);
     }
 
     return convertView;
