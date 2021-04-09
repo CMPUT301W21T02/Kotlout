@@ -1,5 +1,6 @@
 package xyz.kotlout.kotlout.view.fragment;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,10 +19,11 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
 import xyz.kotlout.kotlout.controller.ExperimentController.ExperimentLoadedObserver;
@@ -53,20 +55,23 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
   ArrayList<String> labels, trialLabels;
   ExperimentController controller;
   List<? extends Trial> trialList;
-  SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy");
+  SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy", Locale.CANADA);
   String dataType;
 
   ArrayList<HistogramData> histogramData = new ArrayList<>();
   ArrayList<HistogramData> trialData = new ArrayList<>();
   ArrayList<HistogramData> merged;
 
+  SharedPreferences sharedPrefs;
+
   @NonNull
-  public static ExperimentInfoFragment newInstance(String experimentId, ExperimentType type) {
+  public static ExperimentInfoFragment newInstance(String experimentId, ExperimentType type, SharedPreferences sharedPrefs) {
     ExperimentInfoFragment fragment = new ExperimentInfoFragment();
     Bundle args = new Bundle();
     args.putString(ARG_EXPERIMENT, experimentId);
     args.putSerializable(ARG_EXPERIMENT_TYPE, type);
     fragment.setArguments(args);
+    fragment.sharedPrefs = sharedPrefs;
     return fragment;
   }
 
@@ -101,7 +106,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     return view;
   }
 
-  private void FormatPlot(BarChart histogram, String dataType) {
+  private void formatPlot(BarChart histogram, String dataType) {
     BarDataSet barDataSet = new BarDataSet(trialEntries, dataType);
     barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
     Description description = new Description();
@@ -132,7 +137,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
    *
    * @param histogram the histogram with the data loaded in
    */
-  private void FormatHistogram(BarChart histogram) {
+  private void formatHistogram(BarChart histogram) {
     BarDataSet barDataSet = new BarDataSet(barEntries, "Answers");
     barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
     Description description = new Description();
@@ -161,7 +166,12 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
   @Override
   public void onExperimentLoaded() {
     experiment = controller.getExperimentContext();
-    trialList = controller.getListTrials();
+
+    Set<String> ignoredUuids = sharedPrefs.getStringSet(experimentId, new TreeSet<>());
+
+    trialList = controller.getListTrials().parallelStream().filter((trial) -> !ignoredUuids.contains(trial.getExperimenterId()))
+        .collect(Collectors.toList());
+
     if (trialList.size() > 0) {
       switch (type) {
         case NON_NEGATIVE_INTEGER:
@@ -189,7 +199,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
           }
           trialData = meanTrialData;
 
-          Collections.sort(trialData, (o1, o2) -> o1.getResult().compareTo(o2.getResult()));
+          trialData.sort((t1, t2) -> t1.getResult().compareTo(t2.getResult()));
           break;
 
         case BINOMIAL:
@@ -232,8 +242,8 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
           for (BinomialInfo b : binomialInfo) {
             trialData.add(new HistogramData(b.getDate(), b.successProportion()));
           }
-          Collections.sort(trialData, (o1, o2) -> o1.getResult().compareTo(o2.getResult()));
 
+          trialData.sort((t1, t2) -> t1.getResult().compareTo(t2.getResult()));
           break;
 
         case MEASUREMENT:
@@ -261,7 +271,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
           }
           trialData = meanData;
 
-          Collections.sort(trialData, (o1, o2) -> o1.getResult().compareTo(o2.getResult()));
+          trialData.sort((t1, t2) -> t1.getResult().compareTo(t2.getResult()));
 
           break;
 
@@ -271,7 +281,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
             histogramData.add(new HistogramData(String.valueOf(((CountTrial) t).getResult()), 1));
             trialData.add(new HistogramData(sdf.format(t.getTimestamp()), ((CountTrial) t).getResult()));
           }
-          Collections.sort(trialData, (o1, o2) -> o1.getResult().compareTo(o2.getResult()));
+          trialData.sort((t1, t2) -> t1.getResult().compareTo(t2.getResult()));
           trialData = mergeTrials(trialData);
           if (trialData.size() > 1) {
             for (int i = 1; i < trialData.size(); i++) {
@@ -282,7 +292,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
       }
 
       merged = mergeData(histogramData);
-      FormatHistogram(histogram);
+      formatHistogram(histogram);
 
       //--------------------------------------------
 
@@ -293,7 +303,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
         trialEntries.add(new BarEntry(i, amount));
         trialLabels.add(date);
       }
-      FormatPlot(trialInfo, dataType);
+      formatPlot(trialInfo, dataType);
     }
   }
 
@@ -347,21 +357,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     return merged;
   }
 
-  // Loads dummy data for now as we don't have trials set-up yet
-  private void fillEntries() {
-    trialData.add(new HistogramData("2021-01-05", 56));
-    trialData.add(new HistogramData("2021-01-06", 63));
-    trialData.add(new HistogramData("2021-01-07", 72));
-    trialData.add(new HistogramData("2021-01-08", 97));
-    trialData.add(new HistogramData("2021-01-09", 12));
-    trialData.add(new HistogramData("2021-01-10", 55));
-
-    for (int i = 0; i < trialData.size(); i++) {
-      String date = trialData.get(i).getResult();
-      float amount = trialData.get(i).getCount();
-
-      trialEntries.add(new BarEntry(i, amount));
-      trialLabels.add(date);
-    }
+  public void ignoreListUpdated() {
+    onExperimentLoaded();
   }
 }

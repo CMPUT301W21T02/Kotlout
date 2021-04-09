@@ -1,6 +1,8 @@
 package xyz.kotlout.kotlout.view;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,26 +55,30 @@ public class ExperimentViewActivity extends AppCompatActivity {
       experimentId = intent.getStringExtra(EXPERIMENT_ID);
 
       adapter = new ExperimentViewFragmentsAdapter(getSupportFragmentManager(), getLifecycle());
+
       tabLayout = findViewById(R.id.tl_experiment_view);
       viewPager = findViewById(R.id.pager_experiment_view);
       trialFab = findViewById(R.id.fab_view_add_trial);
 
       experimentController = new ExperimentController(experimentId, () -> {
+        SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.blocklist_file_key), Context.MODE_PRIVATE);
 
         ExperimentInfoFragment infoFragment = ExperimentInfoFragment
             .newInstance(experimentController.getExperimentId(),
-                experimentController.getType());
+                experimentController.getType(), sharedPrefs);
 
         ExperimentMapFragment mapFragment = ExperimentMapFragment
             .newInstance(experimentController.getExperimentId());
 
         ExperimentTrialListFragment trialListFragment = ExperimentTrialListFragment
             .newInstance(experimentController.getExperimentId(),
-                experimentController.getType());
+                experimentController.getType(), sharedPrefs);
 
         adapter.addFragment(infoFragment);
         adapter.addFragment(mapFragment);
         adapter.addFragment(trialListFragment);
+
+        trialListFragment.addIgnoreListener(infoFragment::ignoreListUpdated);
 
         viewPager.setAdapter(adapter);
 
@@ -153,18 +159,6 @@ public class ExperimentViewActivity extends AppCompatActivity {
     return super.onPrepareOptionsMenu(menu);
   }
 
-  public void showOwner(View view) {
-    // TODO: Add actual behavior
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-    builder.setMessage(experimentController.getExperimentContext().getOwnerUuid())
-        .setTitle("DING DONG");
-
-    AlertDialog dialog = builder.create();
-
-    dialog.show();
-  }
-
   public void fabNewTrial(View view) {
     Intent intent = new Intent(this, TrialNewActivity.class);
     intent.putExtra(TrialNewActivity.EXPERIMENT_ID, experimentId);
@@ -205,7 +199,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
     if (itemId == R.id.subscribe_experiment) {
       UserController userController = new UserController(UserHelper.readUuid());
       userController.setUpdateCallback(user -> {
-        if(user.getSubscriptions().contains(experimentId)) {
+        if (user.getSubscriptions().contains(experimentId)) {
           userController.removeSubscription(experimentId);
           item.setIcon(R.drawable.ic_baseline_bookmark_border);
         } else {

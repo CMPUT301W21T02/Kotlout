@@ -61,4 +61,5 @@
   <string name="unsubscribe_from_experiment">Unsubscribe from Experiment</string>
   <string name="title_activity_search">Search Experiments</string>
   <string name="search_hint">Experiments</string>
+  <string name="blocklist_file_key">xyz.kotlout.TRIAL_BLOCKLIST</string>
 </resources>

@@ -2,18 +2,22 @@ package xyz.kotlout.kotlout.model.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
@@ -37,8 +41,11 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
   private ExperimentType type;
   private ExperimentController controller;
 
-  private String experimentId;
+  private final String experimentId;
   private String myUuid;
+
+  private SharedPreferences sharedPrefs;
+  private Set<String> blockList;
 
   public TrialListAdapter(Context context, String experimentId, ExperimentType type) {
     this.context = context;
@@ -49,6 +56,10 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
     myUuid = UserHelper.readUuid();
     Experimenters = new ArrayList<>();
     trialList = new ArrayList<>();
+    sharedPrefs = context.getSharedPreferences(context.getString(R.string.blocklist_file_key), Context.MODE_PRIVATE);
+
+    blockList = new HashSet<>();
+    blockList = sharedPrefs.getStringSet(experimentId, new HashSet<>());
   }
 
   @Override
@@ -73,8 +84,8 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
 
   @Override
   public Object getChild(int groupPosition, int childPosition) {
-    String experimenterName = Experimenters.get(groupPosition);
-    return Objects.requireNonNull(ByExperimenter.get(experimenterName)).get(childPosition);
+    String experimenterUuid = Experimenters.get(groupPosition);
+    return Objects.requireNonNull(ByExperimenter.get(experimenterUuid)).get(childPosition);
   }
 
   @Override
@@ -103,7 +114,7 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
     }
 
     TextView tvGroup = convertView.findViewById(R.id.tv_trial_list_group);
-
+    ImageView ivBlock = convertView.findViewById(R.id.iv_trial_list_block);
     String groupUuid = (String) getGroup(groupPosition);
 
     UserController userController = new UserController(groupUuid);
@@ -114,6 +125,12 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
         tvGroup.setText(user.getDisplayName());
       }
     });
+
+    if(blockList.contains(groupUuid)) {
+      ivBlock.setVisibility(View.VISIBLE);
+    } else {
+      ivBlock.setVisibility(View.GONE);
+    }
 
     return convertView;
   }

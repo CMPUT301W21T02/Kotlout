@@ -50,7 +50,7 @@ public class NameView extends androidx.appcompat.widget.AppCompatTextView implem
   }
 
   public void onClick(View v) {
-    ProfileSheetFragment profile = ProfileSheetFragment.newInstance(user);
+    ProfileSheetFragment profile = new ProfileSheetFragment(user);
     profile.show(((AppCompatActivity) v.getContext()).getSupportFragmentManager(), "NameView");
   }
 
