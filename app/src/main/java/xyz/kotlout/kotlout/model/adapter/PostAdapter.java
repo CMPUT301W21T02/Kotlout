@@ -19,16 +19,26 @@ import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.model.experiment.Post;
 import xyz.kotlout.kotlout.model.user.User;
 
+/**
+ * This class adapts a list of posts such that it appears correctly in
+ * a recyclerview.
+ */
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
   private static final String TAG = "PostAdaptor";
   private final List<Post> posts;
   private final Context context;
   private final OnPostClickListener postClickListener;
+  private final CollectionReference postsCollection; // Used to fetch user posts
+  private final CollectionReference userCollection; // Used to fetch user names
 
-  private final CollectionReference postsCollection;
-  private final CollectionReference userCollection; // For names
-
+  /**
+   * Constructs a Post adaptor
+   * @param context Context, needed for referencing resources.
+   * @param experimentId UUID of an experiment, needed to fetch collection information.
+   * @param posts A list of Posts to display.
+   * @param postClickListener Callback for views being clicked.
+   */
   public PostAdapter(Context context, String experimentId, List<Post> posts, OnPostClickListener postClickListener) {
     this.context = context;
     this.posts = posts;
@@ -60,9 +70,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
   @Override
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     Post post = posts.get(position);
+
+    // Set the comment body in a post
     holder.getText().setText(post.getText());
 
-    //holder.getName().setText(context.getString(R.string.default_author_name));
+    //
     userCollection.document(post.getPoster()).get().addOnSuccessListener(documentSnapshot -> {
       holder.getName().setText(context.getString(R.string.default_author_name));
       User user = documentSnapshot.toObject(User.class);

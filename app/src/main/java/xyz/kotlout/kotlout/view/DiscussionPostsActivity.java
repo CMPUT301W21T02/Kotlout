@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
@@ -37,8 +36,8 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
   private static final String TAG = "DISCUSSION";
   private final Pattern commentReplyPattern = Pattern.compile("(@([\\S]+))?(.*)", Pattern.DOTALL);
   private final Pattern whiteSpacePattern = Pattern.compile("\\s*");
-  private PostAdapter postAdapter;
   private final List<Post> postList = new ArrayList<>();
+  private PostAdapter postAdapter;
   private String experimentUUID;
   private CollectionReference postsCollection;
   private RecyclerView postsView;
@@ -102,7 +101,7 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
       commentBody = "";
     }
 
-    if (whiteSpacePattern.matcher(commentBody).matches()){
+    if (whiteSpacePattern.matcher(commentBody).matches()) {
       Toast.makeText(this, "Can't send empty comment", Toast.LENGTH_SHORT).show();
       return;
     }
@@ -143,14 +142,13 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
 //      postsView.smoothScrollToPosition(postList.size()-1);
 
     // Initial
-    if (postList.isEmpty()){
-      for (DocumentSnapshot doc: value.getDocuments()) {
+    if (postList.isEmpty()) {
+      for (DocumentSnapshot doc : value.getDocuments()) {
         postList.add(doc.toObject(Post.class));
       }
       postAdapter.notifyDataSetChanged();
     } else {
       // Typical
-      // Being smart doesnt work at all, TODO: Why is this completely borked?
       for (DocumentChange doc : value.getDocumentChanges()) {
         switch (doc.getType()) {
           case ADDED:
@@ -186,10 +184,12 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
     Matcher matcher = commentReplyPattern.matcher(commentText.getText().toString());
     String commentBody = null;
 
-    if (matcher.matches()){
+    if (matcher.matches()) {
       commentBody = matcher.group(3);
     }
-    if (commentBody == null || whiteSpacePattern.matcher(commentBody).matches()) commentBody = "";
+    if (commentBody == null || whiteSpacePattern.matcher(commentBody).matches()) {
+      commentBody = "";
+    }
 
     commentText.setText(this.getString(R.string.discussion_reply_message, postUUID, commentBody));
     commentText.setSelection(commentText.getText().length());
@@ -197,7 +197,7 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
 
   @Override
   public void onPostReplyClick(String parentUUID) {
-    for (int i=0; i<postList.size(); i++){
+    for (int i = 0; i < postList.size(); i++) {
       if (postList.get(i).getPostId().equals(parentUUID)) {
         layoutManager.smoothScrollToPosition(postsView, null, i);
       }
