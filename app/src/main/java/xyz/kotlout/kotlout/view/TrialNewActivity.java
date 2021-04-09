@@ -51,6 +51,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
   public static final String REQUIRE_LOCATION = "LOCATION";
 
   private ExperimentType type;
+  private boolean requireGeolocation;
 
   private RadioGroup radioButtons;
   private EditText textEntry;
@@ -66,8 +67,6 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
       }
     }
   };
-
-  private boolean requireGeolocation;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
