@@ -22,13 +22,13 @@ import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
 import xyz.kotlout.kotlout.controller.ScannableController;
 import xyz.kotlout.kotlout.controller.UserHelper;
+import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment.ListType;
 
 public class MainActivity extends AppCompatActivity {
 
-  private ExperimentListFragmentsAdapter adapter;
   private ViewPager2 viewPager;
 
   @Override
@@ -37,13 +37,11 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
     if (savedInstanceState == null) {
       BottomNavigationView bnv = findViewById(R.id.nav_main);
-      adapter = new ExperimentListFragmentsAdapter(getSupportFragmentManager(), getLifecycle());
+      ExperimentListFragmentsAdapter adapter = new ExperimentListFragmentsAdapter(getSupportFragmentManager(), getLifecycle());
       viewPager = findViewById(R.id.pager_experiment_lists);
       viewPager.setAdapter(adapter);
       bnv.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
-
     }
-
   }
 
   @Override
@@ -87,15 +85,17 @@ public class MainActivity extends AppCompatActivity {
     if (requestCode == ExperimentNewActivity.NEW_EXPERIMENT_REQUEST) {
       // Get newly created experiment and publish it to the database
       Experiment newExperiment;
+      ExperimentType experimentType;
       try {
         newExperiment = (Experiment) data
             .getSerializableExtra(ExperimentNewActivity.EXPERIMENT_EXTRA);
+        experimentType = (ExperimentType) data.getSerializableExtra(ExperimentNewActivity.TYPE_EXTRA);
       } catch (NullPointerException ignored) {
         return;
       }
 
       newExperiment.setOwnerUuid(UserHelper.readUuid());
-      ExperimentController experimentController = new ExperimentController(newExperiment);
+      ExperimentController experimentController = new ExperimentController(newExperiment, experimentType);
       experimentController.publishNewExperiment();
     } else if (requestCode == CodeScannerActivity.SCAN_CODE_REQUEST && data != null) {
       String encoded = data.getStringExtra("code");
@@ -136,31 +136,35 @@ public class MainActivity extends AppCompatActivity {
     addTrialIntent.setData(qrUri);
     startActivity(addTrialIntent);
   }
+
+  /**
+   * Adapter for the ViewPager2 in the MainActivity. This allows for movement and swipe motion.
+   */
+  static class ExperimentListFragmentsAdapter extends FragmentStateAdapter {
+
+    ExperimentListFragment[] fragmentList;
+
+    public ExperimentListFragmentsAdapter(@NonNull FragmentManager fragmentManager,
+        @NonNull Lifecycle lifecycle) {
+      super(fragmentManager, lifecycle);
+
+      fragmentList = new ExperimentListFragment[]{
+          ExperimentListFragment.newInstance(ListType.MINE),
+          ExperimentListFragment.newInstance(ListType.ALL),
+          ExperimentListFragment.newInstance(ListType.SUBSCRIBED)
+      };
+    }
+
+    @NonNull
+    @Override
+    public Fragment createFragment(int position) {
+      return fragmentList[position];
+    }
+
+    @Override
+    public int getItemCount() {
+      return fragmentList.length;
+    }
+  }
 }
 
-class ExperimentListFragmentsAdapter extends FragmentStateAdapter {
-
-  ExperimentListFragment[] fragmentList;
-
-  public ExperimentListFragmentsAdapter(@NonNull FragmentManager fragmentManager,
-      @NonNull Lifecycle lifecycle) {
-    super(fragmentManager, lifecycle);
-
-    fragmentList = new ExperimentListFragment[]{
-        ExperimentListFragment.newInstance(ListType.MINE),
-        ExperimentListFragment.newInstance(ListType.ALL),
-        ExperimentListFragment.newInstance(ListType.SUBSCRIBED)
-    };
-  }
-
-  @NonNull
-  @Override
-  public Fragment createFragment(int position) {
-    return fragmentList[position];
-  }
-
-  @Override
-  public int getItemCount() {
-    return fragmentList.length;
-  }
-}

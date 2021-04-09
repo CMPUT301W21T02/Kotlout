@@ -7,7 +7,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.experiment.HistogramData;
 
 @RunWith(JUnit4.class)
@@ -40,7 +39,7 @@ public class HistogramTests {
     // Tests the results
     Assert.assertEquals("April 2, 2021", merged.get(0).getResult());
     // Tests the count
-    Assert.assertEquals((float) merged.get(0).getCount(), (float) 5, 0);
+    Assert.assertEquals(merged.get(0).getCount(), (float) 5, 0);
 
     merged.add(new HistogramData("April 5, 2021", 2));
 

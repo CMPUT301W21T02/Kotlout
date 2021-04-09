@@ -1,14 +1,10 @@
 package xyz.kotlout.kotlout.model.experiment;
 
 
-import androidx.annotation.NonNull;
 import com.google.firebase.firestore.DocumentId;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
-import xyz.kotlout.kotlout.model.user.User;
 
 /**
  * Base class for modelling experiments. Child classes should model a particular type of experiment. Which likely contain a list
@@ -25,7 +21,6 @@ public abstract class Experiment implements Serializable {
   private boolean isPublished; // True if the experiment has been published (i.e. visible to others). False otherwise.
   private boolean isOngoing; // True if the experiment hasn't been ended (i.e. is still accepting trials). False otherwise.
   private boolean geolocationRequired;
-  private List<String> ignoredUsers;
   // Note: Experiments are associated with a list of Discussion posts as well,
   // but this relationship is handled using sub-collections instead of arrays, as such no field exists
   // within the experiment class.
@@ -38,9 +33,10 @@ public abstract class Experiment implements Serializable {
 
   /**
    * Creates a new Experiment with some basic details including description, region, and minimum number of trials.
-   *  @param description   Experiment description.
-   * @param region        The region the experiment is conducted in.
-   * @param minimumTrials The minimum number of trials required for the experiment.
+   *
+   * @param description         Experiment description.
+   * @param region              The region the experiment is conducted in.
+   * @param minimumTrials       The minimum number of trials required for the experiment.
    * @param geolocationRequired If geolocations are enforced for this experiment.
    */
   public Experiment(String description, String region, int minimumTrials, boolean geolocationRequired) {
@@ -49,7 +45,6 @@ public abstract class Experiment implements Serializable {
     this.minimumTrials = minimumTrials;
     this.geolocationRequired = geolocationRequired; // TODO: implement as part of https://github.com/CMPUT301W21T02/Kotlout/issues/5
     this.isOngoing = true;
-    ignoredUsers = new ArrayList<>();
   }
 
   /**
@@ -181,14 +176,6 @@ public abstract class Experiment implements Serializable {
    */
   public boolean isGeolocationRequired() {
     return geolocationRequired;
-  }
-
-  public void ignoreUser(@NonNull User user) {
-    ignoredUsers.add(user.getUuid());
-  }
-
-  public List<String> getIgnoredUser() {
-    return ignoredUsers;
   }
 
   abstract ExperimentType getExperimentType();

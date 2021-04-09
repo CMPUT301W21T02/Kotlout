@@ -14,7 +14,13 @@ import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 
 /**
- * Custom View for the Experiment Info Fragment's header
+ * Custom View for the Experiment Info Fragment's header.
+ * <p>
+ * Shows the description of the experiment, the owner of the experiment, region of experiment, type of experiment and the count
+ * text.
+ * <p>
+ * setExperiment should be called as soon as possible to allow the header to load an experiment that it will pull the data
+ * from.
  */
 public class InfoHeaderView extends LinearLayout implements ExperimentLoadedObserver {
 
@@ -51,7 +57,7 @@ public class InfoHeaderView extends LinearLayout implements ExperimentLoadedObse
   @SuppressLint("SetTextI18n")
   public void setExperiment(String experimentId, ExperimentType type) {
     controller = new ExperimentController(experimentId, this, null);
-    switch(type) {
+    switch (type) {
       case BINOMIAL:
         tvType.setText("Binomial");
         break;

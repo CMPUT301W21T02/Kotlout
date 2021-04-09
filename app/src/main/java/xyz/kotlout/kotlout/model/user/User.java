@@ -90,7 +90,11 @@ public class User implements Serializable {
   public String getDisplayName() {
     String displayName;
     if (getFirstName() != null) {
-      displayName = getFirstName();
+      if (getLastName() != null) {
+        displayName = String.format("%s %s", getFirstName(), getLastName());
+      } else {
+        displayName = getFirstName();
+      }
     } else {
       displayName = getUuid();
     }

@@ -53,15 +53,13 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.annotation:annotation:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'androidx.navigation:navigation-fragment:2.3.4'
-    implementation 'androidx.navigation:navigation-ui:2.3.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     implementation 'org.osmdroid:osmdroid-android:6.1.10' // For open street maps
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     implementation 'com.budiyev.android:code-scanner:2.1.0'
-    implementation 'com.google.zxing:core:3.2.1'
+    implementation 'com.google.zxing:core:3.4.1'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "com.google.truth:truth:1.1.2"
@@ -72,5 +70,4 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation "androidx.test.espresso:espresso-intents:3.3.0"
-    androidTestImplementation "androidx.navigation:navigation-testing:2.3.4"
 }

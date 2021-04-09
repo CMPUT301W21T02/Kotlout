@@ -20,6 +20,7 @@ public class BinomialTrial extends Trial {
    *
    * @param result         Result to store in the trial
    * @param experimenterId Experimenter who did the trial.
+   * @param location       Location of the trial
    */
   public BinomialTrial(boolean result, String experimenterId, Geolocation location) {
     super(experimenterId, location);

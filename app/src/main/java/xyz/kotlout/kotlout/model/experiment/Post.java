@@ -1,14 +1,11 @@
 package xyz.kotlout.kotlout.model.experiment;
 
 import com.google.firebase.firestore.DocumentId;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import xyz.kotlout.kotlout.model.user.User;
 
 /**
- * A Post is a class representing a question or reply posted to an experiment's discussion forum.
- * is a simple POJO class so that it may be serialized onto firebase.
+ * A Post is a class representing a question or reply posted to an experiment's discussion forum. is a simple POJO class so that
+ * it may be serialized onto firebase.
  */
 public class Post {
 

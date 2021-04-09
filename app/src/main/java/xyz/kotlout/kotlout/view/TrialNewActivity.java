@@ -51,6 +51,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
   public static final String REQUIRE_LOCATION = "LOCATION";
 
   private ExperimentType type;
+  private boolean requireGeolocation;
 
   private RadioGroup radioButtons;
   private EditText textEntry;
@@ -58,8 +59,14 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
 
   private Geolocation location;
   private TextView locationText;
-
-  private boolean requireGeolocation;
+  private final LocationListener locationListener = new LocationListener() {
+    public void onLocationChanged(Location deviceLocation) {
+      if (location == null) {
+        location = new Geolocation(deviceLocation.getLatitude(), deviceLocation.getLongitude());
+        locationText.setText(LocationHelper.toGeoPoint(location).toDoubleString());
+      }
+    }
+  };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +75,9 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
 
     Intent intent = getIntent();
     type = (ExperimentType) intent.getSerializableExtra(EXPERIMENT_TYPE);
-    requireGeolocation = (Boolean) intent.getSerializableExtra(REQUIRE_LOCATION);
+    boolean requireGeolocation = (Boolean) intent.getSerializableExtra(REQUIRE_LOCATION);
     radioButtons = findViewById(R.id.rg_new_trial);
-    textEntry = findViewById(R.id.editTextNumber);
+    textEntry = findViewById(R.id.et_trial_entry_number);
     geolocationCheck = findViewById(R.id.cb_new_trial_location);
     locationText = findViewById(R.id.text_new_trial_location);
 
@@ -107,8 +114,6 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
         textEntry.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED);
         radioButtons.setVisibility(View.GONE);
         textEntry.setVisibility(View.VISIBLE);
-        break;
-      case UNKNOWN:
         break;
     }
 
@@ -166,8 +171,6 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
           MeasurementTrial measurementTrial = new MeasurementTrial(Double.parseDouble(userInput), uuid, location);
           intent.putExtra(TRIAL_EXTRA, measurementTrial);
           break;
-        case UNKNOWN:
-          break;
       }
 
       setResult(RESULT_OK, intent);
@@ -194,15 +197,6 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     Log.d("onOkPressed", newPoint.toDoubleString());
     locationText.setText(newPoint.toDoubleString());
   }
-
-  private final LocationListener locationListener = new LocationListener() {
-    public void onLocationChanged(Location deviceLocation) {
-      if (location == null) {
-        location = new Geolocation(deviceLocation.getLatitude(), deviceLocation.getLongitude());
-        locationText.setText(LocationHelper.toGeoPoint(location).toDoubleString());
-      }
-    }
-  };
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

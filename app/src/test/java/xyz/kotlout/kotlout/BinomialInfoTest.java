@@ -1,13 +1,11 @@
 package xyz.kotlout.kotlout;
 
 import com.google.common.truth.Expect;
-import java.util.ArrayList;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import xyz.kotlout.kotlout.model.experiment.HistogramData;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialInfo;
 
 @RunWith(JUnit4.class)

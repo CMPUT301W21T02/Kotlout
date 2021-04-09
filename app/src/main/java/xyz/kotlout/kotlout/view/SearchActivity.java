@@ -91,8 +91,7 @@ public class SearchActivity extends AppCompatActivity {
     adapter.notifyDataSetChanged();
   }
 
-
-  public class SearchResultAdapter extends ArrayAdapter<ExperimentController> {
+  static class SearchResultAdapter extends ArrayAdapter<ExperimentController> {
 
     private final Context context;
     private final ArrayList<ExperimentController> controllers;

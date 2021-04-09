@@ -21,7 +21,6 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -140,7 +139,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
       case BINOMIAL:
         countList = new ArrayList<>();
         for (Trial t : trialList) {
-          Boolean result = ((BinomialTrial) t).getResult();
+          boolean result = ((BinomialTrial) t).getResult();
           if (result) {
             countList.add((double) 1);
           } else {
@@ -152,7 +151,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
       case MEASUREMENT:
         countList = new ArrayList<>();
         for (Trial t : trialList) {
-          countList.add((double) ((MeasurementTrial) t).getResult());
+          countList.add(((MeasurementTrial) t).getResult());
         }
         setStats(countList, calculator, mean, median, stdDev, q1, q3);
         break;
@@ -191,9 +190,8 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
   }
 
   /**
-   * Displays the data of trials, arranged by date
-   * Graphs were made using the MPAndroidChart Library under the Apache 2.0 License
-   * https://github.com/PhilJay/MPAndroidChart
+   * Displays the data of trials, arranged by date Graphs were made using the MPAndroidChart Library under the Apache 2.0
+   * License https://github.com/PhilJay/MPAndroidChart
    *
    * @param histogram a BarChart object used to display trial data
    * @param dataType  what the bars in the data are representing
@@ -225,8 +223,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
   }
 
   /**
-   * Formats the axes and bars of the histogram
-   * Graphs were made using the MPAndroidChart Library under the Apache 2.0 License
+   * Formats the axes and bars of the histogram Graphs were made using the MPAndroidChart Library under the Apache 2.0 License
    * https://github.com/PhilJay/MPAndroidChart
    *
    * @param histogram the histogram with the data loaded in

@@ -9,7 +9,6 @@ import com.google.firebase.firestore.Query;
  */
 public class ExperimentListController {
 
-  private static final String TAG = "EXP_LIST_CONTROLLER";
   private final String userId;
 
   /**

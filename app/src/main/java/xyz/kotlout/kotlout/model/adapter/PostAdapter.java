@@ -85,9 +85,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
           holder.getName().setText(context.getString(R.string.default_author_name));
         }
       }
-    }).addOnFailureListener(e -> {
-      holder.getName().setText(context.getString(R.string.default_author_name));
-    });
+    }).addOnFailureListener(e -> holder.getName().setText(context.getString(R.string.default_author_name)));
 
     // Set comment date
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
@@ -144,10 +142,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
   /**
    * This interface handles callbacks for two cases:
    * <p><ul>
-   *   <li> The comment reply string being pressed.
-   *   <li> The comment text being pressed.
+   * <li> The comment reply string being pressed.
+   * <li> The comment text being pressed.
    * </ul></p>
-   *
    */
   public interface OnPostClickListener {
 

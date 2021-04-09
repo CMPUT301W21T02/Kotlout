@@ -119,6 +119,12 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
     });
   }
 
+  /**
+   * Updates fragment with all experiments stored in the system.
+   *
+   * @param queryDocumentSnapshots All experiments found in firestore
+   * @param e                      Firestore exceptions
+   */
   private void showAllExperiments(@NonNull QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
     clearExperimentGroups();
 

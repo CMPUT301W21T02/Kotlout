@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,19 +38,15 @@ import xyz.kotlout.kotlout.model.user.User;
 public class TrialListAdapter extends BaseExpandableListAdapter {
 
   private final Context context;
-
+  private final String myUuid;
+  private final ExperimentType type;
+  private final ExperimentController controller;
+  private final SharedPreferences sharedPrefs;
   private List<? extends Trial> trialList;
   private Map<String, ? extends List<? extends Trial>> ByExperimenter;
   private List<String> Experimenters;
 
-  private final ExperimentType type;
-  private final ExperimentController controller;
-
-  private final String myUuid;
-
-  private final SharedPreferences sharedPrefs;
-
-  public TrialListAdapter(Context context, String experimentId, ExperimentType type) {
+  public TrialListAdapter(@NonNull Context context, String experimentId, ExperimentType type) {
     this.context = context;
     this.type = type;
 
@@ -127,7 +124,7 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
       }
     });
 
-    if(blockList.contains(groupUuid)) {
+    if (blockList.contains(groupUuid)) {
       ivBlock.setVisibility(View.VISIBLE);
     } else {
       ivBlock.setVisibility(View.INVISIBLE);
