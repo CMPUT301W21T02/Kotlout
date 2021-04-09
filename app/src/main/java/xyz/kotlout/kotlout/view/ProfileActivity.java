@@ -173,6 +173,10 @@ public class ProfileActivity extends AppCompatActivity {
     return super.onOptionsItemSelected(item);
   }
 
+  /**
+   * Sets the edit profile button and confirm buttons to invisible
+   * @param menu
+   */
   private void enableEditMenu(Menu menu) {
     if (!controller.isCurrentUser()) {
       MenuItem edit = menu.findItem(R.id.edit_profile_button).setVisible(false);

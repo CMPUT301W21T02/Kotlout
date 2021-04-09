@@ -11,28 +11,10 @@ import xyz.kotlout.kotlout.model.user.User;
 
 public class ProfileSheetFragment extends BottomSheetDialogFragment {
 
-  private static final String ARG_USER = "USER_ID";
+  private final User user;
 
-  private User user;
-
-  public ProfileSheetFragment() {
-    // Required empty public constructor
-  }
-
-  public static ProfileSheetFragment newInstance(User user) {
-    ProfileSheetFragment fragment = new ProfileSheetFragment();
-    Bundle args = new Bundle();
-    args.putSerializable(ARG_USER, user);
-    fragment.setArguments(args);
-    return fragment;
-  }
-
-  @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    if (getArguments() != null) {
-      user = (User) getArguments().getSerializable(ARG_USER);
-    }
+  public ProfileSheetFragment(User user) {
+    this.user = user;
   }
 
   @Override

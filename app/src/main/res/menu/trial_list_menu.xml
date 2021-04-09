@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
+  <item
+    android:id="@+id/view_profile"
+    android:enabled="true"
+    android:icon="@drawable/ic_baseline_search"
+    android:title="Show Profile"
+    app:showAsAction="always" />
+
+  <item
+    android:id="@+id/block_user"
+    android:enabled="true"
+    android:icon="@drawable/ic_baseline_block"
+    android:title="Ignore"
+    app:showAsAction="always" />
+</menu>
