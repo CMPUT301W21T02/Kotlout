@@ -30,6 +30,9 @@ import xyz.kotlout.kotlout.view.fragment.ExperimentInfoFragment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentMapFragment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentTrialListFragment;
 
+/**
+ * This is the activity for when an experiment is launched.
+ */
 public class ExperimentViewActivity extends AppCompatActivity {
 
   public static final int VIEW_EXPERIMENT_REQUEST = 0;
@@ -158,6 +161,11 @@ public class ExperimentViewActivity extends AppCompatActivity {
     return super.onPrepareOptionsMenu(menu);
   }
 
+  /**
+   * Callback for the floating action button
+   * which launches a fragment to add additional trials.
+   * @param view The floating action button
+   */
   public void fabNewTrial(View view) {
     Intent intent = new Intent(this, TrialNewActivity.class);
     intent.putExtra(TrialNewActivity.EXPERIMENT_ID, experimentId);
@@ -166,19 +174,34 @@ public class ExperimentViewActivity extends AppCompatActivity {
     startActivityForResult(intent, TrialNewActivity.NEW_TRIAL_REQUEST);
   }
 
+
   static class ExperimentViewFragmentsAdapter extends FragmentStateAdapter {
 
     List<Fragment> fragmentList = new ArrayList<>();
 
+
+    /**
+     * Initializes the adapter
+     * @param fragmentManager Its manager
+     * @param lifecycle Its lifecycle
+     */
     public ExperimentViewFragmentsAdapter(@NonNull FragmentManager fragmentManager,
         @NonNull Lifecycle lifecycle) {
       super(fragmentManager, lifecycle);
     }
 
+    /**
+     * Add a fragment
+     * @param fragment the fragment
+     */
     public void addFragment(Fragment fragment) {
       fragmentList.add(fragment);
     }
 
+    /**
+     * Remove a fragment
+     * @param fragment the fragment
+     */
     public void removeFragment(Fragment fragment) {
       fragmentList.remove(fragment);
     }
