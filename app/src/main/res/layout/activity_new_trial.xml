@@ -77,11 +77,11 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/btn_new_trial_submit" />
   <Button
-    android:id="@+id/btn_new_trial_scan_barcode"
+    android:id="@+id/btn_new_trial_create_qrcode"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
-    android:text="@string/trial_scan_barcode"
+    android:text="Create QR Code"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/btn_new_trial_reg_barcode" />
@@ -93,6 +93,6 @@
     android:text="@string/trial_loading_location"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/btn_new_trial_scan_barcode" />
+    app:layout_constraintTop_toBottomOf="@id/btn_new_trial_reg_barcode" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

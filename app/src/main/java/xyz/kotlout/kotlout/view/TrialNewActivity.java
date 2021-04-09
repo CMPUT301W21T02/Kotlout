@@ -4,10 +4,13 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.InputType;
 import android.text.method.DigitsKeyListener;
 import android.util.Log;
@@ -18,11 +21,15 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import com.google.zxing.BarcodeFormat;
+import java.util.HashMap;
 import org.osmdroid.util.GeoPoint;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.LocationHelper;
+import xyz.kotlout.kotlout.controller.ScannableController;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
@@ -34,9 +41,12 @@ import xyz.kotlout.kotlout.view.dialog.SelectLocationDialog;
 
 public class TrialNewActivity extends AppCompatActivity implements SelectLocationDialog.OnFragmentInteractionListener {
 
+  public static final String TAG = "Trial Activity";
   public static final int NEW_TRIAL_REQUEST = 0;
   public static final String EXPERIMENT_ID = "EXPERIMENT";
   public static final String EXPERIMENT_TYPE = "TYPE";
+  public static final String LATITUDE = "LATITUDE";
+  public static final String LONGITUDE = "LONGITUDE";
   public static final String TRIAL_EXTRA = "TRIAL";
   public static final String REQUIRE_LOCATION = "LOCATION";
 
@@ -56,6 +66,8 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
       }
     }
   };
+
+  private boolean requireGeolocation;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -108,8 +120,12 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
 
     Button submitTrial = findViewById(R.id.btn_new_trial_submit);
     Button setLocation = findViewById(R.id.btn_set_geolocation);
+    Button registerBarcode = findViewById(R.id.btn_new_trial_reg_barcode);
+    Button createQrCode = findViewById(R.id.btn_new_trial_create_qrcode);
     submitTrial.setOnClickListener(this::submitTrial);
     setLocation.setOnClickListener(this::selectGeolocation);
+    registerBarcode.setOnClickListener(this::registerBarcode);
+    createQrCode.setOnClickListener(this::createQrCode);
 
     LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -182,4 +198,120 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     Log.d("onOkPressed", newPoint.toDoubleString());
     locationText.setText(newPoint.toDoubleString());
   }
+
+  private final LocationListener locationListener = new LocationListener() {
+    public void onLocationChanged(Location deviceLocation) {
+      if (location == null) {
+        location = new Geolocation(deviceLocation.getLatitude(), deviceLocation.getLongitude());
+        locationText.setText(LocationHelper.toGeoPoint(location).toDoubleString());
+      }
+    }
+  };
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == CodeScannerActivity.SCAN_CODE_REQUEST) {
+      if (resultCode == RESULT_OK) {
+        assert data != null;
+        String codeResult = data.getStringExtra("code");
+        Double latitude = null;
+        Double longitude = null;
+        if (location != null) {
+          latitude = location.getLatitude();
+          longitude = location.getLongitude();
+        }
+        BarcodeFormat format = (BarcodeFormat) data.getSerializableExtra("format");
+        if (format != null && format != BarcodeFormat.QR_CODE) {
+          storeResultAsBarcode(
+              (ExperimentType) getIntent().getSerializableExtra(EXPERIMENT_TYPE),
+              getIntent().getStringExtra(EXPERIMENT_ID),
+              codeResult, latitude, longitude);
+        } else {
+          Toast.makeText(this, "Invalid barcode", Toast.LENGTH_SHORT).show();
+        }
+      }
+    }
+  }
+
+  /**
+   * Creates a map of the trial data and stores it in firebase
+   *
+   * @param type         Experiment type
+   * @param experimentId Experiment Id
+   * @param barcode      barcode that will reference this experiment
+   */
+  private void storeResultAsBarcode(ExperimentType type, String experimentId, String barcode, Double latitude,
+      Double longitude) {
+    HashMap<String, Object> data = new HashMap<>();
+    data.put("experimentId", experimentId);
+    data.put("type", type);
+    data.put("latitude", latitude);
+    data.put("longitude", longitude);
+    data.put("result", textEntry.getVisibility() == View.VISIBLE ? Long.valueOf(textEntry.getText().toString())
+        : radioButtons.getCheckedRadioButtonId() == R.id.radio_success);
+    ScannableController.storeResultAsBarcode(data, barcode);
+  }
+
+  /**
+   * Gets the current trial result as a string regardless of the experiment type Will return null if the data is invalid
+   *
+   * @return Trial result
+   */
+  private String getResult() {
+    String result;
+    if (location == null && requireGeolocation) {
+      result = null;
+    } else if (textEntry.isEnabled() && textEntry.getVisibility() == View.VISIBLE && !textEntry.getText().toString().isEmpty()
+        && textEntry.getText().toString().matches("\\d+")) {
+      result = textEntry.getText().toString();
+    } else if (radioButtons.getCheckedRadioButtonId() != -1) {
+      result = radioButtons.getCheckedRadioButtonId() == R.id.radio_success ? "true" : "false";
+    } else {
+      // Result is not valid
+      result = null;
+    }
+    return result;
+  }
+
+  /**
+   * Creates a QrCode and opens it with a 'Send' intent to share it
+   *
+   * @param view the current view
+   */
+  private void createQrCode(View view) {
+    String result = getResult();
+    Bitmap qrBitmap = ScannableController.createQrBitmap(ScannableController
+        .createUri(result, getIntent().getStringExtra(EXPERIMENT_ID),
+            ((ExperimentType) getIntent().getSerializableExtra(EXPERIMENT_TYPE)).toString(),
+            location != null ? Double.valueOf(location.getLatitude()).toString() : "",
+            location != null ? Double.valueOf(location.getLongitude()).toString() : ""
+        ));
+    if (qrBitmap == null || result == null) {
+      Toast.makeText(this, "Trial result is invalid, cannot make QR code", Toast.LENGTH_SHORT).show();
+      return;
+    }
+    String path = MediaStore.Images.Media
+        .insertImage(view.getContext().getContentResolver(), qrBitmap, "Kotlout Experiment QR Code", null);
+    Uri uri = Uri.parse(path);
+    Intent shareImageIntent = new Intent(Intent.ACTION_SEND);
+    shareImageIntent.setType("image/jpeg");
+    shareImageIntent.putExtra(Intent.EXTRA_STREAM, uri);
+    view.getContext().startActivity(Intent.createChooser(shareImageIntent, "Share QR Code"));
+  }
+
+  /**
+   * Opens the code scanner to read a barcode This will be used to represent the current trial
+   *
+   * @param view parent view
+   */
+  private void registerBarcode(View view) {
+    if (getResult() != null) {
+      Intent codeScannerIntent = new Intent(this, CodeScannerActivity.class);
+      startActivityForResult(codeScannerIntent, CodeScannerActivity.SCAN_CODE_REQUEST);
+    } else {
+      Toast.makeText(this, "Trial result is invalid, cannot register bar code", Toast.LENGTH_SHORT).show();
+    }
+  }
 }
+

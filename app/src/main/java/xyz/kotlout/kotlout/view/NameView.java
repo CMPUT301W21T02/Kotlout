@@ -12,6 +12,9 @@ import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.model.user.User;
 import xyz.kotlout.kotlout.view.fragment.ProfileSheetFragment;
 
+/**
+ * Custom view to handle displaying names, and displaying user info on click
+ */
 public class NameView extends androidx.appcompat.widget.AppCompatTextView implements OnClickListener {
 
   private User user;

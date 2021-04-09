@@ -3,6 +3,7 @@ package xyz.kotlout.kotlout.view;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,8 +17,10 @@ import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.zxing.BarcodeFormat;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.ScannableController;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
@@ -94,6 +97,14 @@ public class MainActivity extends AppCompatActivity {
       newExperiment.setOwnerUuid(UserHelper.readUuid());
       ExperimentController experimentController = new ExperimentController(newExperiment, experimentType);
       experimentController.publishNewExperiment();
+    } else if (requestCode == CodeScannerActivity.SCAN_CODE_REQUEST && data != null) {
+      String encoded = data.getStringExtra("code");
+      BarcodeFormat format = (BarcodeFormat) data.getSerializableExtra("format");
+      if (format == BarcodeFormat.QR_CODE) {
+        processQrCode(Uri.parse(encoded));
+      } else {
+        ScannableController.addTrialFromBarcode(this, encoded);
+      }
     }
   }
 
@@ -107,9 +118,25 @@ public class MainActivity extends AppCompatActivity {
       intent.putExtra(UserHelper.UUID_INTENT, UserHelper.readUuid());
       startActivity(intent);
       return true;
+    } else if (itemId == R.id.scan_code_menu_button) {
+      Intent scanIntent = new Intent(this, CodeScannerActivity.class);
+      startActivityForResult(scanIntent, CodeScannerActivity.SCAN_CODE_REQUEST);
+      return true;
     }
     return super.onOptionsItemSelected(item);
   }
+
+  /**
+   * Process Trial result from uri
+   *
+   * @param qrUri Uri describing a trial result
+   */
+  private void processQrCode(Uri qrUri) {
+    Intent addTrialIntent = new Intent(this, ExperimentViewActivity.class);
+    addTrialIntent.setData(qrUri);
+    startActivity(addTrialIntent);
+  }
+}
 
   /**
    * Adapter for the ViewPager2 in the MainActivity. This allows for movement and swipe motion.

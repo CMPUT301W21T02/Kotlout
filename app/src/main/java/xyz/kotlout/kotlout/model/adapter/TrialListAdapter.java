@@ -30,6 +30,7 @@ import xyz.kotlout.kotlout.model.experiment.trial.CountTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
+import xyz.kotlout.kotlout.model.user.User;
 
 /**
  * Adapter class to show Trials in an Expandable List.

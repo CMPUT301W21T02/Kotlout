@@ -12,6 +12,15 @@
   <string name="profile_email_text">Email</string>
   <string name="profile_phone_text">Phone Number</string>
 
+  <!-- QR codes -->
+  <string name="scannable_intent_scheme">example</string>
+  <string name="scannable_intent_host">kotlout</string>
+  <string name="scannable_intent_label">Local intent</string>
+  <string name="scannable_intent_label_remote">Remote intent</string>
+  <string name="uri_experiment_type">EXPERIMENT_ID</string>
+  <string name="title_activity_codescanner">Code Scanner</string>
+  <string name="scan_code_menu_button_title">Scan QR or barcode</string>
+
   <!-- New Experiment Activity -->
   <string name="new_experiment_min_trials">Minimum Number of Trials</string>
   <string name="new_experiment_region">Region</string>

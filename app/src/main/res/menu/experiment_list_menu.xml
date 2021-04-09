@@ -14,4 +14,10 @@
     android:icon="@drawable/ic_baseline_person"
     android:title="@string/menu_profile"
     app:showAsAction="ifRoom" />
+    <item
+      android:id="@+id/scan_code_menu_button"
+      android:enabled="true"
+      android:icon="@drawable/ic_baseline_qr_code_scanner_24"
+      android:title="@string/scan_code_menu_button_title"
+      app:showAsAction="ifRoom" />
 </menu>

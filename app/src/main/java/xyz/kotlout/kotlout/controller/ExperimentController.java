@@ -1,5 +1,7 @@
 package xyz.kotlout.kotlout.controller;
 
+import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,6 +16,10 @@ import xyz.kotlout.kotlout.model.experiment.CountExperiment;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
 import xyz.kotlout.kotlout.model.experiment.MeasurementExperiment;
 import xyz.kotlout.kotlout.model.experiment.NonNegativeExperiment;
+import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.CountTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
+import xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
 /**
@@ -402,6 +408,29 @@ public class ExperimentController {
 
     void onExperimentUpdated();
   }
+
+  /**
+   * Creates a trial from a URI and adds it to the current experiment
+   *
+   * @param data Uri which encodes a trial
+   * @return true if the trial is valid, false otherwise
+   */
+  public boolean addTrialFromUri(Uri data) {
+    Trial newTrial = ScannableController.getTrialFromUri(data);
+    boolean trialAdded = true;
+    if(newTrial == null) {
+      // Error invalid Uri
+      Log.e(TAG, "Error: Invalid Uri received, trial will not be added");
+      trialAdded = false;
+    } else if (experimentContext == null) {
+      Trial finalNewTrial = newTrial;
+      (new Handler()).postDelayed(() -> addTrial(finalNewTrial), 5000);
+    } else {
+      addTrial(newTrial);
+    }
+    return trialAdded;
+  }
+
 
 }
 
