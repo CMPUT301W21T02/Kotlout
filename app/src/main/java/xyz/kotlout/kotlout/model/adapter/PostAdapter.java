@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirestoreRegistrar;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
@@ -25,9 +24,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
   private static final String TAG = "PostAdaptor";
   private final List<Post> posts;
   private final Context context;
+  private OnPostClickListener postClickListener;
 
   private final CollectionReference postsCollection;
   private final CollectionReference userCollection; // For names
+
+  public static interface OnPostClickListener {
+    public void onPostClick(String postUUID);
+  };
 
   @NonNull
   @Override
@@ -35,7 +39,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.discussion_post_comment,
         parent, false);
 
-    return new ViewHolder(view);
+    ViewHolder viewHolder = new ViewHolder(view);
+
+    viewHolder.getText().setOnClickListener(v -> {
+      postClickListener.onPostClick(
+          posts.get(viewHolder.getAdapterPosition()).getPostId()
+      );
+    });
+    return viewHolder;
   }
 
   @Override
@@ -70,7 +81,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
       holder.getReplies().setText("fetching...");
       postsCollection.document(post.getParent()).get().addOnSuccessListener( documentSnapshot -> {
-        holder.getReplies().setText(documentSnapshot.toObject(Post.class).getText());
+        Post parent = documentSnapshot.toObject(Post.class);
+        if (parent != null){
+          holder.getReplies().setText(parent.getText());
+        } else {
+          holder.getReplies().setText("[deleted]");
+        }
       }
       ).addOnFailureListener(e -> {
         holder.getReplies().setText("[deleted]");
@@ -116,9 +132,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     }
   }
 
-  public PostAdapter(Context context, String experimentId, List<Post> posts) {
+  public PostAdapter(Context context, String experimentId, List<Post> posts, OnPostClickListener postClickListener) {
     this.context = context;
     this.posts = posts;
+    this.postClickListener = postClickListener;
 
     FirebaseFirestore firebase = FirebaseController.getFirestore();
     postsCollection = firebase

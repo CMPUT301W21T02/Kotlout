@@ -10,7 +10,7 @@ public class FirebaseController {
 
   public static final String POSTS_COLLECTION = "posts";
 
-  private static final boolean USE_EMU = true;
+  private static final boolean USE_EMU = false;
 
   private static final String EMU_HOST = "10.0.2.2";
   private static final String NON_EMU_HOST = "192.168.0.80";
@@ -30,7 +30,7 @@ public class FirebaseController {
     isInitialized = true;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     if (USE_EMU) {
-      firestore.useEmulator(NON_EMU_HOST, EMU_FIREBASE_PORT);
+      firestore.useEmulator(EMU_HOST, EMU_FIREBASE_PORT);
     }
   }
 

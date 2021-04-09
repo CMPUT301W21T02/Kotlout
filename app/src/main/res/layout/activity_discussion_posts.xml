@@ -9,11 +9,12 @@
   <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/discussion_recycler_list"
     android:layout_width="0dp"
-    android:layout_height="wrap_content"
+    android:layout_height="0dp"
+    app:layout_constrainedHeight="true"
+    app:layout_constraintBottom_toTopOf="@id/discussion_enter_question"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    />
+    app:layout_constraintTop_toTopOf="parent" />
   <com.google.android.material.textfield.TextInputLayout
     android:id="@+id/discussion_enter_question"
     android:layout_width="0dp"
@@ -25,6 +26,7 @@
     app:boxBackgroundMode="filled"
     app:endIconDrawable="@android:drawable/ic_menu_send"
     app:endIconMode="custom"
+    app:endIconTint="@color/material_on_background_emphasis_high_type"
     app:hintEnabled="true"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
@@ -32,6 +34,7 @@
 
     <com.google.android.material.textfield.TextInputEditText
       android:layout_width="match_parent"
-      android:layout_height="wrap_content" />
+      android:layout_height="wrap_content"
+      android:textColor="@color/common_google_signin_btn_text_dark_focused" />
   </com.google.android.material.textfield.TextInputLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

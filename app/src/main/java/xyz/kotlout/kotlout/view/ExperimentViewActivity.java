@@ -158,6 +158,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
             item.setIcon(R.drawable.ic_baseline_bookmark);
           }
         });
+        return true;
       } else {
       return super.onOptionsItemSelected(item);
     }

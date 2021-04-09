@@ -10,29 +10,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.api.Distribution.BucketOptions.Linear;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.Query.Direction;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firestore.v1.Document;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
 import xyz.kotlout.kotlout.controller.FirebaseController;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.adapter.PostAdapter;
+import xyz.kotlout.kotlout.model.adapter.PostAdapter.OnPostClickListener;
 import xyz.kotlout.kotlout.model.experiment.Post;
 
-public class DiscussionPostsActivity extends AppCompatActivity {
+public class DiscussionPostsActivity extends AppCompatActivity implements OnPostClickListener {
 
   public static final String ON_EXPERIMENT_INTENT = "ON_EXPERIMENT";
   private static final String TAG = "DISCUSSION";
@@ -43,7 +40,8 @@ public class DiscussionPostsActivity extends AppCompatActivity {
   private CollectionReference postsCollection;
   private RecyclerView postsView;
   private LinearLayoutManager layoutManager;
-
+  private EditText commentText;
+  private final Pattern pattern = Pattern.compile("(@([\\S]+))?(.*)");
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -62,17 +60,17 @@ public class DiscussionPostsActivity extends AppCompatActivity {
     layoutManager = new LinearLayoutManager(this);
 
     layoutManager.setStackFromEnd(true);
+
     postsView.setLayoutManager(layoutManager);
 
-    postAdapter = new PostAdapter(this, experimentUUID, postList);
+    postAdapter = new PostAdapter(this, experimentUUID, postList, this);
     postsView.setAdapter(postAdapter);
 
     TextInputLayout commentBox = findViewById(R.id.discussion_enter_question);
-    EditText text = commentBox.getEditText();
+    commentText = commentBox.getEditText();
 
     commentBox.setEndIconOnClickListener((v -> {
-      addComment(text.getText().toString());
-      text.setText("");
+      addComment(this.commentText.getText().toString());
     }));
 
     Query sortedPosts = postsCollection.orderBy("timestamp", Direction.ASCENDING);
@@ -83,14 +81,29 @@ public class DiscussionPostsActivity extends AppCompatActivity {
 //    });
 
     sortedPosts.addSnapshotListener(this, this::snapShotListener);
-
   }
 
+
   void addComment(String commentText) {
+    Matcher matcher = pattern.matcher(commentText);
+
+    String parentUUID = null;
+    String commentBody = "";
+
+    if (matcher.matches()) {
+      parentUUID = matcher.group(2);
+      commentBody = matcher.group(3);
+    }
+
+    if (commentBody == null) {
+      commentBody = "";
+    }
+
     Post newPost = new Post();
     newPost.setTimestamp(new Date());
-    newPost.setText(commentText);
+    newPost.setText(commentBody);
     newPost.setPoster(UserHelper.readUuid());
+    newPost.setParent(parentUUID);
 
     // TODO: No empty comments!
 
@@ -100,33 +113,39 @@ public class DiscussionPostsActivity extends AppCompatActivity {
         .collection(FirebaseController.POSTS_COLLECTION);
 
     Toast.makeText(this, "Posting comment...", Toast.LENGTH_SHORT).show();
-    posts.add(newPost).addOnSuccessListener( documentReference -> {
-        Toast.makeText(this, "Posted!", Toast.LENGTH_SHORT).show();
-      }
+    posts.add(newPost).addOnSuccessListener(documentReference -> {
+          Toast.makeText(this, "Posted!", Toast.LENGTH_SHORT).show();
+        }
     );
+
+    this.commentText.setText("");
   }
 
-  void snapShotListener(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error){
-    if (error != null){
-        Log.w(TAG, "Listen Failed", error);
-        return;
+  void snapShotListener(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+    if (error != null) {
+      Log.w(TAG, "Listen Failed", error);
+      return;
     }
 
+//    boolean wasBottomed = isLastItemDisplaying();
 //    postList.clear();
 //    postList.addAll(
 //    value.getDocuments().parallelStream()
 //        .map(documentSnapshot -> {return documentSnapshot.toObject(Post.class);}).collect(Collectors.toList()));
 //    postAdapter.notifyDataSetChanged();
+//    if (wasBottomed)
+//      postsView.smoothScrollToPosition(postList.size()-1);
 
     // Being smart doesnt work at all, TODO: Why is this completely borked?
-    for (DocumentChange doc: value.getDocumentChanges()){
-      switch (doc.getType()){
+    for (DocumentChange doc : value.getDocumentChanges()) {
+      switch (doc.getType()) {
         case ADDED:
-          boolean wasBottomed = isLastItemDisplaying();
-          postList.add(doc.getDocument().toObject(Post.class));
-          postAdapter.notifyItemInserted(postList.size()-1);
-          if (wasBottomed)
-            postsView.smoothScrollToPosition(postList.size()-1);
+          boolean wasBottomed = layoutManager.findLastCompletelyVisibleItemPosition() == postAdapter.getItemCount()-1;
+          postList.add(doc.getNewIndex(), doc.getDocument().toObject(Post.class));
+          postAdapter.notifyItemInserted(doc.getNewIndex());
+          if (wasBottomed) {
+            layoutManager.smoothScrollToPosition(postsView, null, postAdapter.getItemCount() - 1);
+          }
           break;
         case REMOVED:
           postList.remove(doc.getOldIndex());
@@ -134,7 +153,7 @@ public class DiscussionPostsActivity extends AppCompatActivity {
           break;
         case MODIFIED:
           Post post = doc.getDocument().toObject(Post.class);
-          if(doc.getOldIndex() == doc.getNewIndex()){
+          if (doc.getOldIndex() == doc.getNewIndex()) {
             postList.set(doc.getNewIndex(), post);
           } else {
             postList.remove(doc.getOldIndex());
@@ -147,23 +166,9 @@ public class DiscussionPostsActivity extends AppCompatActivity {
     }
   }
 
-
-  /**
-   * Check whether the last item in RecyclerView is being displayed or not
-   *
-   * @param recyclerView which you would like to check
-   * @return true if last position was Visible and false Otherwise
-   */
-  private boolean isLastItemDisplaying() {
-    // By Sheraz Ahmad Khilji accessed 04-08.
-    // https://stackoverflow.com/a/33515549
-    RecyclerView recyclerView = this.postsView;
-
-    if (recyclerView.getAdapter().getItemCount() != 0) {
-      int lastVisibleItemPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastCompletelyVisibleItemPosition();
-      return lastVisibleItemPosition != RecyclerView.NO_POSITION
-          && lastVisibleItemPosition == recyclerView.getAdapter().getItemCount() - 1;
-    }
-    return false;
+  @Override
+  public void onPostClick(String postUUID) {
+    commentText.setText("@" + postUUID + " " + commentText.getText().toString());
+    commentText.setSelection(commentText.getText().length());
   }
 }
