@@ -1,5 +1,6 @@
 package xyz.kotlout.kotlout.view.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import xyz.kotlout.kotlout.controller.ExperimentController;
 import xyz.kotlout.kotlout.controller.ExperimentController.ExperimentLoadedObserver;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
+import xyz.kotlout.kotlout.model.experiment.HistogramComparator;
 import xyz.kotlout.kotlout.model.experiment.HistogramData;
 import xyz.kotlout.kotlout.model.experiment.StatCalculator;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialInfo;
@@ -57,6 +59,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
   ArrayList<String> labels, trialLabels;
   ExperimentController controller;
   List<? extends Trial> trialList;
+  @SuppressLint("SimpleDateFormat")
   SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy");
   DecimalFormat df = new DecimalFormat("#.####");
   String dataType;
@@ -100,11 +103,12 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     q1 = view.findViewById(R.id.q1_text_view);
     q3 = view.findViewById(R.id.q3_text_view);
 
+    // Instantiating objects related to the histograms
     histogram = view.findViewById(R.id.histogram);
     barEntries = new ArrayList<>();
     labels = new ArrayList<>();
 
-    //------------------------------------------
+    // Instantiating object related to the trial plots
     trialInfo = view.findViewById(R.id.trialInfo);
     trialEntries = new ArrayList<>();
     trialLabels = new ArrayList<>();
@@ -112,6 +116,11 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     return view;
   }
 
+  /**
+   * calculates the mean, median, standard deviation, first quartile, and third quartile from a list of trials
+   *
+   * @param trialList a list of all trials in the current experiment
+   */
   public void calculateStats(List<? extends Trial> trialList) {
     double calcMean, calcMedian, calcStdDev, calcQ1, calcQ3;
     StatCalculator calculator = new StatCalculator();
@@ -148,11 +157,21 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
         for (Trial t : trialList) {
           countList.add((double) ((NonNegativeTrial) t).getResult());
         }
+        setStats(countList, calculator, mean, median, stdDev, q1, q3);
         break;
     }
 
   }
 
+  /**
+   * @param countList  a list of trials
+   * @param calculator a StatCalculator object which will perform the necessary operations
+   * @param mean       a textView which shows the mean on the GUI
+   * @param median     a textView which shows the median on the GUI
+   * @param stdDev     a textView which shows the standard deviation on the GUI
+   * @param q1         a textView which shows the first quartile on the GUI
+   * @param q3         a textView which shows the third quartile on the GUI
+   */
   private void setStats(ArrayList<Double> countList, StatCalculator calculator, TextView mean, TextView median, TextView stdDev,
       TextView q1, TextView q3) {
     double calcMedian = calculator.getMedian(countList);
@@ -167,6 +186,12 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     q3.setText(df.format(calcQ3));
   }
 
+  /**
+   * Displays the data of trials, arranged by date
+   *
+   * @param histogram a BarChart object used to display trial data
+   * @param dataType  what the bars in the data are representing
+   */
   private void formatPlot(BarChart histogram, String dataType) {
     BarDataSet barDataSet = new BarDataSet(trialEntries, dataType);
     barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
@@ -349,6 +374,8 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
       }
 
       merged = mergeData(histogramData);
+      Log.d("TAG", String.valueOf(merged));
+      Log.d("TAG", String.valueOf(merged));
       formatHistogram(histogram);
 
       //--------------------------------------------
@@ -403,9 +430,11 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
       }
     }
 
+    Collections.sort(merged, new HistogramComparator());
     for (int i = 0; i < merged.size(); i++) {
       String date = merged.get(i).getResult();
       float amount = merged.get(i).getCount();
+      Log.d("I NEED THIS TAG", String.valueOf(merged.get(i).getCount()));
 
       barEntries.add(new BarEntry(i, amount));
       labels.add(date);
@@ -414,21 +443,4 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     return merged;
   }
 
-  // Loads dummy data for now as we don't have trials set-up yet
-  private void fillEntries() {
-    trialData.add(new HistogramData("2021-01-05", 56));
-    trialData.add(new HistogramData("2021-01-06", 63));
-    trialData.add(new HistogramData("2021-01-07", 72));
-    trialData.add(new HistogramData("2021-01-08", 97));
-    trialData.add(new HistogramData("2021-01-09", 12));
-    trialData.add(new HistogramData("2021-01-10", 55));
-
-    for (int i = 0; i < trialData.size(); i++) {
-      String date = trialData.get(i).getResult();
-      float amount = trialData.get(i).getCount();
-
-      trialEntries.add(new BarEntry(i, amount));
-      trialLabels.add(date);
-    }
-  }
 }
