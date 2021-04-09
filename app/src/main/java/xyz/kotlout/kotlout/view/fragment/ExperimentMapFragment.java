@@ -24,20 +24,29 @@ import org.osmdroid.views.MapViewRepository;
 import xyz.kotlout.kotlout.BuildConfig;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.model.ExperimentType;
-import xyz.kotlout.kotlout.model.adapter.TrialMarkerAdapter;
+import xyz.kotlout.kotlout.model.adapter.TrialMarkAdapter;
 
+/**
+ * The Experiment info list fragment for displaying the Map
+ */
 public class ExperimentMapFragment extends Fragment {
 
   private static final String ARG_EXPERIMENT = "EXPERIMENT";
   private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
   private MapView map = null;
   private int trialsMarked = 0;
-  String experimentId;
-  View view;
-  ExperimentType type;
-  TrialMarkerAdapter markIt;
+  private String experimentId;
+  private View view;
+  private ExperimentType type;
+  private TrialMarkAdapter trialMarker;
 
 
+  /**
+   * New instance experiment map fragment.
+   *
+   * @param experimentId the experiment id
+   * @return the experiment map fragment
+   */
   public static ExperimentMapFragment newInstance(String experimentId) {
     ExperimentMapFragment fragment = new ExperimentMapFragment();
     Bundle args = new Bundle();
@@ -64,7 +73,7 @@ public class ExperimentMapFragment extends Fragment {
     configureMap(view);
 
 
-    markIt = new TrialMarkerAdapter(getContext(), experimentId, type, map);
+    trialMarker = new TrialMarkAdapter(getContext(), experimentId, map);
     return view;
   }
 
@@ -135,13 +144,14 @@ public class ExperimentMapFragment extends Fragment {
   public void onResume() {
     super.onResume();
     map.onResume();
+
     /* https://github.com/osmdroid/osmdroid/issues/277#issuecomment-412099853 */
     MapTileProviderBasic tileProvider = new MapTileProviderBasic(getContext().getApplicationContext(), TileSourceFactory.MAPNIK);
     SimpleInvalidationHandler mTileRequestCompleteHandler = new SimpleInvalidationHandler(map);
     tileProvider.getTileRequestCompleteHandlers().add(mTileRequestCompleteHandler);
     map.setTileProvider(tileProvider);
+
     MapViewRepository mvr = map.getRepository();
-    markIt.onResume();
-    markIt.placeMarkers();
+    trialMarker.placeMarkers();
   }
 }
