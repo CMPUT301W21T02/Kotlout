@@ -77,7 +77,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
         adapter.addFragment(mapFragment);
         adapter.addFragment(trialListFragment);
 
-        trialListFragment.addIgnoreListener(infoFragment::ignoreListUpdated);
+        trialListFragment.setIgnoreListener(infoFragment::ignoreListUpdated);
 
         viewPager.setAdapter(adapter);
 

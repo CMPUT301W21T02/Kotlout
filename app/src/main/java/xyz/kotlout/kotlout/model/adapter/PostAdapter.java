@@ -151,8 +151,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
    */
   public interface OnPostClickListener {
 
+    /**
+     * Called when a single post has it's text (comment body) clicked on.
+     * @param postUUID UUID of clicked post.
+     */
     void onPostTextClick(String postUUID);
 
+    /**
+     * Called when a single post has it's "reply" view clicked.
+     * @param parentUUID UUID of the parent of the clicked post.
+     */
     void onPostReplyClick(String parentUUID);
   }
 
@@ -166,6 +174,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     TextView text;
     TextView replies;
 
+
+    /**
+     * Instantiates a new View holder.
+     *
+     * @param itemView the item view
+     */
     public ViewHolder(@NonNull View itemView) {
       super(itemView);
 
@@ -175,18 +189,38 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
       replies = itemView.findViewById(R.id.comment_reply_string);
     }
 
+    /**
+     * Gets name (of the poster) text view.
+     *
+     * @return the name
+     */
     public TextView getName() {
       return name;
     }
 
+    /**
+     * Gets date text view.
+     *
+     * @return the date
+     */
     public TextView getDate() {
       return date;
     }
 
+    /**
+     * Gets the comment body Text view.
+     *
+     * @return the text
+     */
     public TextView getText() {
       return text;
     }
 
+    /**
+     * Gets replies Text view.
+     *
+     * @return the replies
+     */
     public TextView getReplies() {
       return replies;
     }

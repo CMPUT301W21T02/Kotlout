@@ -44,6 +44,7 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
   private RecyclerView postsView;
   private LinearLayoutManager layoutManager;
   private EditText commentText;
+  private CollectionReference postsCollection;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
     Intent intent = getIntent();
     experimentUUID = intent.getStringExtra(ON_EXPERIMENT_INTENT);
 
-    CollectionReference postsCollection = FirebaseController.getFirestore()
+    postsCollection = FirebaseController.getFirestore()
         .collection(FirebaseController.EXPERIMENT_COLLECTION)
         .document(experimentUUID)
         .collection(FirebaseController.POSTS_COLLECTION);
@@ -85,8 +86,14 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
     sortedPosts.addSnapshotListener(this, this::snapShotListener);
   }
 
-
+  /**
+   * This is a callback handler that adds a comment with a given body.
+   * All other fields are assigned automatically.
+   * @param commentText Body text for a new comment
+   */
   void addComment(String commentText) {
+
+    // This is some simple code that sets up replies
     Matcher matcher = commentReplyPattern.matcher(commentText);
 
     String parentUUID = null;
@@ -106,19 +113,15 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
       return;
     }
 
+    // Construct a new post and set all its fields.
     Post newPost = new Post();
     newPost.setTimestamp(new Date());
     newPost.setText(commentBody);
     newPost.setPoster(UserHelper.readUuid());
     newPost.setParent(parentUUID);
 
-    CollectionReference posts = FirebaseController.getFirestore()
-        .collection(FirebaseController.EXPERIMENT_COLLECTION)
-        .document(experimentUUID)
-        .collection(FirebaseController.POSTS_COLLECTION);
-
     // Toast.makeText(this, "Posting comment...", Toast.LENGTH_SHORT).show();
-    posts.add(newPost).addOnSuccessListener(documentReference -> {
+    postsCollection.add(newPost).addOnSuccessListener(documentReference -> {
           // Toast.makeText(this, "Posted!", Toast.LENGTH_SHORT).show();
         }
     );
@@ -126,29 +129,26 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
     this.commentText.setText("");
   }
 
+  /**
+   * Callback handler for when a listened-to collection receives updates.
+   * Manages the postlist entirely, and notifies the adaptor.
+   * @param value Query update value (contains updates)
+   * @param error If firebase encountered an exception
+   */
   void snapShotListener(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
     if (error != null) {
       Log.w(TAG, "Listen Failed", error);
       return;
     }
 
-//    boolean wasBottomed = isLastItemDisplaying();
-//    postList.clear();
-//    postList.addAll(
-//    value.getDocuments().parallelStream()
-//        .map(documentSnapshot -> {return documentSnapshot.toObject(Post.class);}).collect(Collectors.toList()));
-//    postAdapter.notifyDataSetChanged();
-//    if (wasBottomed)
-//      postsView.smoothScrollToPosition(postList.size()-1);
-
-    // Initial
+    // Initial fill, with all comments
     if (postList.isEmpty()) {
       for (DocumentSnapshot doc : value.getDocuments()) {
         postList.add(doc.toObject(Post.class));
       }
       postAdapter.notifyDataSetChanged();
     } else {
-      // Typical
+      // Typical single comment updates
       for (DocumentChange doc : value.getDocumentChanges()) {
         switch (doc.getType()) {
           case ADDED:
