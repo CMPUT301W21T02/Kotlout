@@ -1,6 +1,6 @@
 package xyz.kotlout.kotlout.view.fragment;
 
-import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +23,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
 import xyz.kotlout.kotlout.controller.ExperimentController.ExperimentLoadedObserver;
@@ -57,8 +61,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
   ArrayList<String> labels, trialLabels;
   ExperimentController controller;
   List<? extends Trial> trialList;
-  @SuppressLint("SimpleDateFormat")
-  SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy");
+  SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy", Locale.CANADA);
   DecimalFormat df = new DecimalFormat("#.####");
   String dataType;
 
@@ -66,13 +69,16 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
   ArrayList<HistogramData> trialData = new ArrayList<>();
   ArrayList<HistogramData> merged;
 
+  SharedPreferences sharedPrefs;
+
   @NonNull
-  public static ExperimentInfoFragment newInstance(String experimentId, ExperimentType type) {
+  public static ExperimentInfoFragment newInstance(String experimentId, ExperimentType type, SharedPreferences sharedPrefs) {
     ExperimentInfoFragment fragment = new ExperimentInfoFragment();
     Bundle args = new Bundle();
     args.putString(ARG_EXPERIMENT, experimentId);
     args.putSerializable(ARG_EXPERIMENT_TYPE, type);
     fragment.setArguments(args);
+    fragment.sharedPrefs = sharedPrefs;
     return fragment;
   }
 
@@ -257,7 +263,12 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
   @Override
   public void onExperimentLoaded() {
     experiment = controller.getExperimentContext();
-    trialList = controller.getListTrials();
+
+    Set<String> ignoredUuids = sharedPrefs.getStringSet(experimentId, new TreeSet<>());
+
+    trialList = controller.getListTrials().parallelStream().filter((trial) -> !ignoredUuids.contains(trial.getExperimenterId()))
+        .collect(Collectors.toList());
+
     if (trialList.size() > 0) {
       calculateStats(trialList);
       switch (type) {
@@ -286,7 +297,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
           }
           trialData = meanTrialData;
 
-          Collections.sort(trialData, (o1, o2) -> o1.getResult().compareTo(o2.getResult()));
+          trialData.sort((t1, t2) -> t1.getResult().compareTo(t2.getResult()));
           break;
 
         case BINOMIAL:
@@ -329,8 +340,8 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
           for (BinomialInfo b : binomialInfo) {
             trialData.add(new HistogramData(b.getDate(), b.successProportion()));
           }
-          Collections.sort(trialData, (o1, o2) -> o1.getResult().compareTo(o2.getResult()));
 
+          trialData.sort((t1, t2) -> t1.getResult().compareTo(t2.getResult()));
           break;
 
         case MEASUREMENT:
@@ -358,7 +369,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
           }
           trialData = meanData;
 
-          Collections.sort(trialData, (o1, o2) -> o1.getResult().compareTo(o2.getResult()));
+          trialData.sort((t1, t2) -> t1.getResult().compareTo(t2.getResult()));
 
           break;
 
@@ -368,7 +379,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
             histogramData.add(new HistogramData(String.valueOf(((CountTrial) t).getResult()), 1));
             trialData.add(new HistogramData(sdf.format(t.getTimestamp()), ((CountTrial) t).getResult()));
           }
-          Collections.sort(trialData, (o1, o2) -> o1.getResult().compareTo(o2.getResult()));
+          trialData.sort((t1, t2) -> t1.getResult().compareTo(t2.getResult()));
           trialData = mergeTrials(trialData);
           if (trialData.size() > 1) {
             for (int i = 1; i < trialData.size(); i++) {
@@ -379,7 +390,6 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
       }
 
       merged = mergeData(histogramData);
-      Log.d("TAG", String.valueOf(merged));
       Log.d("TAG", String.valueOf(merged));
       formatHistogram(histogram);
 
@@ -444,7 +454,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
       }
     }
 
-    Collections.sort(merged, new HistogramComparator());
+    merged.sort(new HistogramComparator());
     for (int i = 0; i < merged.size(); i++) {
       String date = merged.get(i).getResult();
       float amount = merged.get(i).getCount();
@@ -457,4 +467,7 @@ public class ExperimentInfoFragment extends Fragment implements ExperimentLoaded
     return merged;
   }
 
+  public void ignoreListUpdated() {
+    onExperimentLoaded();
+  }
 }
