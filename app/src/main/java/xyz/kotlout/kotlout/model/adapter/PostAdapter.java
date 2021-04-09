@@ -87,29 +87,29 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
       holder.getReplies().setVisibility(View.VISIBLE);
       // We need to find the thing somehow.
 
-      holder.getReplies().setText(context.getString(R.string.discussion_deleted_message));
+      holder.getReplies().setText(context.getString(R.string.discussion_fetching));
       postsCollection.document(post.getParent()).get().addOnSuccessListener(documentSnapshot -> {
             Post parent = documentSnapshot.toObject(Post.class);
             if (parent != null) {
 
-              holder.getReplies().setOnClickListener(v -> {
-                postClickListener.onPostReplyClick(parent.getPostId());
-              });
+              holder.getReplies().setOnClickListener(v -> postClickListener.onPostReplyClick(parent.getPostId()));
 
-              userCollection.document(post.getPoster()).get().addOnSuccessListener(documentSnapshot1 -> {
-                User user = documentSnapshot1.toObject(User.class);
-                if (user != null) {
-                  String displayName = user.getDisplayName();
-                  if (displayName == null) {
-                    displayName = context.getString(R.string.default_author_name);
+              holder.getReplies().setText(context.getString(R.string.discussion_reply_format,
+                  context.getString(R.string.default_author_name),
+                  parent.getText()));
+
+              userCollection.document(parent.getPoster()).get().addOnSuccessListener(documentSnapshotParentUser -> {
+                User parentUser = documentSnapshotParentUser.toObject(User.class);
+                if (parentUser != null) {
+                  String parentDisplayName = parentUser.getDisplayName();
+                  if (parentDisplayName == null) {
+                    parentDisplayName = context.getString(R.string.default_author_name);
                   }
 
                   holder.getReplies().setText(context.getString(R.string.discussion_reply_format,
-                      displayName, parent.getText()));
+                      parentDisplayName, parent.getText()));
                 }
-              }).addOnFailureListener(e -> holder.getReplies().setText(context.getString(R.string.discussion_reply_format,
-                  context.getString(R.string.default_author_name),
-                  parent.getText())));
+              });
             } else {
               holder.getReplies().setText(context.getString(R.string.discussion_deleted_message));
             }

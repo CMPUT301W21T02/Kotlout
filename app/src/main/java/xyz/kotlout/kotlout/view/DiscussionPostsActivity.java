@@ -200,7 +200,6 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
     for (int i=0; i<postList.size(); i++){
       if (postList.get(i).getPostId().equals(parentUUID)) {
         layoutManager.smoothScrollToPosition(postsView, null, i);
-        break;
       }
     }
   }
