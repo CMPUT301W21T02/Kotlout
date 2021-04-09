@@ -11,7 +11,7 @@ import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.experiment.HistogramData;
 
 @RunWith(JUnit4.class)
-public class MoreTests {
+public class HistogramTests {
 
   @Rule
   public final Expect expect = Expect.create();
@@ -26,16 +26,20 @@ public class MoreTests {
       testHistograms.add(new HistogramData("April 2, 2021", 1));
     }
 
+    // Tests merging multiple data points into one
     for (HistogramData h : testHistograms) {
       int index = merged.indexOf(h);
       if (index != -1) {
+        // Tests the merge method
         merged.set(index, merged.get(index).merge(h));
       } else {
         merged.add(h);
       }
     }
     Assert.assertEquals(1, merged.size());
+    // Tests the results
     Assert.assertEquals("April 2, 2021", merged.get(0).getResult());
+    // Tests the count
     Assert.assertEquals((float) merged.get(0).getCount(), (float) 5, 0);
 
     merged.add(new HistogramData("April 5, 2021", 2));
