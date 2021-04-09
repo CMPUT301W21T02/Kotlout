@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class representing a single user of the app. As there is no way to make accounts, this also corresponds directly to a
- * device on which the app is installed.
+ * A class representing a single user of the app. As there is
+ * no way to make accounts, this also corresponds directly to
+ * a device on which the app is installed.
  */
 public class User implements Serializable {
 
@@ -21,10 +22,22 @@ public class User implements Serializable {
   // Maybe we should consider using Firebase ID's instead
   private String uuid;
 
-  // Required for Firebase Serialization
+  /**
+   * Empty user constructor for Firebase
+   */
   public User() {
   }
 
+  /**
+   * Instantiates a new User with information about that user.
+   * All fields can optionally be set to null except uuid.
+   *
+   * @param firstName   the user's first name
+   * @param lastName    the user's last name
+   * @param email       the user's email
+   * @param phoneNumber the user's phone number
+   * @param uuid        the uuid to assign to the user
+   */
   public User(String firstName, String lastName, String email, String phoneNumber, String uuid) {
     // If the User is initialized with empty Strings, those fields should be set to null
     if (firstName.isEmpty()) {
@@ -46,46 +59,101 @@ public class User implements Serializable {
     this.uuid = uuid;
   }
 
+  /**
+   * Gets the uuid of the user.
+   *
+   * @return the user uuid
+   */
   public String getUuid() {
     return uuid;
   }
 
+  /**
+   * Sets the uuid of the user.
+   *
+   * @param uuid the new user uuid
+   */
   public void setUuid(String uuid) {
     this.uuid = uuid;
   }
 
+  /**
+   * Gets the first name of the user.
+   *
+   * @return the users first name
+   */
   public String getFirstName() {
     return firstName;
   }
 
+  /**
+   * Sets the first name of the user.
+   *
+   * @param firstName the new first name
+   */
   public void setFirstName(String firstName) {
     this.firstName = firstName;
   }
 
+  /**
+   * Gets the last name of the user.
+   *
+   * @return the current last name
+   */
   public String getLastName() {
     return lastName;
   }
 
+  /**
+   * Sets the last name of the user.
+   *
+   * @param lastName the new last name
+   */
   public void setLastName(String lastName) {
     this.lastName = lastName;
   }
 
+  /**
+   * Gets the email of the user.
+   *
+   * @return the email
+   */
   public String getEmail() {
     return email;
   }
 
+  /**
+   * Sets the email of the user.
+   *
+   * @param email the new email
+   */
   public void setEmail(String email) {
     this.email = email;
   }
 
+  /**
+   * Gets phone number of the user.
+   *
+   * @return the phone number
+   */
   public String getPhoneNumber() {
     return phoneNumber;
   }
 
+  /**
+   * Sets phone number of the user.
+   *
+   * @param phoneNumber the new phone number
+   */
   public void setPhoneNumber(String phoneNumber) {
     this.phoneNumber = phoneNumber;
   }
 
+  /**
+   * Gets the user display name.
+   *
+   * @return the display name
+   */
   @Exclude
   public String getDisplayName() {
     String displayName;
