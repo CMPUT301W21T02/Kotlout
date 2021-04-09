@@ -197,6 +197,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
     Intent intent = new Intent(this, TrialNewActivity.class);
     intent.putExtra(TrialNewActivity.EXPERIMENT_ID, experimentId);
     intent.putExtra(TrialNewActivity.EXPERIMENT_TYPE, experimentController.getType());
+    intent.putExtra(TrialNewActivity.REQUIRE_LOCATION, experimentController.getExperimentContext().isGeolocationRequired());
     startActivityForResult(intent, TrialNewActivity.NEW_TRIAL_REQUEST);
   }
 

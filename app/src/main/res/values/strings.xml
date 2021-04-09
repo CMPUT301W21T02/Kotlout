@@ -29,6 +29,7 @@
   <string name="new_experiment_region">Region</string>
   <string name="new_experiment_description">Description</string>
   <string name="btn_new_experiment_add">Add Experiment</string>
+  <string name="new_experiment_geolocation">Require Geolocation?</string>
   <string name="title_activity_new">New Experiment</string>
   <string name="share_experiment">Share Experiment</string>
   <string name="subscribe_to_experiment">Subscribe to Experiment</string>
