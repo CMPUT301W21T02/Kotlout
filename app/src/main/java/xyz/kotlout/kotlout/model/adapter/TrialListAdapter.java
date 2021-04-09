@@ -27,6 +27,9 @@ import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
+/**
+ * Adapter class to show Trials in an Expandable List.
+ */
 public class TrialListAdapter extends BaseExpandableListAdapter {
 
   private final Context context;
@@ -35,15 +38,13 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
   private Map<String, ? extends List<? extends Trial>> ByExperimenter;
   private List<String> Experimenters;
 
-  private ExperimentType type;
-  private ExperimentController controller;
+  private final ExperimentType type;
+  private final ExperimentController controller;
 
-  private String experimentId;
-  private String myUuid;
+  private final String myUuid;
 
   public TrialListAdapter(Context context, String experimentId, ExperimentType type) {
     this.context = context;
-    this.experimentId = experimentId;
     this.type = type;
 
     controller = new ExperimentController(experimentId, this::onExperimentLoaded, this::onExperimentLoaded);
@@ -170,6 +171,9 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
     return false;
   }
 
+  /**
+   * Callback function for when the experiment gets updated, causing the trial list to reload.
+   */
   public void onExperimentLoaded() {
     trialList = controller.getListTrials();
 

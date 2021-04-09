@@ -34,10 +34,11 @@ public class FirebaseController {
     }
   }
 
-  //TODO consider removing this method, since we no longer keep a static instance
 
   /**
-   * Gets an instance of firestore and returns it
+   * Gets an instance of firestore and returns it.
+   * <p>
+   * TODO consider removing this method, since we no longer keep a static instance.
    *
    * @return Firestore instance
    */

@@ -14,10 +14,25 @@ public class ExperimentListController {
 
   /**
    * Initializes the controller with the given user ID.
+   *
    * @param userId The user ID.
    */
   public ExperimentListController(String userId) {
     this.userId = userId;
+  }
+
+  /**
+   * Gets a query for getting all experiments for the given user.
+   * <p>
+   * Firestore does not support where-in queries with more than 10 clauses (i.e. only 10 subscriptions would be supported) So,
+   * get all experiments and let the application filter them for subscribed experiments
+   *
+   * @return A instance of Query for getting all experiments for the given user.
+   */
+  public static Query getAllExperiments() {
+    FirebaseFirestore db = FirebaseController.getFirestore();
+
+    return db.collection(ExperimentController.EXPERIMENT_COLLECTION);
   }
 
   /**
@@ -29,18 +44,5 @@ public class ExperimentListController {
     FirebaseFirestore db = FirebaseController.getFirestore();
     CollectionReference experimentsRef = db.collection(ExperimentController.EXPERIMENT_COLLECTION);
     return experimentsRef.whereEqualTo("ownerUuid", this.userId);
-  }
-
-  /**
-   * Gets a query for getting all experiments for the given user.
-   *
-   * Firestore does not support where-in queries with more than 10 clauses (i.e. only 10 subscriptions would be supported)
-   * So, get all experiments and let the application filter them for subscribed experiments
-   * @return A instance of Query for getting all experiments for the given user.
-   */
-  public static Query getAllExperiments() {
-    FirebaseFirestore db = FirebaseController.getFirestore();
-
-    return db.collection(ExperimentController.EXPERIMENT_COLLECTION);
   }
 }
