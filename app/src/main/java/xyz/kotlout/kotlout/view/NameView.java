@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import xyz.kotlout.kotlout.R;
@@ -49,8 +50,8 @@ public class NameView extends androidx.appcompat.widget.AppCompatTextView implem
     setText(this.name);
   }
 
-  public void onClick(View v) {
-    ProfileSheetFragment profile = ProfileSheetFragment.newInstance(user);
+  public void onClick(@NonNull View v) {
+    ProfileSheetFragment profile = new ProfileSheetFragment(user);
     profile.show(((AppCompatActivity) v.getContext()).getSupportFragmentManager(), "NameView");
   }
 

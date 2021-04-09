@@ -28,8 +28,6 @@ public class ExperimentController {
   private String experimentId;
   private ExperimentType type;
 
-  private ExperimentLoadedObserver experimentObserver;
-
   /**
    * Default constructor. Disabled, because an empty controller is useless.
    */
@@ -39,13 +37,15 @@ public class ExperimentController {
   /**
    * Initializes the controller and sets the context to a string that refers to the experiment's document ID in Firestore.
    *
-   * @param experimentId Firestore DocumentID that refers to the experiment.
+   * @param experimentId    Document ID of experiment in Firebase
+   * @param loadedObserver  Callback to use when experiment has been loaded. (Only called once)
+   * @param updatedObserver Callback to use for whenever the snapshot changes.
    */
   public ExperimentController(String experimentId, @Nullable ExperimentLoadedObserver loadedObserver,
       @Nullable ExperimentUpdatedObserver updatedObserver) {
     FirebaseFirestore db = FirebaseController.getFirestore();
     this.experimentId = experimentId;
-    this.experimentObserver = loadedObserver;
+
     db.collection(EXPERIMENT_COLLECTION).document(experimentId).get()
         .addOnSuccessListener(documentSnapshot -> {
           if (documentSnapshot != null) {
@@ -114,6 +114,12 @@ public class ExperimentController {
     this.type = type;
   }
 
+  /**
+   * Initializes the controller from a known DocumentSnapshot object. This does not require a callback as the document can be
+   * automatically processed into an object.
+   *
+   * @param experimentDoc DocumentSnapshot object to build experiment from.
+   */
   public ExperimentController(@NonNull DocumentSnapshot experimentDoc) {
     this.experimentId = experimentDoc.getId();
     type = ExperimentType.valueOf((String) experimentDoc.get("type"));
@@ -140,6 +146,7 @@ public class ExperimentController {
    * @param region      The region where the experiment is conducted.
    * @param minTrials   The minimum number of trials required for the experiment.
    * @param geolocationRequired
+   * @param type        Type of experiment
    */
   @NonNull
   public static ExperimentController newInstance(@NonNull String description, String region,
@@ -180,6 +187,11 @@ public class ExperimentController {
     return experimentContext;
   }
 
+  /**
+   * Get the type of the experiment handled by this controller.
+   *
+   * @return Type of experiment.
+   */
   public ExperimentType getType() {
     return type;
   }
@@ -210,9 +222,9 @@ public class ExperimentController {
   }
 
   /**
-   * Returns the number of trials that this experiment has completed
+   * Returns the number of trials that this experiment has completed.
    *
-   * @return integer value representing the count of experiments
+   * @return integer value representing the count of experiments.
    */
   public int getTrialsCompleted() {
     switch (type) {
@@ -347,12 +359,22 @@ public class ExperimentController {
                     experimentContext.getId()));
   }
 
+  /**
+   * Adds a new trial to the experiment context handled by this controller
+   *
+   * @param trial The new trial to add.
+   */
   public void addTrial(Trial trial) {
     FirebaseFirestore db = FirebaseController.getFirestore();
     db.collection(EXPERIMENT_COLLECTION).document(experimentId)
         .update("trials", FieldValue.arrayUnion(trial));
   }
 
+  /**
+   * Get a list of trials linked to this experiment.
+   *
+   * @return List of trials of the correct type.
+   */
   public List<? extends Trial> getListTrials() {
     switch (type) {
       case BINOMIAL:
@@ -372,11 +394,17 @@ public class ExperimentController {
     return null;
   }
 
+  /**
+   * Callback interface for when the experiment is loaded.
+   */
   public interface ExperimentLoadedObserver {
 
     void onExperimentLoaded();
   }
 
+  /**
+   * Callback interface for when the experiment is updated.
+   */
   public interface ExperimentUpdatedObserver {
 
     void onExperimentUpdated();

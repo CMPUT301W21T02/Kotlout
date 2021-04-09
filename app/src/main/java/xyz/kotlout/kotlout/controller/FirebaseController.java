@@ -1,6 +1,7 @@
 package xyz.kotlout.kotlout.controller;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import xyz.kotlout.kotlout.BuildConfig;
 
 
 /**
@@ -8,13 +9,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
  */
 public class FirebaseController {
 
-  private static final boolean USE_EMU = false;
+  public static final String POSTS_COLLECTION = "posts";
+
+  private static final boolean USE_EMU = BuildConfig.DEBUG;
+
   private static final String EMU_HOST = "10.0.2.2";
   private static final String NON_EMU_HOST = "192.168.0.80";
+
   private static final int EMU_FIREBASE_PORT = 8080;
   private static final int EMU_AUTH_PORT = 9099;
   private static boolean IS_INITIALIZED = false;
-  public static final String POSTS_COLLECTION = "posts";
 
   /**
    * Initialize an instance of firestore. The operating is idempotent and multiple calls
@@ -31,10 +35,11 @@ public class FirebaseController {
     }
   }
 
-  //TODO consider removing this method, since we no longer keep a static instance
 
   /**
-   * Gets an instance of firestore and returns it
+   * Gets an instance of firestore and returns it.
+   * <p>
+   * TODO consider removing this method, since we no longer keep a static instance.
    *
    * @return Firestore instance
    */

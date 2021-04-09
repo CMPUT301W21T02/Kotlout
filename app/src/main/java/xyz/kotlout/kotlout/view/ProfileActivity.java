@@ -39,7 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
   /**
    * When the user launches the activity, their information should be displayed if it exists
    *
-   * @param savedInstanceState
+   * @param savedInstanceState previous saved instance of activity
    */
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,7 @@ public class ProfileActivity extends AppCompatActivity {
   /**
    * An options relevant to the user profile will appear
    *
-   * @param menu
+   * @param menu Menu to inflate
    * @return true
    */
   @Override
@@ -113,7 +113,7 @@ public class ProfileActivity extends AppCompatActivity {
   /**
    * If the editing button is visible, it will be changed to the confirmation button, and vice versa
    *
-   * @param menu
+   * @param menu Menu to modify visibility
    * @return true
    */
   public boolean changeVisibility(Menu menu) {
@@ -173,6 +173,10 @@ public class ProfileActivity extends AppCompatActivity {
     return super.onOptionsItemSelected(item);
   }
 
+  /**
+   * Sets the edit profile button and confirm buttons to invisible
+   * @param menu
+   */
   private void enableEditMenu(Menu menu) {
     if (!controller.isCurrentUser()) {
       MenuItem edit = menu.findItem(R.id.edit_profile_button).setVisible(false);

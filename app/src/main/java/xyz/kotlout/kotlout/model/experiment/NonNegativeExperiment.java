@@ -11,12 +11,11 @@ import xyz.kotlout.kotlout.model.experiment.trial.Trial;
  */
 public class NonNegativeExperiment extends Experiment {
 
+  private final List<NonNegativeTrial> trials = new ArrayList<>();
   /**
    * Type of experiment, can't be static due to Firestore model generation
    */
   public ExperimentType type = ExperimentType.NON_NEGATIVE_INTEGER;
-
-  private List<NonNegativeTrial> trials = new ArrayList<>();
 
   public NonNegativeExperiment() {
   }
