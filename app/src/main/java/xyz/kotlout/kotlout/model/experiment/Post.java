@@ -8,6 +8,7 @@ import xyz.kotlout.kotlout.model.user.User;
 
 /**
  * A Post is a class representing a question or reply posted to an experiment's discussion forum.
+ * is a simple POJO class so that it may be serialized onto firebase.
  */
 public class Post {
 
@@ -18,6 +19,7 @@ public class Post {
   private String text;
   private Date timestamp;
 
+  // Empty constructor required for firebase...
   public Post() {
   }
 
