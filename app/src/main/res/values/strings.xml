@@ -70,4 +70,8 @@
   <string name="mean">Mean:</string>
   <string name="n_a">N/A</string>
   <string name="discussion_option_menu_name">Discussion</string>
+  <string name="discussion_reply_message">\@%1$s %2$s</string>
+  <string name="discussion_deleted_message">[deleted]</string>
+  <string name="discussion_fetching">fetching information…</string>
+  <string name="discussion_reply_format">%1$s: %2$s</string>
 </resources>
