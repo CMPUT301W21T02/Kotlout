@@ -140,6 +140,11 @@ public class ScannableController {
     });
   }
 
+  /**
+   * Creates a Trial object from a given Uri
+   * @param trialUri The uri to parse into a trial
+   * @return Trial if the Uri is valid Trial, null otherwise
+   */
   public static Trial getTrialFromUri(Uri trialUri) {
     Trial newTrial;
     String resultString = trialUri.getQueryParameter("result");
