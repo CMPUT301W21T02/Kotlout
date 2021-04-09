@@ -1,9 +1,5 @@
 package xyz.kotlout.kotlout;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -15,7 +11,12 @@ import static org.hamcrest.Matchers.containsString;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-
+import com.google.firebase.firestore.FirebaseFirestore;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import xyz.kotlout.kotlout.controller.FirebaseController;
 import xyz.kotlout.kotlout.view.MainActivity;
 
 @RunWith(AndroidJUnit4.class)
@@ -25,12 +26,14 @@ public class ExperimentListViewTest {
   public ActivityScenarioRule<MainActivity> activityRule = new ActivityScenarioRule<>(
       MainActivity.class);
 
+  @Before
+  public void clearFirestore() {
+    FirebaseFirestore db = FirebaseController.getFirestore();
 
+  }
 
-  // TODO: Fix, currently breaks due to matching in ListView
   @Test
   public void testAddCountExperiment() {
-
     String description = "Volkswagens in Edmonton";
     String region = "Edmonton";
     String minimumTrials = "200";
@@ -47,7 +50,6 @@ public class ExperimentListViewTest {
         .perform(typeText(region));
     onView(withId(R.id.et_experiment_new_min_trials))
         .perform(typeText(minimumTrials), closeSoftKeyboard());
-
     onView(withId(R.id.sp_experiment_new_type))
         .perform(click());
     onView(withText(typeOption)).perform(click());
@@ -55,8 +57,10 @@ public class ExperimentListViewTest {
     // Submit
     onView(withId(R.id.btn_experiment_new_add)).perform(click());
 
+    onView(withText("Open Experiments")).perform(click());
     onView(withId(R.id.tv_experiment_list_description)).check(matches(withText(description)));
     onView(withId(R.id.tv_experiment_list_region)).check(matches(withText(region)));
+    onView(withId(R.id.tv_experiment_list_type)).check(matches(withText(typeOption)));
     onView(withId(R.id.tv_experiment_list_counter))
         .check(matches(withText(containsString(minimumTrials))));
   }
