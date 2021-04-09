@@ -135,7 +135,7 @@ public class ScannableController {
       }
       addTrialIntent.setData(ScannableController
           .createUri(stringResult, experimentId, type.toString(), latitude != null ? latitude.toString() : null,
-              longitude != null ? latitude.toString() : null));
+              longitude != null ? longitude.toString() : null));
       ctx.startActivity(addTrialIntent);
     });
   }
