@@ -14,16 +14,30 @@ public abstract class Trial implements Serializable {
   private Date timestamp;
   private Geolocation location;
 
+  /**
+   * Instantiates a new Trial. (Empty for Firebase)
+   */
   public Trial() {
 
   }
 
+  /**
+   * Instantiates a new Trial with an experiment.
+   *
+   * @param experimenterId the experimenter id
+   */
   public Trial(String experimenterId) {
     this.experimenterId = experimenterId;
     this.timestamp = Calendar.getInstance().getTime();
     this.location = new Geolocation(0.0, 0.0);
   }
 
+  /**
+   * Instantiates a new Trial with an experiment and geolocation
+   *
+   * @param experimenterId the experimenter id
+   * @param location       the location of the trial
+   */
   public Trial(String experimenterId, Geolocation location) {
     this.experimenterId = experimenterId;
     this.timestamp = Calendar.getInstance().getTime();
