@@ -7,8 +7,8 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Color;
 import android.net.Uri;
 import android.net.Uri.Builder;
-import android.os.Handler;
 import android.util.Log;
+import androidx.annotation.Nullable;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -24,14 +24,14 @@ import xyz.kotlout.kotlout.model.experiment.trial.CountTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.NonNegativeTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.Trial;
+import xyz.kotlout.kotlout.model.geolocation.Geolocation;
 import xyz.kotlout.kotlout.view.ExperimentViewActivity;
 import xyz.kotlout.kotlout.view.TrialNewActivity;
 
 public class ScannableController {
 
-  private static final String TAG = "Scannable Controller";
-
   public static final String BARCODE_COLLECTION = "barcodes";
+  private static final String TAG = "Scannable Controller";
   private static final int QR_WIDTH = 500;
   private static final int QR_HEIGHT = 500;
 
@@ -44,10 +44,14 @@ public class ScannableController {
    * @param experimentType Experiment Type as a string
    * @return Custom Uri that will add the specified trial when opened
    */
-  public static Uri createUri(String result, String experimentId, String experimentType) {
+  public static Uri createUri(String result, String experimentId, String experimentType, @Nullable String latitude,
+      @Nullable String longitude) {
     Builder qrUriBuilder = new Builder().scheme("kotlout").authority("experiments");
     qrUriBuilder.appendQueryParameter(TrialNewActivity.EXPERIMENT_ID, experimentId);
     qrUriBuilder.appendQueryParameter(TrialNewActivity.EXPERIMENT_TYPE, experimentType);
+    qrUriBuilder.appendQueryParameter(TrialNewActivity.LONGITUDE, longitude != null ? longitude : "");
+    qrUriBuilder.appendQueryParameter(TrialNewActivity.LATITUDE, latitude != null ? latitude : "");
+
     qrUriBuilder.appendQueryParameter("result", result);
     return qrUriBuilder.build();
   }
@@ -103,6 +107,14 @@ public class ScannableController {
       Trial trial = null;
       ExperimentType type = ExperimentType.valueOf(result.getString("type"));
       String experimentId = result.getString("experimentId");
+      Double latitude, longitude;
+      try {
+        latitude = result.getDouble("latitude");
+        longitude = result.getDouble("longitude");
+      } catch (NumberFormatException e) {
+        latitude = null;
+        longitude = null;
+      }
       String stringResult = "";
       //assert type != null;
       switch (type) {
@@ -121,7 +133,9 @@ public class ScannableController {
         case UNKNOWN:
           return;
       }
-      addTrialIntent.setData(ScannableController.createUri(stringResult, experimentId, type.toString()));
+      addTrialIntent.setData(ScannableController
+          .createUri(stringResult, experimentId, type.toString(), latitude != null ? latitude.toString() : null,
+              longitude != null ? latitude.toString() : null));
       ctx.startActivity(addTrialIntent);
     });
   }
@@ -158,6 +172,15 @@ public class ScannableController {
       Log.e(TAG, "Error: URI trial result is invalid. Result String: " + resultString);
       return null;
     }
+    Geolocation location;
+    try {
+      Double latitude = Double.valueOf(trialUri.getQueryParameter(TrialNewActivity.LATITUDE));
+      Double longitude = Double.valueOf(trialUri.getQueryParameter(TrialNewActivity.LONGITUDE));
+      location = new Geolocation(latitude, longitude);
+    } catch (NumberFormatException  | NullPointerException e) {
+      location = null;
+    }
+    newTrial.setLocation(location);
     return newTrial;
   }
 }

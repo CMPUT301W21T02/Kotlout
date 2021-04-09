@@ -46,6 +46,8 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
   public static final int NEW_TRIAL_REQUEST = 0;
   public static final String EXPERIMENT_ID = "EXPERIMENT";
   public static final String EXPERIMENT_TYPE = "TYPE";
+  public static final String LATITUDE = "LATITUDE";
+  public static final String LONGITUDE = "LONGITUDE";
   public static final String TRIAL_EXTRA = "TRIAL";
   public static final String REQUIRE_LOCATION = "LOCATION";
 
@@ -61,8 +63,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
   private boolean requireGeolocation;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_new_trial);
+    super.onCreate(savedInstanceState); setContentView(R.layout.activity_new_trial);
 
     Intent intent = getIntent();
     type = (ExperimentType) intent.getSerializableExtra(EXPERIMENT_TYPE);
@@ -207,12 +208,20 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
       if (resultCode == RESULT_OK) {
         assert data != null;
         String codeResult = data.getStringExtra("code");
+        String latitudeStr = data.getStringExtra("latitude");
+        String longitudeStr = data.getStringExtra("longitude");
+        Double latitude = null;
+        Double longitude = null;
+        if(latitudeStr != null && longitudeStr != null) {
+          latitude = Double.valueOf(latitudeStr);
+          longitude = Double.valueOf(longitudeStr);
+        }
         BarcodeFormat format = (BarcodeFormat) data.getSerializableExtra("format");
         if (format != null && format != BarcodeFormat.QR_CODE) {
           storeResultAsBarcode(
-              (ExperimentType) getIntent().getSerializableExtra("type"),
-              getIntent().getStringExtra("experimentId"),
-              codeResult);
+              (ExperimentType) getIntent().getSerializableExtra(EXPERIMENT_TYPE),
+              getIntent().getStringExtra(EXPERIMENT_ID),
+              codeResult, latitude, longitude);
         } else {
           Toast.makeText(this, "Invalid barcode", Toast.LENGTH_SHORT).show();
         }
@@ -227,10 +236,12 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
    * @param experimentId Experiment Id
    * @param barcode      barcode that will reference this experiment
    */
-  private void storeResultAsBarcode(ExperimentType type, String experimentId, String barcode) {
+  private void storeResultAsBarcode(ExperimentType type, String experimentId, String barcode, Double latitude, Double longitude) {
     HashMap<String, Object> data = new HashMap<>();
     data.put("experimentId", experimentId);
     data.put("type", type);
+    data.put("latitude", latitude);
+    data.put("longitude", longitude);
     data.put("result", textEntry.getVisibility() == View.VISIBLE ? Long.valueOf(textEntry.getText().toString())
         : radioButtons.getCheckedRadioButtonId() == R.id.radio_success);
     ScannableController.storeResultAsBarcode(data, barcode);
@@ -264,7 +275,10 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     String result = getResult();
     Bitmap qrBitmap = ScannableController.createQrBitmap(ScannableController
         .createUri(result, getIntent().getStringExtra(EXPERIMENT_ID),
-            ((ExperimentType) getIntent().getSerializableExtra(EXPERIMENT_TYPE)).toString()));
+            ((ExperimentType) getIntent().getSerializableExtra(EXPERIMENT_TYPE)).toString(),
+            location != null ? Double.valueOf(location.getLatitude()).toString() : "",
+            location != null ? Double.valueOf(location.getLongitude()).toString() : ""
+        ));
     if (qrBitmap == null) {
       Toast.makeText(this, "Trial result is invalid, cannot make QR code", Toast.LENGTH_SHORT).show();
       return;
