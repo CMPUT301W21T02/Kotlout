@@ -14,7 +14,7 @@ public class FirebaseController {
   public static final String USER_COLLECTION = "users";
   public static final String EXPERIMENT_COLLECTION = "experiments";
 
-  private static final boolean USE_EMU = false;
+  private static final boolean USE_EMU = BuildConfig.DEBUG;
 
   private static final String EMU_HOST = "10.0.2.2";
   private static final String NON_EMU_HOST = "192.168.0.80";
