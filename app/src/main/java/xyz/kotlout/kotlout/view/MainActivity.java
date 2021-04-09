@@ -118,6 +118,10 @@ public class MainActivity extends AppCompatActivity {
       intent.putExtra(UserHelper.UUID_INTENT, UserHelper.readUuid());
       startActivity(intent);
       return true;
+    } else if (itemId == R.id.scan_code_menu_button) {
+      Intent scanIntent = new Intent(this, CodeScannerActivity.class);
+      startActivityForResult(scanIntent, CodeScannerActivity.SCAN_CODE_REQUEST);
+      return true;
     }
     return super.onOptionsItemSelected(item);
   }

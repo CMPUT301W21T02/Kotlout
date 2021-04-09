@@ -3,13 +3,13 @@ package xyz.kotlout.kotlout.view;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Bundle;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.text.method.DigitsKeyListener;
@@ -19,20 +19,19 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.Toast;
-import androidx.annotation.Nullable;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import com.google.zxing.BarcodeFormat;
 import java.util.HashMap;
-import androidx.core.app.ActivityCompat;
 import org.osmdroid.util.GeoPoint;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.controller.LocationHelper;
 import xyz.kotlout.kotlout.controller.ScannableController;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.ExperimentType;
-import xyz.kotlout.kotlout.controller.LocationHelper;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.CountTrial;
 import xyz.kotlout.kotlout.model.experiment.trial.MeasurementTrial;
@@ -61,9 +60,11 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
   private TextView locationText;
 
   private boolean requireGeolocation;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState); setContentView(R.layout.activity_new_trial);
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_new_trial);
 
     Intent intent = getIntent();
     type = (ExperimentType) intent.getSerializableExtra(EXPERIMENT_TYPE);
@@ -121,7 +122,9 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     createQrCode.setOnClickListener(this::createQrCode);
 
     LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+        && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+        != PackageManager.PERMISSION_GRANTED) {
       ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 225);
       return;
     }
@@ -136,12 +139,12 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     boolean useGeolocation = geolocationCheck.isChecked();
     if (useGeolocation && location == null) {
       Toast.makeText(this, "No location is selected, if loading your "
-                                    + "local location is taking too long you can "
-                                    + "manually set it with set location", Toast.LENGTH_LONG).show();
+          + "local location is taking too long you can "
+          + "manually set it with set location", Toast.LENGTH_LONG).show();
       return;
     }
 
-    location = (useGeolocation)? location : null;
+    location = (useGeolocation) ? location : null;
 
     try {
       switch (type) {
@@ -175,7 +178,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
     }
   }
 
-  private void selectGeolocation (View v) {
+  private void selectGeolocation(View v) {
     SelectLocationDialog selectLocationDialog = new SelectLocationDialog();
     if (location != null) {
       Bundle bundle = new Bundle();
@@ -194,7 +197,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
 
   private final LocationListener locationListener = new LocationListener() {
     public void onLocationChanged(Location deviceLocation) {
-      if(location == null) {
+      if (location == null) {
         location = new Geolocation(deviceLocation.getLatitude(), deviceLocation.getLongitude());
         locationText.setText(LocationHelper.toGeoPoint(location).toDoubleString());
       }
@@ -208,13 +211,11 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
       if (resultCode == RESULT_OK) {
         assert data != null;
         String codeResult = data.getStringExtra("code");
-        String latitudeStr = data.getStringExtra("latitude");
-        String longitudeStr = data.getStringExtra("longitude");
         Double latitude = null;
         Double longitude = null;
-        if(latitudeStr != null && longitudeStr != null) {
-          latitude = Double.valueOf(latitudeStr);
-          longitude = Double.valueOf(longitudeStr);
+        if (location != null) {
+          latitude = location.getLatitude();
+          longitude = location.getLongitude();
         }
         BarcodeFormat format = (BarcodeFormat) data.getSerializableExtra("format");
         if (format != null && format != BarcodeFormat.QR_CODE) {
@@ -236,7 +237,8 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
    * @param experimentId Experiment Id
    * @param barcode      barcode that will reference this experiment
    */
-  private void storeResultAsBarcode(ExperimentType type, String experimentId, String barcode, Double latitude, Double longitude) {
+  private void storeResultAsBarcode(ExperimentType type, String experimentId, String barcode, Double latitude,
+      Double longitude) {
     HashMap<String, Object> data = new HashMap<>();
     data.put("experimentId", experimentId);
     data.put("type", type);
@@ -254,7 +256,9 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
    */
   private String getResult() {
     String result;
-    if (textEntry.isEnabled() && textEntry.getVisibility() == View.VISIBLE && !textEntry.getText().toString().isEmpty()
+    if (location == null && requireGeolocation) {
+      result = null;
+    } else if (textEntry.isEnabled() && textEntry.getVisibility() == View.VISIBLE && !textEntry.getText().toString().isEmpty()
         && textEntry.getText().toString().matches("\\d+")) {
       result = textEntry.getText().toString();
     } else if (radioButtons.getCheckedRadioButtonId() != -1) {
@@ -279,7 +283,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
             location != null ? Double.valueOf(location.getLatitude()).toString() : "",
             location != null ? Double.valueOf(location.getLongitude()).toString() : ""
         ));
-    if (qrBitmap == null) {
+    if (qrBitmap == null || result == null) {
       Toast.makeText(this, "Trial result is invalid, cannot make QR code", Toast.LENGTH_SHORT).show();
       return;
     }

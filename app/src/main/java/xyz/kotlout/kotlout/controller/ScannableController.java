@@ -155,13 +155,13 @@ public class ScannableController {
           newTrial = new CountTrial(Long.parseLong(resultString), UserHelper.readUuid());
           break;
         case BINOMIAL:
-          newTrial = new BinomialTrial(trialUri.getBooleanQueryParameter("result", false), UserHelper.readUuid());
+          newTrial = new BinomialTrial(trialUri.getBooleanQueryParameter("result", false), UserHelper.readUuid(), null);
           break;
         case MEASUREMENT:
-          newTrial = new MeasurementTrial(Double.parseDouble(resultString), UserHelper.readUuid());
+          newTrial = new MeasurementTrial(Double.parseDouble(resultString), UserHelper.readUuid(), null);
           break;
         case NON_NEGATIVE_INTEGER:
-          newTrial = new NonNegativeTrial(Long.parseLong(resultString), UserHelper.readUuid());
+          newTrial = new NonNegativeTrial(Long.parseLong(resultString), UserHelper.readUuid(), null);
           break;
         default:
           // Error
@@ -177,7 +177,7 @@ public class ScannableController {
       Double latitude = Double.valueOf(trialUri.getQueryParameter(TrialNewActivity.LATITUDE));
       Double longitude = Double.valueOf(trialUri.getQueryParameter(TrialNewActivity.LONGITUDE));
       location = new Geolocation(latitude, longitude);
-    } catch (NumberFormatException  | NullPointerException e) {
+    } catch (NumberFormatException | NullPointerException e) {
       location = null;
     }
     newTrial.setLocation(location);
