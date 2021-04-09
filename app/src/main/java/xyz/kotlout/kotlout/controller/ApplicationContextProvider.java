@@ -19,6 +19,4 @@ public class ApplicationContextProvider extends Application {
     UserHelper.initUserHelper(applicationContext);
     UserHelper.initializeUser();
   }
-
-
 }

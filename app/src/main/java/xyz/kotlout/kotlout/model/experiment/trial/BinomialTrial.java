@@ -9,23 +9,37 @@ public class BinomialTrial extends Trial {
 
   private boolean result;
 
+  /**
+   * Default public constructor for Firebase to use.
+   */
   public BinomialTrial() {
   }
 
-  public BinomialTrial(boolean result, String experimenterId) {
-    super(experimenterId);
-    this.result = result;
-  }
-
+  /**
+   * Parameterized constructor for creating new instances before storing into Firebase.
+   *
+   * @param result         Result to store in the trial
+   * @param experimenterId Experimenter who did the trial.
+   */
   public BinomialTrial(boolean result, String experimenterId, Geolocation location) {
     super(experimenterId, location);
     this.result = result;
   }
 
+  /**
+   * Get result stored in trial.
+   *
+   * @return result of trial.
+   */
   public boolean getResult() {
     return result;
   }
 
+  /**
+   * Set trial with a result. SHOULD ONLY BE USED FOR FIREBASE.
+   *
+   * @param result Boolean result to set.
+   */
   public void setResult(boolean result) {
     this.result = result;
   }

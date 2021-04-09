@@ -71,6 +71,7 @@
   <string name="unsubscribe_from_experiment">Unsubscribe from Experiment</string>
   <string name="title_activity_search">Search Experiments</string>
   <string name="search_hint">Experiments</string>
+  <string name="blocklist_file_key">xyz.kotlout.TRIAL_BLOCKLIST</string>
   <string name="quartile_3">Quartile 3:</string>
   <string name="quartile_1">Quartile 1:</string>
   <string name="std_dev">Std. Dev:</string>
@@ -78,4 +79,8 @@
   <string name="mean">Mean:</string>
   <string name="n_a">N/A</string>
   <string name="discussion_option_menu_name">Discussion</string>
+  <string name="discussion_reply_message">\@%1$s %2$s</string>
+  <string name="discussion_deleted_message">[deleted]</string>
+  <string name="discussion_fetching">fetching information…</string>
+  <string name="discussion_reply_format">%1$s: %2$s</string>
 </resources>

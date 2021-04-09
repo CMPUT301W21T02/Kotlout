@@ -23,7 +23,7 @@ import xyz.kotlout.kotlout.controller.ExperimentController;
 import xyz.kotlout.kotlout.controller.ExperimentListController;
 
 /**
- * Source: https://developer.android.com/training/search
+ * Base code used: https://developer.android.com/training/search
  */
 public class SearchActivity extends AppCompatActivity {
 

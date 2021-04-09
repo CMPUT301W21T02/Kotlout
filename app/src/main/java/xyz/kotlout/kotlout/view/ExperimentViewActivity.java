@@ -1,6 +1,8 @@
 package xyz.kotlout.kotlout.view;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,7 +11,6 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -65,21 +66,24 @@ public class ExperimentViewActivity extends AppCompatActivity {
       trialFab = findViewById(R.id.fab_view_add_trial);
 
       experimentController = new ExperimentController(experimentId, () -> {
+        SharedPreferences sharedPrefs = getSharedPreferences(getString(R.string.blocklist_file_key), Context.MODE_PRIVATE);
 
         ExperimentInfoFragment infoFragment = ExperimentInfoFragment
             .newInstance(experimentController.getExperimentId(),
-                experimentController.getType());
+                experimentController.getType(), sharedPrefs);
 
         ExperimentMapFragment mapFragment = ExperimentMapFragment
             .newInstance(experimentController.getExperimentId());
 
         ExperimentTrialListFragment trialListFragment = ExperimentTrialListFragment
             .newInstance(experimentController.getExperimentId(),
-                experimentController.getType());
+                experimentController.getType(), sharedPrefs);
 
         adapter.addFragment(infoFragment);
         adapter.addFragment(mapFragment);
         adapter.addFragment(trialListFragment);
+
+        trialListFragment.addIgnoreListener(infoFragment::ignoreListUpdated);
 
         viewPager.setAdapter(adapter);
 
@@ -151,33 +155,6 @@ public class ExperimentViewActivity extends AppCompatActivity {
   }
 
   @Override
-  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    int i = item.getItemId();
-    if (i == R.id.open_discussion_posts){
-
-      Intent intent = new Intent(this, DiscussionPostsActivity.class);
-      intent.putExtra(DiscussionPostsActivity.ON_EXPERIMENT_INTENT, experimentId);
-      startActivity(intent);
-      return true;
-
-    } else if (i == R.id.subscribe_experiment) {
-        UserController userController = new UserController(UserHelper.readUuid());
-        userController.setUpdateCallback(user -> {
-          if(user.getSubscriptions().contains(experimentId)) {
-            userController.removeSubscription(experimentId);
-            item.setIcon(R.drawable.ic_baseline_bookmark_border);
-          } else {
-            userController.addSubscription(experimentId);
-            item.setIcon(R.drawable.ic_baseline_bookmark);
-          }
-        });
-        return true;
-      } else {
-      return super.onOptionsItemSelected(item);
-    }
-  }
-
-  @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
     // Set Subscribe and Unsubscribe visibility based on user subscriptions
     MenuItem subscribeItem = menu.findItem(R.id.subscribe_experiment);
@@ -192,18 +169,6 @@ public class ExperimentViewActivity extends AppCompatActivity {
       userController.unregisterSnapshotListener();
     });
     return super.onPrepareOptionsMenu(menu);
-  }
-
-  public void showOwner(View view) {
-    // TODO: Add actual behavior
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-    builder.setMessage(experimentController.getExperimentContext().getOwnerUuid())
-        .setTitle("DING DONG");
-
-    AlertDialog dialog = builder.create();
-
-    dialog.show();
   }
 
   public void fabNewTrial(View view) {
@@ -227,6 +192,10 @@ public class ExperimentViewActivity extends AppCompatActivity {
       fragmentList.add(fragment);
     }
 
+    public void removeFragment(Fragment fragment) {
+      fragmentList.remove(fragment);
+    }
+
     @NonNull
     @Override
     public Fragment createFragment(int position) {
@@ -239,4 +208,31 @@ public class ExperimentViewActivity extends AppCompatActivity {
     }
   }
 
+
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    int i = item.getItemId();
+    if (i == R.id.open_discussion_posts) {
+
+      Intent intent = new Intent(this, DiscussionPostsActivity.class);
+      intent.putExtra(DiscussionPostsActivity.ON_EXPERIMENT_INTENT, experimentId);
+      startActivity(intent);
+      return true;
+
+    } else if (i == R.id.subscribe_experiment) {
+      UserController userController = new UserController(UserHelper.readUuid());
+      userController.setUpdateCallback(user -> {
+        if (user.getSubscriptions().contains(experimentId)) {
+          userController.removeSubscription(experimentId);
+          item.setIcon(R.drawable.ic_baseline_bookmark_border);
+        } else {
+          userController.addSubscription(experimentId);
+          item.setIcon(R.drawable.ic_baseline_bookmark);
+        }
+      });
+      return true;
+    } else {
+      return super.onOptionsItemSelected(item);
+    }
+  }
 }

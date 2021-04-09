@@ -24,20 +24,29 @@ import org.osmdroid.views.MapViewRepository;
 import xyz.kotlout.kotlout.BuildConfig;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.model.ExperimentType;
-import xyz.kotlout.kotlout.model.adapter.TrialMarkerAdapter;
+import xyz.kotlout.kotlout.model.adapter.TrialMarkAdapter;
 
+/**
+ * The ExperimentMapFragment, displays a map with markers on where trials have been recorded.
+ */
 public class ExperimentMapFragment extends Fragment {
 
   private static final String ARG_EXPERIMENT = "EXPERIMENT";
   private final int REQUEST_PERMISSIONS_REQUEST_CODE = 1;
   private MapView map = null;
   private int trialsMarked = 0;
-  String experimentId;
-  View view;
-  ExperimentType type;
-  TrialMarkerAdapter markIt;
+  private String experimentId;
+  private View view;
+  private ExperimentType type;
+  private TrialMarkAdapter trialMarker;
 
 
+  /**
+   * Creates an experiment map fragment.
+   *
+   * @param experimentId the experiment id to get data from
+   * @return the experiment map fragment
+   */
   public static ExperimentMapFragment newInstance(String experimentId) {
     ExperimentMapFragment fragment = new ExperimentMapFragment();
     Bundle args = new Bundle();
@@ -64,7 +73,7 @@ public class ExperimentMapFragment extends Fragment {
     configureMap(view);
 
 
-    markIt = new TrialMarkerAdapter(getContext(), experimentId, type, map);
+    trialMarker = new TrialMarkAdapter(getContext(), experimentId, map);
     return view;
   }
 
@@ -94,6 +103,16 @@ public class ExperimentMapFragment extends Fragment {
 
   }
 
+  /**
+   * Handles the result of the permissions
+   *
+   * https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
+   * This function is from the open street maps wiki
+   *
+   * @param requestCode
+   * @param permissions
+   * @param grantResults
+   */
   @Override
   public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
     ArrayList<String> permissionsToRequest = new ArrayList<>();
@@ -108,6 +127,14 @@ public class ExperimentMapFragment extends Fragment {
     }
   }
 
+  /**
+   * Request permissions from the user if they have not yet been provided.
+   *
+   * https://github.com/osmdroid/osmdroid/wiki/How-to-use-the-osmdroid-library-(Java)
+   * This function is from the open street maps wiki
+   *
+   * @param permissions A list of required permissions to request
+   */
   private void requestPermissionsIfNecessary(String[] permissions) {
     ArrayList<String> permissionsToRequest = new ArrayList<>();
     for (String permission : permissions) {
@@ -135,13 +162,14 @@ public class ExperimentMapFragment extends Fragment {
   public void onResume() {
     super.onResume();
     map.onResume();
+
     /* https://github.com/osmdroid/osmdroid/issues/277#issuecomment-412099853 */
     MapTileProviderBasic tileProvider = new MapTileProviderBasic(getContext().getApplicationContext(), TileSourceFactory.MAPNIK);
     SimpleInvalidationHandler mTileRequestCompleteHandler = new SimpleInvalidationHandler(map);
     tileProvider.getTileRequestCompleteHandlers().add(mTileRequestCompleteHandler);
     map.setTileProvider(tileProvider);
-    MapViewRepository mvr = map.getRepository();
-    markIt.onResume();
-    markIt.placeMarkers();
+
+    // Replace the markers since they get removed each time the map is paused.
+    trialMarker.placeMarkers();
   }
 }

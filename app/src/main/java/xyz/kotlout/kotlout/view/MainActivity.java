@@ -36,15 +36,15 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     if (savedInstanceState == null) {
+      BottomNavigationView bnv = findViewById(R.id.nav_main);
       adapter = new ExperimentListFragmentsAdapter(getSupportFragmentManager(), getLifecycle());
       viewPager = findViewById(R.id.pager_experiment_lists);
       viewPager.setAdapter(adapter);
+      bnv.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
 
     }
 
-    BottomNavigationView bnv = findViewById(R.id.nav_main);
-    bnv.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
-  } 
+  }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
       viewPager.setCurrentItem(2);
       return true;
     }
-
     return false;
   }
 
@@ -111,23 +110,16 @@ public class MainActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    switch (item.getItemId()) {
-
-      case R.id.search_experiments:
-        return true;
-
-      case R.id.show_profile:
-        Intent intent = new Intent(this, ProfileActivity.class);
-        intent.putExtra(UserHelper.UUID_INTENT, UserHelper.readUuid());
-        startActivity(intent);
-        return true;
-      case R.id.scan_code_menu_button:
-        Intent scanIntent = new Intent(this, CodeScannerActivity.class);
-        startActivityForResult(scanIntent, CodeScannerActivity.SCAN_CODE_REQUEST);
-        return true;
-      default:
-        return super.onOptionsItemSelected(item);
+    int itemId = item.getItemId();
+    if (itemId == R.id.search_experiments) {
+      return true;
+    } else if (itemId == R.id.show_profile) {
+      Intent intent = new Intent(this, ProfileActivity.class);
+      intent.putExtra(UserHelper.UUID_INTENT, UserHelper.readUuid());
+      startActivity(intent);
+      return true;
     }
+    return super.onOptionsItemSelected(item);
   }
 
   /**
