@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -150,6 +151,33 @@ public class ExperimentViewActivity extends AppCompatActivity {
   }
 
   @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    int i = item.getItemId();
+    if (i == R.id.open_discussion_posts){
+
+      Intent intent = new Intent(this, DiscussionPostsActivity.class);
+      intent.putExtra(DiscussionPostsActivity.ON_EXPERIMENT_INTENT, experimentId);
+      startActivity(intent);
+      return true;
+
+    } else if (i == R.id.subscribe_experiment) {
+        UserController userController = new UserController(UserHelper.readUuid());
+        userController.setUpdateCallback(user -> {
+          if(user.getSubscriptions().contains(experimentId)) {
+            userController.removeSubscription(experimentId);
+            item.setIcon(R.drawable.ic_baseline_bookmark_border);
+          } else {
+            userController.addSubscription(experimentId);
+            item.setIcon(R.drawable.ic_baseline_bookmark);
+          }
+        });
+        return true;
+      } else {
+      return super.onOptionsItemSelected(item);
+    }
+  }
+
+  @Override
   public boolean onPrepareOptionsMenu(Menu menu) {
     // Set Subscribe and Unsubscribe visibility based on user subscriptions
     MenuItem subscribeItem = menu.findItem(R.id.subscribe_experiment);
@@ -182,6 +210,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
     Intent intent = new Intent(this, TrialNewActivity.class);
     intent.putExtra(TrialNewActivity.EXPERIMENT_ID, experimentId);
     intent.putExtra(TrialNewActivity.EXPERIMENT_TYPE, experimentController.getType());
+    intent.putExtra(TrialNewActivity.REQUIRE_LOCATION, experimentController.getExperimentContext().isGeolocationRequired());
     startActivityForResult(intent, TrialNewActivity.NEW_TRIAL_REQUEST);
   }
 
@@ -210,25 +239,4 @@ public class ExperimentViewActivity extends AppCompatActivity {
     }
   }
 
-  @Override
-  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    int itemId = item.getItemId();
-
-    // subscribe to experiment
-    if (itemId == R.id.subscribe_experiment) {
-      UserController userController = new UserController(UserHelper.readUuid());
-      userController.setUpdateCallback(user -> {
-        if(user.getSubscriptions().contains(experimentId)) {
-          userController.removeSubscription(experimentId);
-          item.setIcon(R.drawable.ic_baseline_bookmark_border);
-        } else {
-          userController.addSubscription(experimentId);
-          item.setIcon(R.drawable.ic_baseline_bookmark);
-        }
-      });
-    } else {
-      return super.onOptionsItemSelected(item);
-    }
-    return true;
-  }
 }

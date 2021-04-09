@@ -7,21 +7,31 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import xyz.kotlout.kotlout.R;
+import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.FirebaseController;
+import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.model.experiment.Post;
+import xyz.kotlout.kotlout.model.user.User;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
-  private final List<Post> postData;
-  private final Context appContext;
+  private static final String TAG = "PostAdaptor";
+  private final List<Post> posts;
+  private final Context context;
+  private OnPostClickListener postClickListener;
 
-  public PostAdapter(List<Post> posts, Context context) {
-    this.postData = posts;
-    this.appContext = context;
-  }
+  private final CollectionReference postsCollection;
+  private final CollectionReference userCollection; // For names
+
+  public static interface OnPostClickListener {
+    public void onPostClick(String postUUID);
+  };
 
   @NonNull
   @Override
@@ -29,37 +39,64 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.discussion_post_comment,
         parent, false);
 
-    return new ViewHolder(view);
+    ViewHolder viewHolder = new ViewHolder(view);
+
+    viewHolder.getText().setOnClickListener(v -> {
+      postClickListener.onPostClick(
+          posts.get(viewHolder.getAdapterPosition()).getPostId()
+      );
+    });
+    return viewHolder;
   }
 
   @Override
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-    Post post = postData.get(position);
+    Post post = posts.get(position);
     holder.getText().setText(post.getText());
-    holder.getName().setText(post.getPoster().getDisplayName());
+
+    //holder.getName().setText(context.getString(R.string.default_author_name));
+    userCollection.document(post.getPoster()).get().addOnSuccessListener(documentSnapshot -> {
+          holder.getName().setText(context.getString(R.string.default_author_name));
+          User user = documentSnapshot.toObject(User.class);
+          if (user != null){
+            String displayName = user.getDisplayName();
+            if (displayName != null){
+              holder.getName().setText(displayName);
+            }
+          }
+    });
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-        appContext.getString(R.string.comment_date_format),
+        context.getString(R.string.comment_date_format),
         Locale.CANADA
     );
+
     holder.getDate().setText(simpleDateFormat.format(post.getTimestamp()));
 
-    if (post.getChildren().isEmpty()) {
+    if (post.getParent() == null) {
       holder.getReplies().setVisibility(View.GONE);
     } else {
-      if (post.getChildren().size() > 1) {
-        holder.getReplies().setText(String.format(Locale.CANADA,
-            "%d Replies", post.getChildren().size()));
-      } else {
-        holder.getReplies().setText("1 Reply");
-      }
       holder.getReplies().setVisibility(View.VISIBLE);
+      // We need to find the thing somehow.
+
+      holder.getReplies().setText("fetching...");
+      postsCollection.document(post.getParent()).get().addOnSuccessListener( documentSnapshot -> {
+        Post parent = documentSnapshot.toObject(Post.class);
+        if (parent != null){
+          holder.getReplies().setText(parent.getText());
+        } else {
+          holder.getReplies().setText("[deleted]");
+        }
+      }
+      ).addOnFailureListener(e -> {
+        holder.getReplies().setText("[deleted]");
+      });
     }
   }
 
   @Override
   public int getItemCount() {
-    return postData.size();
+    return posts.size();
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -75,7 +112,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
       name = itemView.findViewById(R.id.comment_name);
       date = itemView.findViewById(R.id.comment_date);
       text = itemView.findViewById(R.id.comment_text);
-      replies = itemView.findViewById(R.id.comment_reply_count);
+      replies = itemView.findViewById(R.id.comment_reply_string);
     }
 
     public TextView getName() {
@@ -93,6 +130,20 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public TextView getReplies() {
       return replies;
     }
+  }
+
+  public PostAdapter(Context context, String experimentId, List<Post> posts, OnPostClickListener postClickListener) {
+    this.context = context;
+    this.posts = posts;
+    this.postClickListener = postClickListener;
+
+    FirebaseFirestore firebase = FirebaseController.getFirestore();
+    postsCollection = firebase
+        .collection(ExperimentController.EXPERIMENT_COLLECTION)
+        .document(experimentId).collection(FirebaseController.POSTS_COLLECTION);
+
+    userCollection = firebase
+        .collection(UserController.USER_COLLECTION);
   }
 
 }

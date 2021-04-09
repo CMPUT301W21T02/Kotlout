@@ -18,6 +18,13 @@ public abstract class Trial implements Serializable {
   public Trial(String experimenterId) {
     this.experimenterId = experimenterId;
     this.timestamp = Calendar.getInstance().getTime();
+    this.location = new Geolocation(0.0, 0.0);
+  }
+
+  public Trial(String experimenterId, Geolocation location) {
+    this.experimenterId = experimenterId;
+    this.timestamp = Calendar.getInstance().getTime();
+    this.location = location;
   }
 
   public String getExperimenterId() {

@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView bnv = findViewById(R.id.nav_main);
     bnv.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
-  }
+  } 
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {

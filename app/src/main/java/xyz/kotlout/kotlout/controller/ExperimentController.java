@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.List;
 import java.util.Locale;
@@ -141,26 +142,26 @@ public class ExperimentController {
 
   /**
    * Sets the experiment context with the basic fields needed for a new Experiment.
-   *
-   * @param description The experiment description.
+   *  @param description The experiment description.
    * @param region      The region where the experiment is conducted.
    * @param minTrials   The minimum number of trials required for the experiment.
+   * @param geolocationRequired
    */
   @NonNull
   public static ExperimentController newInstance(@NonNull String description, String region,
-      int minTrials, @NonNull ExperimentType type) {
+      int minTrials, boolean geolocationRequired, @NonNull ExperimentType type) {
 
     switch (type) {
       case BINOMIAL:
-        return new ExperimentController(new BinomialExperiment(description, region, minTrials),
+        return new ExperimentController(new BinomialExperiment(description, region, minTrials, geolocationRequired),
             type);
       case NON_NEGATIVE_INTEGER:
-        return new ExperimentController(new NonNegativeExperiment(description, region, minTrials),
+        return new ExperimentController(new NonNegativeExperiment(description, region, minTrials, geolocationRequired),
             type);
       case COUNT:
-        return new ExperimentController(new CountExperiment(description, region, minTrials), type);
+        return new ExperimentController(new CountExperiment(description, region, minTrials, geolocationRequired), type);
       case MEASUREMENT:
-        return new ExperimentController(new MeasurementExperiment(description, region, minTrials),
+        return new ExperimentController(new MeasurementExperiment(description, region, minTrials, geolocationRequired),
             type);
       default:
         throw new UnsupportedOperationException();
@@ -354,30 +355,8 @@ public class ExperimentController {
 
   public void addTrial(Trial trial) {
     FirebaseFirestore db = FirebaseController.getFirestore();
-
-    switch (type) {
-      case BINOMIAL:
-        BinomialExperiment binomialExperiment = (BinomialExperiment) experimentContext;
-        binomialExperiment.addTrial(trial);
-        db.collection(EXPERIMENT_COLLECTION).document(experimentId).update("trials", binomialExperiment.getTrials());
-        break;
-      case NON_NEGATIVE_INTEGER:
-        NonNegativeExperiment nonNegativeExperiment = (NonNegativeExperiment) experimentContext;
-        nonNegativeExperiment.addTrial(trial);
-        db.collection(EXPERIMENT_COLLECTION).document(experimentId).update("trials", nonNegativeExperiment.getTrials());
-        break;
-      case COUNT:
-        CountExperiment countExperiment = (CountExperiment) experimentContext;
-        countExperiment.addTrial(trial);
-        db.collection(EXPERIMENT_COLLECTION).document(experimentId).update("trials", countExperiment.getTrials());
-        break;
-      case MEASUREMENT:
-        MeasurementExperiment measurementExperiment = (MeasurementExperiment) experimentContext;
-        measurementExperiment.addTrial(trial);
-        db.collection(EXPERIMENT_COLLECTION).document(experimentId).update("trials", measurementExperiment.getTrials());
-        break;
-    }
-
+    db.collection(EXPERIMENT_COLLECTION).document(experimentId)
+        .update("trials", FieldValue.arrayUnion(trial));
   }
 
   public List<? extends Trial> getListTrials() {
