@@ -314,6 +314,11 @@ public class ExperimentInfoViewTest {
 
     onView(withId(R.id.btn_new_trial_submit)).perform(click());
 
+    // Fail to add a trial
+    onView(withId(R.id.fab_view_add_trial)).perform(click());
+    onView(withId(R.id.btn_new_trial_submit)).perform(click());
+
+    onView(isRoot()).perform(ViewActions.pressBack());
     onView(isRoot()).perform(ViewActions.pressBack());
 
     onView(withText(description)).perform(click());
