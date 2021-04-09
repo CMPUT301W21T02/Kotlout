@@ -1,0 +1,11 @@
+xyz.kotlout.kotlout
+xyz.kotlout.kotlout.controller
+xyz.kotlout.kotlout.model
+xyz.kotlout.kotlout.model.adapter
+xyz.kotlout.kotlout.model.experiment
+xyz.kotlout.kotlout.model.experiment.trial
+xyz.kotlout.kotlout.model.geolocation
+xyz.kotlout.kotlout.model.user
+xyz.kotlout.kotlout.view
+xyz.kotlout.kotlout.view.dialog
+xyz.kotlout.kotlout.view.fragment
