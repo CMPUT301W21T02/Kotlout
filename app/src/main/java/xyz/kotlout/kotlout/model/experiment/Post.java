@@ -1,5 +1,6 @@
 package xyz.kotlout.kotlout.model.experiment;
 
+import com.google.firebase.firestore.DocumentId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,30 +11,45 @@ import xyz.kotlout.kotlout.model.user.User;
  */
 public class Post {
 
-  private final List<Post> children = new ArrayList<>();
-  private User poster;
-  private Post parent;
+  @DocumentId
+  private String postId;
+  private String poster;
+  private String parent;
   private String text;
   private Date timestamp;
 
+  public Post() {
+  }
 
-  public User getPoster() {
+  public Post(String postId, String poster, String parent, String text, Date timestamp) {
+    this.postId = postId;
+    this.poster = poster;
+    this.parent = parent;
+    this.text = text;
+    this.timestamp = timestamp;
+  }
+
+  public String getPostId() {
+    return postId;
+  }
+
+  public void setPostId(String postId) {
+    this.postId = postId;
+  }
+
+  public String getPoster() {
     return poster;
   }
 
-  public void setPoster(User poster) {
+  public void setPoster(String poster) {
     this.poster = poster;
   }
 
-  public List<Post> getChildren() {
-    return children;
-  }
-
-  public Post getParent() {
+  public String getParent() {
     return parent;
   }
 
-  public void setParent(Post parent) {
+  public void setParent(String parent) {
     this.parent = parent;
   }
 
