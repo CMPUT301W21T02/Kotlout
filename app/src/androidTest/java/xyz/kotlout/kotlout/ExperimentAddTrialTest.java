@@ -11,6 +11,7 @@ import static org.hamcrest.Matchers.containsString;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,6 +65,15 @@ public class ExperimentAddTrialTest {
     onView(withText("Me")).perform(click());
 
     onView(withText("1")).perform(click());
+
+    // Bad submission -> good submission test
+    onView(withId(R.id.fab_view_add_trial)).perform(click());
+
+    onView(withId(R.id.btn_new_trial_submit)).perform(click());
+
+    onView((withId(R.id.editTextNumber))).perform(typeText("1"));
+
+    onView(withId(R.id.btn_new_trial_submit)).perform(click());
 
   }
 

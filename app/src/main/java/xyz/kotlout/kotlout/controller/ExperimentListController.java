@@ -32,7 +32,7 @@ public class ExperimentListController {
   public static Query getAllExperiments() {
     FirebaseFirestore db = FirebaseController.getFirestore();
 
-    return db.collection(ExperimentController.EXPERIMENT_COLLECTION);
+    return db.collection(FirebaseController.EXPERIMENT_COLLECTION);
   }
 
   /**
@@ -42,7 +42,7 @@ public class ExperimentListController {
    */
   public Query getUserExperiments() {
     FirebaseFirestore db = FirebaseController.getFirestore();
-    CollectionReference experimentsRef = db.collection(ExperimentController.EXPERIMENT_COLLECTION);
+    CollectionReference experimentsRef = db.collection(FirebaseController.EXPERIMENT_COLLECTION);
     return experimentsRef.whereEqualTo("ownerUuid", this.userId);
   }
 }

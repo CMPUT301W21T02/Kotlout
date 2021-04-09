@@ -6,6 +6,7 @@ import android.os.SystemClock;
 import androidx.core.util.Consumer;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.firebase.firestore.DocumentReference;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.After;
@@ -30,35 +31,31 @@ public class UserControllerFirebaseTest {
 
   private final static long TIMEOUT = 1000;
   private final static int NUM_DOC_WRITES = 10;
-  private static User OLD_USER;
+  private static User oldUser;
 
   @BeforeClass
   public static void storeOldUser() {
     AtomicBoolean done = new AtomicBoolean();
-    FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid()).get().addOnCompleteListener(task -> {
-      OLD_USER = task.getResult().toObject(User.class);
-      done.set(true);
-    });
-    waitFor(done);
+    FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(UserHelper.readUuid()).get().addOnCompleteListener(task -> oldUser = task.getResult().toObject(User.class));
   }
 
   @After
   public void restoreOldUser() {
-    DocumentReference userDoc = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid());
-    if(OLD_USER != null) {
-      userDoc.set(OLD_USER);
+    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(UserHelper.readUuid());
+    if(oldUser != null) {
+      userDoc.set(oldUser);
     } else {
-      deleteUser(userDoc);
+      userDoc.delete();
     }
   }
 
   @Test
   public void testInitUser() {
     AtomicBoolean done = new AtomicBoolean();
-    DocumentReference userDoc = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid());
-    deleteUser(userDoc);
+    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(UserHelper.readUuid());
     User newUser = new User();
     newUser.setUuid(UserHelper.readUuid());
+    userDoc.delete();
     UserHelper.initializeUser();
     SystemClock.sleep(100);
     userDoc.get().addOnCompleteListener(task -> {
@@ -71,7 +68,7 @@ public class UserControllerFirebaseTest {
   @Test
   public void testInitPreexistingUser() {
     AtomicBoolean done = new AtomicBoolean();
-    DocumentReference userDoc = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid());
+    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(UserHelper.readUuid());
     User newUser = new User();
     newUser.setUuid(UserHelper.readUuid());
     User testUser = new User("FIRST", "LAST", "EMAIL", "PHONE", UserHelper.readUuid());
@@ -89,7 +86,7 @@ public class UserControllerFirebaseTest {
   @Test
   public void testFirebase() {
     AtomicInteger updateCount = new AtomicInteger();
-    String testUuid = UserHelper.readUuid();
+    String testUuid = UUID.randomUUID().toString();
     User testUser = new User();
     testUser.setUuid(testUuid);
     Consumer<User> callback = user -> {
@@ -102,7 +99,7 @@ public class UserControllerFirebaseTest {
 
     UserController controller = new UserController(testUuid);
     controller.setUpdateCallback(callback);
-    DocumentReference userDoc = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION)
+    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION)
         .document(testUuid);
 
     long startTime = System.currentTimeMillis();
@@ -122,16 +119,10 @@ public class UserControllerFirebaseTest {
     }
   }
 
-  private static void waitFor(AtomicBoolean condition) {
+  private void waitFor(AtomicBoolean condition) {
     while(!condition.get()) {
       SystemClock.sleep(100);
     }
-  }
-
-  private static void deleteUser(DocumentReference userDoc) {
-    AtomicBoolean done = new AtomicBoolean();
-    userDoc.delete().addOnSuccessListener(task -> done.set(true));
-    waitFor(done);
   }
 
 }

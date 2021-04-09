@@ -23,13 +23,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import xyz.kotlout.kotlout.R;
-import xyz.kotlout.kotlout.controller.ExperimentController;
 import xyz.kotlout.kotlout.controller.FirebaseController;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.adapter.PostAdapter;
 import xyz.kotlout.kotlout.model.adapter.PostAdapter.OnPostClickListener;
 import xyz.kotlout.kotlout.model.experiment.Post;
 
+/**
+ * This activity controls Q and A posts
+ */
 public class DiscussionPostsActivity extends AppCompatActivity implements OnPostClickListener {
 
   public static final String ON_EXPERIMENT_INTENT = "ON_EXPERIMENT";
@@ -39,11 +41,9 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
   private final List<Post> postList = new ArrayList<>();
   private PostAdapter postAdapter;
   private String experimentUUID;
-  private CollectionReference postsCollection;
   private RecyclerView postsView;
   private LinearLayoutManager layoutManager;
   private EditText commentText;
-  private Query sortedPosts;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +53,8 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
     Intent intent = getIntent();
     experimentUUID = intent.getStringExtra(ON_EXPERIMENT_INTENT);
 
-    postsCollection = FirebaseController.getFirestore()
-        .collection(ExperimentController.EXPERIMENT_COLLECTION)
+    CollectionReference postsCollection = FirebaseController.getFirestore()
+        .collection(FirebaseController.EXPERIMENT_COLLECTION)
         .document(experimentUUID)
         .collection(FirebaseController.POSTS_COLLECTION);
 
@@ -75,7 +75,7 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
       addComment(this.commentText.getText().toString());
     }));
 
-    sortedPosts = postsCollection.orderBy("timestamp", Direction.ASCENDING);
+    Query sortedPosts = postsCollection.orderBy("timestamp", Direction.ASCENDING);
 
 //    postsCollection.get().addOnSuccessListener(queryDocumentSnapshots -> {
 //      postList.addAll(queryDocumentSnapshots.toObjects(Post.class));
@@ -113,7 +113,7 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
     newPost.setParent(parentUUID);
 
     CollectionReference posts = FirebaseController.getFirestore()
-        .collection(ExperimentController.EXPERIMENT_COLLECTION)
+        .collection(FirebaseController.EXPERIMENT_COLLECTION)
         .document(experimentUUID)
         .collection(FirebaseController.POSTS_COLLECTION);
 

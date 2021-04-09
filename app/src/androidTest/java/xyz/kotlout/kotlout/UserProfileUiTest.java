@@ -55,7 +55,7 @@ public class UserProfileUiTest {
     AtomicBoolean initalized = new AtomicBoolean();
     User newUser = new User();
     newUser.setUuid(UUID.randomUUID().toString());
-    firestore.collection(UserHelper.USER_COLLECTION).document(newUser.getUuid()).get().addOnCompleteListener( task -> {
+    firestore.collection(FirebaseController.USER_COLLECTION).document(newUser.getUuid()).get().addOnCompleteListener( task -> {
       if(task.isSuccessful() && task.getResult() != null) {
         oldUser = task.getResult().toObject(User.class);
         initalized.set(true);
@@ -64,13 +64,13 @@ public class UserProfileUiTest {
     while(!initalized.get()) {
       SystemClock.sleep(100);
     }
-    firestore.collection(UserHelper.USER_COLLECTION).document(newUser.getUuid()).set(newUser);
+    firestore.collection(FirebaseController.USER_COLLECTION).document(newUser.getUuid()).set(newUser);
   }
 
   @AfterClass
   public static void tearDownProfileTest() {
     FirebaseFirestore firestore = FirebaseController.getFirestore();
-    firestore.collection(UserHelper.USER_COLLECTION).document(oldUser.getUuid()).set(oldUser);
+    firestore.collection(FirebaseController.USER_COLLECTION).document(oldUser.getUuid()).set(oldUser);
   }
 
   @Before
@@ -78,7 +78,7 @@ public class UserProfileUiTest {
     String uuid = UserHelper.readUuid();
     User newUser = new User();
     newUser.setUuid(uuid);
-    FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(uuid).set(newUser);
+    FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(uuid).set(newUser);
   }
 
   @Test
@@ -174,7 +174,7 @@ public class UserProfileUiTest {
     onView(withId(R.id.profilePhoneEditText)).check(matches(withHint(R.string.profile_phone_text)));
 
     String uuid = UserHelper.readUuid();
-    FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(uuid).set(
+    FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(uuid).set(
         new User(VALID_FIRST_NAME_STRING, VALID_LAST_NAME_STRING, VALID_EMAIL_ADDR_STRING,
             VALID_PHONE_NUM_STRING, uuid));
     // Pause to make sure update happens in time

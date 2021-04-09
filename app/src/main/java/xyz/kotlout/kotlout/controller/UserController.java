@@ -13,7 +13,6 @@ import xyz.kotlout.kotlout.model.user.User;
  */
 public class UserController {
 
-  public static final String USER_COLLECTION = "users";
   private static final String TAG = "USER CONTROLLER";
 
   private final DocumentReference userDoc;
@@ -34,7 +33,7 @@ public class UserController {
     // Set user to garuntee UUID is valid if firebase is unable to fetch data
     user = new User();
     user.setUuid(userId);
-    userDoc = FirebaseController.getFirestore().collection(USER_COLLECTION).document(userId);
+    userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(userId);
     registerSnapshotListener();
   }
 
@@ -85,7 +84,7 @@ public class UserController {
 
   private void syncUser() {
     FirebaseFirestore firestore = FirebaseController.getFirestore();
-    firestore.collection(USER_COLLECTION).document(this.user.getUuid()).set(this.user);
+    firestore.collection(FirebaseController.USER_COLLECTION).document(this.user.getUuid()).set(this.user);
   }
 
   public void updateUser(User user) {

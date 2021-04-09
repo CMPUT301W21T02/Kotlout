@@ -2,12 +2,8 @@ package xyz.kotlout.kotlout.controller;
 
 import android.content.Context;
 import android.provider.Settings.Secure;
-import android.util.Log;
 import androidx.annotation.NonNull;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.regex.Pattern;
 import xyz.kotlout.kotlout.model.user.User;
 
@@ -16,10 +12,6 @@ import xyz.kotlout.kotlout.model.user.User;
  */
 public final class UserHelper {
 
-  /**
-   * Firestore collection name
-   */
-  public static final String USER_COLLECTION = "users";
   /**
    * Firestore collection name
    */
@@ -34,7 +26,7 @@ public final class UserHelper {
    * Pattern to validate phone numbers </br> Notation taken from Figma diagram: 000-111-2222
    */
   private static final Pattern PHONE_REGEX = Pattern.compile("^[\\d\\-\\+\\(\\)]*$");
-  private static String uuid;
+  private static String LOCAL_USER_UUID;
 
   /**
    * Validate email boolean.
@@ -73,7 +65,7 @@ public final class UserHelper {
   }
 
   public static void initUserHelper(@NonNull Context context) {
-    uuid = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+    LOCAL_USER_UUID = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
   }
 
   /**
@@ -82,7 +74,7 @@ public final class UserHelper {
    * @return UUID stored in internal storage
    */
   public static String readUuid() {
-    return uuid;
+    return LOCAL_USER_UUID;
   }
 
   /**
@@ -91,7 +83,7 @@ public final class UserHelper {
   public static void initializeUser() {
     User user = new User();
     user.setUuid(readUuid());
-    DocumentReference ref = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION)
+    DocumentReference ref = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION)
         .document(UserHelper.readUuid());
     ref.get().addOnCompleteListener(task -> {
       if (!task.isSuccessful() || task.getResult().get("uuid") == null) {
