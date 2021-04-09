@@ -88,7 +88,7 @@ public class ScannableUiTests {
     onView(withId(R.id.fab_view_add_trial)).perform(click());
     onView(withId(R.id.btn_new_trial_create_qrcode)).perform(click());
 
-    onView(withId(R.id.editTextNumber)).perform(click(), typeText(Long.valueOf(Math.abs(rand.nextLong())).toString()), closeSoftKeyboard());
+    onView(withId(R.id.et_trial_entry_number)).perform(click(), typeText(Long.valueOf(Math.abs(rand.nextLong())).toString()), closeSoftKeyboard());
     onView(withId(R.id.btn_new_trial_create_qrcode)).perform(click());
   }
 
@@ -107,7 +107,7 @@ public class ScannableUiTests {
     onView(withId(R.id.fab_view_add_trial)).perform(click());
     onView(withId(R.id.btn_new_trial_reg_barcode)).perform(click());
 
-    onView(withId(R.id.editTextNumber)).perform(click(), typeText(Long.valueOf(Math.abs(rand.nextLong())).toString()), closeSoftKeyboard());
+    onView(withId(R.id.et_trial_entry_number)).perform(click(), typeText(Long.valueOf(Math.abs(rand.nextLong())).toString()), closeSoftKeyboard());
     onView(withId(R.id.btn_new_trial_reg_barcode)).perform(click());
   }
 

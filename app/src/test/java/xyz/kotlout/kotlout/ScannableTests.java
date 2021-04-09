@@ -58,8 +58,6 @@ public class ScannableTests {
           return ((CountTrial) a).getResult() == ((CountTrial) b).getResult();
         case MEASUREMENT:
           return ((MeasurementTrial) a).getResult() == ((MeasurementTrial) b).getResult();
-        case UNKNOWN:
-          return false;
       }
     } catch (NullPointerException e) {
       return false;
@@ -103,7 +101,7 @@ public class ScannableTests {
     List<CountTrial> originalTrials = new ArrayList<>();
     List<String> experimentIds = new ArrayList<>();
     for (int i = 0; i < NUM_TRIALS; ++i) {
-      originalTrials.add(new CountTrial(rand.nextLong(), Long.valueOf(rand.nextLong()).toString()));
+      originalTrials.add(new CountTrial(rand.nextLong(), Long.valueOf(rand.nextLong()).toString(), null));
       experimentIds.add(Long.valueOf(rand.nextLong()).toString());
     }
 
@@ -132,7 +130,7 @@ public class ScannableTests {
     List<NonNegativeTrial> originalTrials = new ArrayList<>();
     List<String> experimentIds = new ArrayList<>();
     for (int i = 0; i < NUM_TRIALS; ++i) {
-      originalTrials.add(new NonNegativeTrial(rand.nextLong(), Long.valueOf(rand.nextLong()).toString()));
+      originalTrials.add(new NonNegativeTrial(rand.nextLong(), Long.valueOf(rand.nextLong()).toString(), null));
       experimentIds.add(Long.valueOf(rand.nextLong()).toString());
     }
 
