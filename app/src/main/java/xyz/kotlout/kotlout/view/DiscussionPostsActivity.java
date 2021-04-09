@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
@@ -34,7 +35,8 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
 
   public static final String ON_EXPERIMENT_INTENT = "ON_EXPERIMENT";
   private static final String TAG = "DISCUSSION";
-  private final Pattern pattern = Pattern.compile("(@([\\S]+))?(.*)");
+  private final Pattern commentReplyPattern = Pattern.compile("(@([\\S]+))?(.*)", Pattern.DOTALL);
+  private final Pattern whiteSpacePattern = Pattern.compile("\\s*");
   private PostAdapter postAdapter;
   private final List<Post> postList = new ArrayList<>();
   private String experimentUUID;
@@ -42,6 +44,7 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
   private RecyclerView postsView;
   private LinearLayoutManager layoutManager;
   private EditText commentText;
+  private Query sortedPosts;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +76,7 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
       addComment(this.commentText.getText().toString());
     }));
 
-    Query sortedPosts = postsCollection.orderBy("timestamp", Direction.ASCENDING);
+    sortedPosts = postsCollection.orderBy("timestamp", Direction.ASCENDING);
 
 //    postsCollection.get().addOnSuccessListener(queryDocumentSnapshots -> {
 //      postList.addAll(queryDocumentSnapshots.toObjects(Post.class));
@@ -85,7 +88,7 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
 
 
   void addComment(String commentText) {
-    Matcher matcher = pattern.matcher(commentText);
+    Matcher matcher = commentReplyPattern.matcher(commentText);
 
     String parentUUID = null;
     String commentBody = "";
@@ -99,22 +102,25 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
       commentBody = "";
     }
 
+    if (whiteSpacePattern.matcher(commentBody).matches()){
+      Toast.makeText(this, "Can't send empty comment", Toast.LENGTH_SHORT).show();
+      return;
+    }
+
     Post newPost = new Post();
     newPost.setTimestamp(new Date());
     newPost.setText(commentBody);
     newPost.setPoster(UserHelper.readUuid());
     newPost.setParent(parentUUID);
 
-    // TODO: No empty comments!
-
     CollectionReference posts = FirebaseController.getFirestore()
         .collection(ExperimentController.EXPERIMENT_COLLECTION)
         .document(experimentUUID)
         .collection(FirebaseController.POSTS_COLLECTION);
 
-    Toast.makeText(this, "Posting comment...", Toast.LENGTH_SHORT).show();
+    // Toast.makeText(this, "Posting comment...", Toast.LENGTH_SHORT).show();
     posts.add(newPost).addOnSuccessListener(documentReference -> {
-          Toast.makeText(this, "Posted!", Toast.LENGTH_SHORT).show();
+          // Toast.makeText(this, "Posted!", Toast.LENGTH_SHORT).show();
         }
     );
 
@@ -148,7 +154,7 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
       for (DocumentChange doc : value.getDocumentChanges()) {
         switch (doc.getType()) {
           case ADDED:
-            boolean wasBottomed = layoutManager.findLastCompletelyVisibleItemPosition() == postAdapter.getItemCount() - 1;
+            boolean wasBottomed = layoutManager.findLastVisibleItemPosition() == postAdapter.getItemCount() - 1;
             postList.add(doc.getNewIndex(), doc.getDocument().toObject(Post.class));
             postAdapter.notifyItemInserted(doc.getNewIndex());
             if (wasBottomed) {
@@ -176,8 +182,27 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
   }
 
   @Override
-  public void onPostClick(String postUUID) {
-    commentText.setText("@" + postUUID + " " + commentText.getText().toString());
+  public void onPostTextClick(String postUUID) {
+    Matcher matcher = commentReplyPattern.matcher(commentText.getText().toString());
+    String commentBody = null;
+
+    if (matcher.matches()){
+      commentBody = matcher.group(3);
+    }
+    if (commentBody == null || whiteSpacePattern.matcher(commentBody).matches()) commentBody = "";
+
+    commentText.setText(this.getString(R.string.discussion_reply_message, postUUID, commentBody));
     commentText.setSelection(commentText.getText().length());
   }
+
+  @Override
+  public void onPostReplyClick(String parentUUID) {
+    for (int i=0; i<postList.size(); i++){
+      if (postList.get(i).getPostId().equals(parentUUID)) {
+        layoutManager.smoothScrollToPosition(postsView, null, i);
+        break;
+      }
+    }
+  }
+
 }

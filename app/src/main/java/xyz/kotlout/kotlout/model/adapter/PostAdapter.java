@@ -24,14 +24,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
   private static final String TAG = "PostAdaptor";
   private final List<Post> posts;
   private final Context context;
-  private OnPostClickListener postClickListener;
+  private final OnPostClickListener postClickListener;
 
   private final CollectionReference postsCollection;
   private final CollectionReference userCollection; // For names
 
-  public static interface OnPostClickListener {
-    public void onPostClick(String postUUID);
-  };
+  public PostAdapter(Context context, String experimentId, List<Post> posts, OnPostClickListener postClickListener) {
+    this.context = context;
+    this.posts = posts;
+    this.postClickListener = postClickListener;
+
+    FirebaseFirestore firebase = FirebaseController.getFirestore();
+    postsCollection = firebase
+        .collection(ExperimentController.EXPERIMENT_COLLECTION)
+        .document(experimentId).collection(FirebaseController.POSTS_COLLECTION);
+
+    userCollection = firebase
+        .collection(UserController.USER_COLLECTION);
+  }
 
   @NonNull
   @Override
@@ -41,11 +51,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     ViewHolder viewHolder = new ViewHolder(view);
 
-    viewHolder.getText().setOnClickListener(v -> {
-      postClickListener.onPostClick(
-          posts.get(viewHolder.getAdapterPosition()).getPostId()
-      );
-    });
+    viewHolder.getText().setOnClickListener(v -> postClickListener.onPostTextClick(
+        posts.get(viewHolder.getAdapterPosition()).getPostId()
+    ));
     return viewHolder;
   }
 
@@ -56,14 +64,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     //holder.getName().setText(context.getString(R.string.default_author_name));
     userCollection.document(post.getPoster()).get().addOnSuccessListener(documentSnapshot -> {
-          holder.getName().setText(context.getString(R.string.default_author_name));
-          User user = documentSnapshot.toObject(User.class);
-          if (user != null){
-            String displayName = user.getDisplayName();
-            if (displayName != null){
-              holder.getName().setText(displayName);
-            }
-          }
+      holder.getName().setText(context.getString(R.string.default_author_name));
+      User user = documentSnapshot.toObject(User.class);
+      if (user != null) {
+        String displayName = user.getDisplayName();
+        if (displayName != null) {
+          holder.getName().setText(displayName);
+        }
+      }
     });
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
@@ -79,24 +87,47 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
       holder.getReplies().setVisibility(View.VISIBLE);
       // We need to find the thing somehow.
 
-      holder.getReplies().setText("fetching...");
-      postsCollection.document(post.getParent()).get().addOnSuccessListener( documentSnapshot -> {
-        Post parent = documentSnapshot.toObject(Post.class);
-        if (parent != null){
-          holder.getReplies().setText(parent.getText());
-        } else {
-          holder.getReplies().setText("[deleted]");
-        }
-      }
-      ).addOnFailureListener(e -> {
-        holder.getReplies().setText("[deleted]");
-      });
+      holder.getReplies().setText(context.getString(R.string.discussion_deleted_message));
+      postsCollection.document(post.getParent()).get().addOnSuccessListener(documentSnapshot -> {
+            Post parent = documentSnapshot.toObject(Post.class);
+            if (parent != null) {
+
+              holder.getReplies().setOnClickListener(v -> {
+                postClickListener.onPostReplyClick(parent.getPostId());
+              });
+
+              userCollection.document(post.getPoster()).get().addOnSuccessListener(documentSnapshot1 -> {
+                User user = documentSnapshot1.toObject(User.class);
+                if (user != null) {
+                  String displayName = user.getDisplayName();
+                  if (displayName == null) {
+                    displayName = context.getString(R.string.default_author_name);
+                  }
+
+                  holder.getReplies().setText(context.getString(R.string.discussion_reply_format,
+                      displayName, parent.getText()));
+                }
+              }).addOnFailureListener(e -> holder.getReplies().setText(context.getString(R.string.discussion_reply_format,
+                  context.getString(R.string.default_author_name),
+                  parent.getText())));
+            } else {
+              holder.getReplies().setText(context.getString(R.string.discussion_deleted_message));
+            }
+          }
+      ).addOnFailureListener(e -> holder.getReplies().setText(context.getString(R.string.discussion_deleted_message)));
     }
   }
 
   @Override
   public int getItemCount() {
     return posts.size();
+  }
+
+  public interface OnPostClickListener {
+
+    void onPostTextClick(String postUUID);
+
+    void onPostReplyClick(String parentUUID);
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -130,20 +161,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public TextView getReplies() {
       return replies;
     }
-  }
-
-  public PostAdapter(Context context, String experimentId, List<Post> posts, OnPostClickListener postClickListener) {
-    this.context = context;
-    this.posts = posts;
-    this.postClickListener = postClickListener;
-
-    FirebaseFirestore firebase = FirebaseController.getFirestore();
-    postsCollection = firebase
-        .collection(ExperimentController.EXPERIMENT_COLLECTION)
-        .document(experimentId).collection(FirebaseController.POSTS_COLLECTION);
-
-    userCollection = firebase
-        .collection(UserController.USER_COLLECTION);
   }
 
 }
