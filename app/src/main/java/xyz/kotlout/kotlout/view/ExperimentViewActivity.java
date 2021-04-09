@@ -32,6 +32,9 @@ import xyz.kotlout.kotlout.view.fragment.ExperimentInfoFragment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentMapFragment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentTrialListFragment;
 
+/**
+ * This is the activity for when an experiment is launched.
+ */
 public class ExperimentViewActivity extends AppCompatActivity {
 
   public static final int VIEW_EXPERIMENT_REQUEST = 0;
@@ -83,7 +86,7 @@ public class ExperimentViewActivity extends AppCompatActivity {
         adapter.addFragment(mapFragment);
         adapter.addFragment(trialListFragment);
 
-        trialListFragment.addIgnoreListener(infoFragment::ignoreListUpdated);
+        trialListFragment.setIgnoreListener(infoFragment::ignoreListUpdated);
 
         viewPager.setAdapter(adapter);
 
@@ -171,6 +174,11 @@ public class ExperimentViewActivity extends AppCompatActivity {
     return super.onPrepareOptionsMenu(menu);
   }
 
+  /**
+   * Callback for the floating action button
+   * which launches a fragment to add additional trials.
+   * @param view The floating action button
+   */
   public void fabNewTrial(View view) {
     Intent intent = new Intent(this, TrialNewActivity.class);
     intent.putExtra(TrialNewActivity.EXPERIMENT_ID, experimentId);

@@ -20,6 +20,9 @@ import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.adapter.TrialListAdapter;
 
+/**
+ * This fragment manages the display of a list of trials.
+ */
 public class ExperimentTrialListFragment extends Fragment implements OnCreateContextMenuListener {
 
   String experimentId;
@@ -31,6 +34,12 @@ public class ExperimentTrialListFragment extends Fragment implements OnCreateCon
   Runnable listener;
   ExpandableListView elv;
 
+  /**
+   * Public constructor
+   * @param experimentId Document ID of the experiment
+   * @param type An experiment's type
+   * @param sharedPrefs Ignored users preferences
+   */
   public ExperimentTrialListFragment(String experimentId, ExperimentType type, SharedPreferences sharedPrefs) {
     this.experimentId = experimentId;
     this.type = type;
@@ -41,6 +50,13 @@ public class ExperimentTrialListFragment extends Fragment implements OnCreateCon
     blockList.addAll(sharedPrefs.getStringSet(experimentId, new TreeSet<>()));
   }
 
+  /**
+   * Alternative Constructor
+   * @param experimentId Document ID
+   * @param type An experiment's type
+   * @param sharedPrefs Ignore user preferences
+   * @return The constructed fragment
+   */
   public static ExperimentTrialListFragment newInstance(String experimentId, ExperimentType type,
       SharedPreferences sharedPrefs) {
     return new ExperimentTrialListFragment(experimentId, type, sharedPrefs);
@@ -109,7 +125,11 @@ public class ExperimentTrialListFragment extends Fragment implements OnCreateCon
   }
 
 
-  public void addIgnoreListener(Runnable listener) {
+  /**
+   *  Sets a listener to get alerted when a user is ignored.
+   * @param listener Called when ignorer is clicked
+   */
+  public void setIgnoreListener(Runnable listener) {
     this.listener = listener;
   }
 }
