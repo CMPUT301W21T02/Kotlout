@@ -24,8 +24,7 @@ public class StatCalculator {
     for (double d : numberArray) {
       sum += d;
     }
-    double mean = sum / numberArray.size();
-    return mean;
+    return sum / numberArray.size();
   }
 
   /**
@@ -65,8 +64,7 @@ public class StatCalculator {
   public double getQ1(ArrayList<Double> numberArray) {
     Collections.sort(numberArray);
     int medianIndex = numberArray.size() / 2;
-    double q1 = numberArray.get(medianIndex / 2);
-    return q1;
+    return numberArray.get(medianIndex / 2);
   }
 
   /**
@@ -76,8 +74,7 @@ public class StatCalculator {
   public double getQ3(ArrayList<Double> numberArray) {
     Collections.sort(numberArray);
     int medianIndex = numberArray.size() / 2;
-    double q3 = numberArray.get((medianIndex + numberArray.size()) / 2);
-    return q3;
+    return numberArray.get((medianIndex + numberArray.size()) / 2);
   }
 
 

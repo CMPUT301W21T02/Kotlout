@@ -21,6 +21,8 @@ public class ExperimentNewActivity extends AppCompatActivity {
 
   public static final int NEW_EXPERIMENT_REQUEST = 0;
   public static final String EXPERIMENT_EXTRA = "EXPERIMENT";
+  public static final String TYPE_EXTRA = "TYPE";
+
   private EditText descriptionEditText;
   private Button submitButton;
 
@@ -30,7 +32,7 @@ public class ExperimentNewActivity extends AppCompatActivity {
     setContentView(R.layout.activity_experiment_new);
 
     submitButton = this.findViewById(R.id.btn_experiment_new_add);
-    descriptionEditText = (EditText) this.findViewById(R.id.et_experiment_new_description);
+    descriptionEditText = this.findViewById(R.id.et_experiment_new_description);
     descriptionEditText.addTextChangedListener(new TextWatcher() {
       @Override
       public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -75,13 +77,14 @@ public class ExperimentNewActivity extends AppCompatActivity {
     int typeId = (int) ((Spinner) this.findViewById(R.id.sp_experiment_new_type))
         .getSelectedItemId();
 
-    boolean geolocationRequired = (boolean) ((CheckBox) this.findViewById(R.id.cb_experiment_new_geolocation)).isChecked();
+    boolean geolocationRequired = ((CheckBox) this.findViewById(R.id.cb_experiment_new_geolocation)).isChecked();
 
     ExperimentController experimentController = ExperimentController
         .newInstance(description, region, minTrials, geolocationRequired, ExperimentType.values()[typeId]);
 
     Intent intent = new Intent();
     intent.putExtra(EXPERIMENT_EXTRA, experimentController.getExperimentContext());
+    intent.putExtra(TYPE_EXTRA, experimentController.getType());
     setResult(NEW_EXPERIMENT_REQUEST, intent);
     finish();
   }

@@ -18,6 +18,8 @@ import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
 /**
  * Controller for handling interactions with Experiment objects.
+ * <p>
+ * Has multiple constructors, each with differing reasons for use.
  */
 public class ExperimentController {
 
@@ -30,11 +32,14 @@ public class ExperimentController {
   /**
    * Default constructor. Disabled, because an empty controller is useless.
    */
-  public ExperimentController() {
+  @SuppressWarnings({"unused", "RedundantSuppression"})
+  private ExperimentController() {
   }
 
   /**
    * Initializes the controller and sets the context to a string that refers to the experiment's document ID in Firestore.
+   * <p>
+   * Both observer parameters are optional, and behave differently. If a specific observer is to be ignored, set it to null.
    *
    * @param experimentId    Document ID of experiment in Firebase
    * @param loadedObserver  Callback to use when experiment has been loaded. (Only called once)
@@ -44,7 +49,7 @@ public class ExperimentController {
       @Nullable ExperimentUpdatedObserver updatedObserver) {
     FirebaseFirestore db = FirebaseController.getFirestore();
     this.experimentId = experimentId;
-
+    // This could probably get split to multiple functions, but this is good enough for the project.
     db.collection(FirebaseController.EXPERIMENT_COLLECTION).document(experimentId).get()
         .addOnSuccessListener(documentSnapshot -> {
           if (documentSnapshot != null) {
@@ -70,36 +75,27 @@ public class ExperimentController {
         });
 
     if (updatedObserver != null) {
-      db.collection(FirebaseController.EXPERIMENT_COLLECTION).document(experimentId).addSnapshotListener((documentSnapshot, error) -> {
-        if (documentSnapshot != null && type != null) {
-          switch (type) {
-            case BINOMIAL:
-              experimentContext = documentSnapshot.toObject(BinomialExperiment.class);
-              break;
-            case NON_NEGATIVE_INTEGER:
-              experimentContext = documentSnapshot.toObject(NonNegativeExperiment.class);
-              break;
-            case COUNT:
-              experimentContext = documentSnapshot.toObject(CountExperiment.class);
-              break;
-            case MEASUREMENT:
-              experimentContext = documentSnapshot.toObject(MeasurementExperiment.class);
-              break;
-          }
-          updatedObserver.onExperimentUpdated();
-        }
-      });
+      db.collection(FirebaseController.EXPERIMENT_COLLECTION).document(experimentId)
+          .addSnapshotListener((documentSnapshot, error) -> {
+            if (documentSnapshot != null && type != null) {
+              switch (type) {
+                case BINOMIAL:
+                  experimentContext = documentSnapshot.toObject(BinomialExperiment.class);
+                  break;
+                case NON_NEGATIVE_INTEGER:
+                  experimentContext = documentSnapshot.toObject(NonNegativeExperiment.class);
+                  break;
+                case COUNT:
+                  experimentContext = documentSnapshot.toObject(CountExperiment.class);
+                  break;
+                case MEASUREMENT:
+                  experimentContext = documentSnapshot.toObject(MeasurementExperiment.class);
+                  break;
+              }
+              updatedObserver.onExperimentUpdated();
+            }
+          });
     }
-  }
-
-  /**
-   * Initializes the controller and sets the context to an existing Experiment object.
-   *
-   * @param experiment An instance of Experiment.
-   */
-  public ExperimentController(Experiment experiment) {
-    this.experimentContext = experiment;
-    this.type = ExperimentType.UNKNOWN;
   }
 
   /**
@@ -141,11 +137,12 @@ public class ExperimentController {
 
   /**
    * Sets the experiment context with the basic fields needed for a new Experiment.
-   *  @param description The experiment description.
-   * @param region      The region where the experiment is conducted.
-   * @param minTrials   The minimum number of trials required for the experiment.
-   * @param geolocationRequired
-   * @param type        Type of experiment
+   *
+   * @param description         The experiment description.
+   * @param region              The region where the experiment is conducted.
+   * @param minTrials           The minimum number of trials required for the experiment.
+   * @param geolocationRequired If geolocation is required for this experiment.
+   * @param type                Type of experiment
    */
   @NonNull
   public static ExperimentController newInstance(@NonNull String description, String region,
@@ -153,16 +150,13 @@ public class ExperimentController {
 
     switch (type) {
       case BINOMIAL:
-        return new ExperimentController(new BinomialExperiment(description, region, minTrials, geolocationRequired),
-            type);
+        return new ExperimentController(new BinomialExperiment(description, region, minTrials, geolocationRequired), type);
       case NON_NEGATIVE_INTEGER:
-        return new ExperimentController(new NonNegativeExperiment(description, region, minTrials, geolocationRequired),
-            type);
+        return new ExperimentController(new NonNegativeExperiment(description, region, minTrials, geolocationRequired), type);
       case COUNT:
         return new ExperimentController(new CountExperiment(description, region, minTrials, geolocationRequired), type);
       case MEASUREMENT:
-        return new ExperimentController(new MeasurementExperiment(description, region, minTrials, geolocationRequired),
-            type);
+        return new ExperimentController(new MeasurementExperiment(description, region, minTrials, geolocationRequired), type);
       default:
         throw new UnsupportedOperationException();
     }

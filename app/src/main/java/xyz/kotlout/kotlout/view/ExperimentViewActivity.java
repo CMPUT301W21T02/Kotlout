@@ -166,6 +166,33 @@ public class ExperimentViewActivity extends AppCompatActivity {
     startActivityForResult(intent, TrialNewActivity.NEW_TRIAL_REQUEST);
   }
 
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    int i = item.getItemId();
+    if (i == R.id.open_discussion_posts) {
+
+      Intent intent = new Intent(this, DiscussionPostsActivity.class);
+      intent.putExtra(DiscussionPostsActivity.ON_EXPERIMENT_INTENT, experimentId);
+      startActivity(intent);
+      return true;
+
+    } else if (i == R.id.subscribe_experiment) {
+      UserController userController = new UserController(UserHelper.readUuid());
+      userController.setUpdateCallback(user -> {
+        if (user.getSubscriptions().contains(experimentId)) {
+          userController.removeSubscription(experimentId);
+          item.setIcon(R.drawable.ic_baseline_bookmark_border);
+        } else {
+          userController.addSubscription(experimentId);
+          item.setIcon(R.drawable.ic_baseline_bookmark);
+        }
+      });
+      return true;
+    } else {
+      return super.onOptionsItemSelected(item);
+    }
+  }
+
   static class ExperimentViewFragmentsAdapter extends FragmentStateAdapter {
 
     List<Fragment> fragmentList = new ArrayList<>();
@@ -192,34 +219,6 @@ public class ExperimentViewActivity extends AppCompatActivity {
     @Override
     public int getItemCount() {
       return fragmentList.size();
-    }
-  }
-
-
-  @Override
-  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    int i = item.getItemId();
-    if (i == R.id.open_discussion_posts) {
-
-      Intent intent = new Intent(this, DiscussionPostsActivity.class);
-      intent.putExtra(DiscussionPostsActivity.ON_EXPERIMENT_INTENT, experimentId);
-      startActivity(intent);
-      return true;
-
-    } else if (i == R.id.subscribe_experiment) {
-      UserController userController = new UserController(UserHelper.readUuid());
-      userController.setUpdateCallback(user -> {
-        if (user.getSubscriptions().contains(experimentId)) {
-          userController.removeSubscription(experimentId);
-          item.setIcon(R.drawable.ic_baseline_bookmark_border);
-        } else {
-          userController.addSubscription(experimentId);
-          item.setIcon(R.drawable.ic_baseline_bookmark);
-        }
-      });
-      return true;
-    } else {
-      return super.onOptionsItemSelected(item);
     }
   }
 }

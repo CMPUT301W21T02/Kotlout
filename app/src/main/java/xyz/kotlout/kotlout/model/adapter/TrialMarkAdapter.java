@@ -19,17 +19,16 @@ import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 public class TrialMarkAdapter {
 
   private final Context context;
-  private String experimentId;
-  private MapView map;
+  private final String experimentId;
+  private final MapView map;
 
-  private ExperimentController controller;
+  private final ExperimentController controller;
   private List<? extends Trial> trialList;
 
   /**
    * Instantiates a new Trial mark adapter.
-   *
-   * The TrialMarkAdapter can be used for taking experiment
-   * trial location and displaying them onto a mapView.
+   * <p>
+   * The TrialMarkAdapter can be used for taking experiment trial location and displaying them onto a mapView.
    *
    * @param context      the context of the map
    * @param experimentId the experiment id for the trials
@@ -58,7 +57,7 @@ public class TrialMarkAdapter {
   public void placeMarkers() {
     // Need to clear all the drawn markers since we are placing new ones
     map.getOverlays().clear();
-    for (Trial trial: trialList) {
+    for (Trial trial : trialList) {
       if (trial.getLocation() != null) {
 
         // For all the experiments that do have geolocations, convert them to a GeoPoint

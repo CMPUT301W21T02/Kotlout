@@ -15,7 +15,7 @@ public class LocationHelper {
    * @return geolocation location type
    */
   public static Geolocation toGeolocation(GeoPoint geoPoint) {
-    return new Geolocation((Double) geoPoint.getLatitude(), (Double) geoPoint.getLongitude());
+    return new Geolocation(geoPoint.getLatitude(), geoPoint.getLongitude());
   }
 
   /**
@@ -25,6 +25,6 @@ public class LocationHelper {
    * @return geoPoint location type
    */
   public static GeoPoint toGeoPoint(Geolocation geolocation) {
-    return new GeoPoint((double) geolocation.getLatitude(), (double) geolocation.getLongitude());
+    return new GeoPoint(geolocation.getLatitude(), geolocation.getLongitude());
   }
 }

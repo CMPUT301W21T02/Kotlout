@@ -30,7 +30,7 @@ public class UserController {
       Log.e(TAG, "Error no uuid provided, using local uuid");
       userId = UserHelper.readUuid();
     }
-    // Set user to garuntee UUID is valid if firebase is unable to fetch data
+    // Set user to guarantee UUID is valid if firebase is unable to fetch data
     user = new User();
     user.setUuid(userId);
     userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(userId);

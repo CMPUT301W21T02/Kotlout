@@ -78,13 +78,13 @@ public class ExperimentInfoViewTest {
 
     onView(withId(R.id.fab_view_add_trial)).perform(click());
 
-    onView((withId(R.id.editTextNumber))).perform(typeText("1"));
+    onView((withId(R.id.et_trial_entry_number))).perform(typeText("1"));
 
     onView(withId(R.id.btn_new_trial_submit)).perform(click());
 
     onView(withId(R.id.fab_view_add_trial)).perform(click());
 
-    onView((withId(R.id.editTextNumber))).perform(typeText("4"));
+    onView((withId(R.id.et_trial_entry_number))).perform(typeText("4"));
 
     onView(withId(R.id.btn_new_trial_submit)).perform(click());
 
@@ -220,19 +220,19 @@ public class ExperimentInfoViewTest {
 
     onView(withId(R.id.fab_view_add_trial)).perform(click());
 
-    onView((withId(R.id.editTextNumber))).perform(typeText("1.5"));
+    onView((withId(R.id.et_trial_entry_number))).perform(typeText("1.5"));
 
     onView(withId(R.id.btn_new_trial_submit)).perform(click());
 
     onView(withId(R.id.fab_view_add_trial)).perform(click());
 
-    onView((withId(R.id.editTextNumber))).perform(typeText("1.0"));
+    onView((withId(R.id.et_trial_entry_number))).perform(typeText("1.0"));
 
     onView(withId(R.id.btn_new_trial_submit)).perform(click());
 
     onView(withId(R.id.fab_view_add_trial)).perform(click());
 
-    onView((withId(R.id.editTextNumber))).perform(typeText("1.00"));
+    onView((withId(R.id.et_trial_entry_number))).perform(typeText("1.00"));
 
     onView(withId(R.id.btn_new_trial_submit)).perform(click());
 
@@ -298,19 +298,19 @@ public class ExperimentInfoViewTest {
 
     onView(withId(R.id.fab_view_add_trial)).perform(click());
 
-    onView((withId(R.id.editTextNumber))).perform(typeText("20"));
+    onView((withId(R.id.et_trial_entry_number))).perform(typeText("20"));
 
     onView(withId(R.id.btn_new_trial_submit)).perform(click());
 
     onView(withId(R.id.fab_view_add_trial)).perform(click());
 
-    onView((withId(R.id.editTextNumber))).perform(typeText("19"));
+    onView((withId(R.id.et_trial_entry_number))).perform(typeText("19"));
 
     onView(withId(R.id.btn_new_trial_submit)).perform(click());
 
     onView(withId(R.id.fab_view_add_trial)).perform(click());
 
-    onView((withId(R.id.editTextNumber))).perform(typeText("22"));
+    onView((withId(R.id.et_trial_entry_number))).perform(typeText("22"));
 
     onView(withId(R.id.btn_new_trial_submit)).perform(click());
 
