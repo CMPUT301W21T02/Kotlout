@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,6 +18,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
@@ -106,11 +108,14 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
 
     String groupUuid = (String) getGroup(groupPosition);
 
-    if (groupUuid.equals(myUuid)) {
-      tvGroup.setText("Me");
-    } else {
-      tvGroup.setText(UserHelper.fetchUser(groupUuid).getDisplayName());
-    }
+    UserController userController = new UserController(groupUuid);
+    userController.setUpdateCallback(user -> {
+      if (user.getUuid().equals(myUuid)) {
+        tvGroup.setText("Me");
+      } else {
+        tvGroup.setText(user.getDisplayName());
+      }
+    });
 
     return convertView;
   }
@@ -125,8 +130,10 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
       convertView = inflater.inflate(R.layout.trial_list_item, parent, false);
     }
 
-    TextView trialResult = convertView
-        .findViewById(R.id.tv_trial_list_result);
+    TextView trialResult = convertView.findViewById(R.id.tv_trial_list_result);
+    ImageView trialGeolocation = convertView.findViewById(R.id.iv_trial_list_geolocation);
+    TextView trialDate = convertView.findViewById(R.id.tv_trial_list_date);
+
     Trial trial = (Trial) getChild(groupPosition, childPosition);
     switch (type) {
       case BINOMIAL:
@@ -147,7 +154,12 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
         break;
     }
 
-    TextView trialDate = convertView.findViewById(R.id.tv_trial_list_date);
+    if (trial.getLocation() == null) {
+      trialGeolocation.setImageResource(R.drawable.ic_baseline_location_off);
+    } else {
+      trialGeolocation.setImageResource(R.drawable.ic_baseline_location_on);
+    }
+
     DateFormat local = new SimpleDateFormat("yyyy-MM-dd @ HH:mm", Locale.getDefault());
     trialDate.setText(local.format(trial.getTimestamp()));
 

@@ -1,5 +1,7 @@
 package xyz.kotlout.kotlout.model.experiment.trial;
 
+import xyz.kotlout.kotlout.model.geolocation.Geolocation;
+
 /**
  * A trial with a binary (true or false) outcome
  */
@@ -19,8 +21,8 @@ public class BinomialTrial extends Trial {
    * @param result         Result to store in the trial
    * @param experimenterId Experimenter who did the trial.
    */
-  public BinomialTrial(boolean result, String experimenterId) {
-    super(experimenterId);
+  public BinomialTrial(boolean result, String experimenterId, Geolocation location) {
+    super(experimenterId, location);
     this.result = result;
   }
 

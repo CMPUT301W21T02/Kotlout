@@ -36,28 +36,39 @@
     android:orientation="horizontal"
     app:layout_constraintGuide_percent="0.3" />
 
-  <CheckBox
-    android:id="@+id/cb_new_trial_location"
+  <LinearLayout
+    android:id="@+id/ll_new_trial_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
-    android:text="Record Location"
-    app:layout_constraintTop_toBottomOf="@id/guideline"
-    tools:layout_editor_absoluteX="70dp"
-    tools:layout_editor_absoluteY="175dp" />
+    android:orientation="horizontal"
+    app:layout_constraintTop_toBottomOf="@id/guideline">
+    <CheckBox
+      android:id="@+id/cb_new_trial_location"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:text="Record Location" />
+    <Button
+      android:id="@+id/btn_set_geolocation"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_weight="1"
+      android:text="Set Location" />
+  </LinearLayout>
+
   <Button
     android:id="@+id/btn_new_trial_submit"
-    android:layout_width="wrap_content"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
-    android:layout_marginTop="64dp"
     android:text="Submit Trial"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/cb_new_trial_location" />
+    app:layout_constraintTop_toBottomOf="@id/ll_new_trial_layout" />
   <Button
     android:id="@+id/btn_new_trial_reg_barcode"
-    android:layout_width="wrap_content"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
     android:text="Register Barcode"
@@ -66,12 +77,21 @@
     app:layout_constraintTop_toBottomOf="@id/btn_new_trial_submit" />
   <Button
     android:id="@+id/btn_new_trial_scan_barcode"
-    android:layout_width="wrap_content"
+    android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
     android:text="Scan Barcode"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@id/btn_new_trial_reg_barcode" />
+  <TextView
+    android:id="@+id/text_new_trial_location"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:text="Loading location..."
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/btn_new_trial_scan_barcode" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

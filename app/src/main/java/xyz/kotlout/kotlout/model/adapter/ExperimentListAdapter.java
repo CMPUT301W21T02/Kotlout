@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -23,11 +24,7 @@ import xyz.kotlout.kotlout.controller.ExperimentGroup;
 import xyz.kotlout.kotlout.controller.ExperimentListController;
 import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.controller.UserHelper;
-import xyz.kotlout.kotlout.model.experiment.BinomialExperiment;
-import xyz.kotlout.kotlout.model.experiment.CountExperiment;
 import xyz.kotlout.kotlout.model.experiment.Experiment;
-import xyz.kotlout.kotlout.model.experiment.MeasurementExperiment;
-import xyz.kotlout.kotlout.model.experiment.NonNegativeExperiment;
 import xyz.kotlout.kotlout.view.fragment.ExperimentListFragment.ListType;
 
 /**
@@ -38,6 +35,7 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
   private static final String TAG = "EXP_LIST_ADAPTER";
   private final Map<ExperimentGroup, List<ExperimentController>> experimentGroups;
   private final Context context;
+  private final ListType listType;
 
   /**
    * Initializes the adapter for the given user's open and closed experiments.
@@ -46,6 +44,7 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
    */
   public ExperimentListAdapter(Context context, String userUuid, @NonNull ListType listType) {
     this.context = context;
+    this.listType = listType;
 
     experimentGroups = initializeExperimentGroups();
     ExperimentListController experimentListController = new ExperimentListController(userUuid);
@@ -90,14 +89,15 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
    * @param e                      A firestore exception
    */
   private void showSubscribedExperiments(QuerySnapshot queryDocumentSnapshots, FirebaseFirestoreException e) {
-    clearExperimentGroups();
-
     UserController userController = new UserController(UserHelper.readUuid());
     userController.setUpdateCallback(user -> {
+      clearExperimentGroups();
+
       List<String> subscriptions = user.getSubscriptions();
 
       // no subscriptions yet
       if (subscriptions.isEmpty()) {
+        this.notifyDataSetChanged();
         return;
       }
 
@@ -247,40 +247,32 @@ public class ExperimentListAdapter extends BaseExpandableListAdapter {
     TextView region = convertView.findViewById(R.id.tv_experiment_list_region);
     TextView counter = convertView.findViewById(R.id.tv_experiment_list_counter);
     TextView type = convertView.findViewById(R.id.tv_experiment_list_type);
+    ImageView icon = convertView.findViewById(R.id.iv_experiment_list_visible);
 
     ExperimentGroup experimentGroup = ExperimentGroup.getByOrder(groupPosition);
     ExperimentController experimentController = experimentGroups.get(experimentGroup).get(childPosition);
+
+    switch (listType) {
+      case MINE:
+        if (experimentController.getExperimentContext().isPublished()) {
+          icon.setVisibility(View.GONE);
+        } else {
+          icon.setVisibility(View.VISIBLE);
+        }
+        break;
+      case ALL:
+      case SUBSCRIBED:
+        icon.setVisibility(View.GONE);
+        break;
+    }
 
     description.setText(experimentController.getExperimentContext().getDescription());
     region.setText(experimentController.getExperimentContext().getRegion());
     counter.setText(experimentController.generateCountText());
 
-    type.setText(getExperimentType(experimentController.getExperimentContext()));
+    type.setText(Experiment.getExperimentType(experimentController.getExperimentContext()));
 
     return convertView;
-  }
-
-  /**
-   * Gets a string describing the type of experiment.
-   *
-   * @param experiment An instance of Experiment
-   * @return A string with the experiment type.
-   */
-  public String getExperimentType(Experiment experiment) {
-    String experimentType = "unknown";
-    if (experiment instanceof BinomialExperiment) {
-      experimentType = "Binomial";
-    }
-    if (experiment instanceof NonNegativeExperiment) {
-      experimentType = "Non-negative Integer";
-    }
-    if (experiment instanceof CountExperiment) {
-      experimentType = "Count";
-    }
-    if (experiment instanceof MeasurementExperiment) {
-      experimentType = "Measurement";
-    }
-    return experimentType;
   }
 
   @Override

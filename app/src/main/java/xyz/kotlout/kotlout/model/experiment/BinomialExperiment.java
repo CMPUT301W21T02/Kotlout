@@ -26,8 +26,8 @@ public class BinomialExperiment extends Experiment {
   /**
    * Creates a new BinomialExperiment with basic fields passed on to the base Experiment constructor.
    */
-  public BinomialExperiment(String description, String region, int minimumTrials) {
-    super(description, region, minimumTrials);
+  public BinomialExperiment(String description, String region, int minimumTrials, boolean geolocationRequired) {
+    super(description, region, minimumTrials, geolocationRequired);
   }
 
   @Override

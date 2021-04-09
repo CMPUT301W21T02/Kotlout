@@ -56,23 +56,6 @@ public final class UserHelper {
     return phoneNumber == null || phoneNumber.isEmpty() || PHONE_REGEX.matcher(phoneNumber).matches();
   }
 
-
-  /**
-   * Register user.
-   *
-   * @param userUUID the user uuid
-   */
-  public static void registerUser(String userUUID) {
-    if (fetchUser(userUUID) == null) {
-      User newUser = new User();
-      newUser.setUuid(userUUID);
-      FirebaseFirestore firestore = FirebaseController.getFirestore();
-      firestore.collection(USER_COLLECTION).document(newUser.getUuid()).set(newUser);
-    } else {
-      throw new RuntimeException("User already registered!");
-    }
-  }
-
   /**
    * Sets info.
    *
@@ -87,53 +70,6 @@ public final class UserHelper {
     user.setLastName(lastName);
     user.setEmail(email);
     user.setPhoneNumber(phone);
-  }
-
-  /**
-   * Fetch user user.
-   *
-   * @param userUUID the user uuid
-   * @return the user
-   */
-  public static User fetchUser(String userUUID) {
-    FirebaseFirestore firestore = FirebaseController.getFirestore();
-    final CollectionReference collection = firestore.collection(USER_COLLECTION);
-    final User[] readUser = {null};
-    collection.document(userUUID).get().addOnCompleteListener(snapshot -> {
-      if (snapshot.isSuccessful()) {
-        DocumentSnapshot document = snapshot.getResult();
-        if (document.exists()) {
-          Log.d("FIRESTORE", "Document snapshot: " + document.getData());
-          readUser[0] = (User) document.toObject(User.class);
-        } else {
-          Log.d("FIRESTORE", "Document snapshot not found");
-        }
-      } else {
-        Log.d("FIRESTORE", "Get failed with: " + snapshot.getException());
-      }
-    });
-    return readUser[0];
-  }
-
-  /**
-   * Fetch user user.
-   *
-   * @param docName   the doc name
-   * @param firestore the firestore
-   * @return the user
-   */
-  public static User fetchUser(String docName, FirebaseFirestore firestore) {
-    final User[] user = {new User()};
-    firestore.collection("users").document(docName).get().addOnCompleteListener(
-        task -> {
-          if (task.isSuccessful()) {
-            DocumentSnapshot documentSnapshot = task.getResult();
-            if (documentSnapshot.exists()) {
-              user[0] = documentSnapshot.toObject(User.class);
-            }
-          }
-        });
-    return user[0];
   }
 
   public static void initUserHelper(@NonNull Context context) {

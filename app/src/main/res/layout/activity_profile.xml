@@ -1,110 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
-
-
+  android:id="@+id/profileConstraintLayout"
   android:layout_width="match_parent"
-  android:layout_height="match_parent">
+  android:layout_height="match_parent"
+  app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-  <androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/profileConstraintLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+  <EditText
+    android:id="@+id/profileFirstNameEditText"
+    android:layout_width="@dimen/profile_input_text_width"
+    android:layout_height="@dimen/profile_input_text_height"
+    android:layout_marginTop="100dp"
+    android:autofillHints="personGivenName"
+    android:ems="10"
+    android:hint="@string/profile_first_name_text"
+    android:inputType="textPersonName"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.495"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-      android:id="@+id/profileFirstNameEditText"
-      android:layout_width="@dimen/profile_input_text_width"
-      android:layout_height="@dimen/profile_input_text_height"
-      android:layout_marginTop="100dp"
-      android:autofillHints="personGivenName"
-      android:ems="10"
-      android:hint="@string/profile_first_name_text"
-      android:inputType="textPersonName"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.495"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent" />
+  <TextView
+    android:id="@+id/profileFirstNameLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/profile_first_name_text"
+    android:visibility="visible"
+    app:layout_constraintBottom_toTopOf="@+id/profileFirstNameEditText"
+    app:layout_constraintStart_toStartOf="@+id/profileFirstNameEditText" />
 
-    <TextView
-      android:id="@+id/profileFirstNameLabel"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="@string/profile_first_name_text"
-      android:visibility="visible"
-      app:layout_constraintBottom_toTopOf="@+id/profileFirstNameEditText"
-      app:layout_constraintStart_toStartOf="@+id/profileFirstNameEditText" />
+  <EditText
+    android:id="@+id/profileLastNameEditText"
+    android:layout_width="@dimen/profile_input_text_width"
+    android:layout_height="@dimen/profile_input_text_height"
+    android:layout_marginTop="@dimen/profile_input_spacing"
+    android:autofillHints="personFamilyName"
+    android:ems="10"
+    android:hint="@string/profile_last_name_text"
+    android:inputType="textPersonName"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.495"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/profileFirstNameEditText" />
 
-    <EditText
-      android:id="@+id/profileLastNameEditText"
-      android:layout_width="@dimen/profile_input_text_width"
-      android:layout_height="@dimen/profile_input_text_height"
-      android:layout_marginTop="@dimen/profile_input_spacing"
-      android:autofillHints="personFamilyName"
-      android:ems="10"
-      android:hint="@string/profile_last_name_text"
-      android:inputType="textPersonName"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.495"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/profileFirstNameEditText" />
+  <TextView
+    android:id="@+id/profileLastNameLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/profile_last_name_text"
+    android:visibility="visible"
+    app:layout_constraintBottom_toTopOf="@+id/profileLastNameEditText"
+    app:layout_constraintStart_toStartOf="@+id/profileLastNameEditText" />
 
-    <TextView
-      android:id="@+id/profileLastNameLabel"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="@string/profile_last_name_text"
-      android:visibility="visible"
-      app:layout_constraintBottom_toTopOf="@+id/profileLastNameEditText"
-      app:layout_constraintStart_toStartOf="@+id/profileLastNameEditText" />
+  <EditText
+    android:id="@+id/profileEmailEditText"
+    android:layout_width="@dimen/profile_input_text_width"
+    android:layout_height="@dimen/profile_input_text_height"
+    android:layout_marginTop="@dimen/profile_input_spacing"
+    android:autofillHints="emailAddress"
+    android:ems="10"
+    android:hint="@string/profile_email_text"
+    android:inputType="textEmailAddress"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.495"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/profileLastNameEditText" />
 
-    <EditText
-      android:id="@+id/profileEmailEditText"
-      android:layout_width="@dimen/profile_input_text_width"
-      android:layout_height="@dimen/profile_input_text_height"
-      android:layout_marginTop="@dimen/profile_input_spacing"
-      android:autofillHints="emailAddress"
-      android:ems="10"
-      android:hint="@string/profile_email_text"
-      android:inputType="textEmailAddress"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.495"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/profileLastNameEditText" />
+  <TextView
+    android:id="@+id/profileEmailLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/profile_email_text"
+    android:visibility="visible"
+    app:layout_constraintBottom_toTopOf="@+id/profileEmailEditText"
+    app:layout_constraintStart_toStartOf="@+id/profileEmailEditText" />
 
-    <TextView
-      android:id="@+id/profileEmailLabel"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="@string/profile_email_text"
-      android:visibility="visible"
-      app:layout_constraintBottom_toTopOf="@+id/profileEmailEditText"
-      app:layout_constraintStart_toStartOf="@+id/profileEmailEditText" />
+  <EditText
+    android:id="@+id/profilePhoneEditText"
+    android:layout_width="@dimen/profile_input_text_width"
+    android:layout_height="@dimen/profile_input_text_height"
+    android:layout_marginTop="@dimen/profile_input_spacing"
+    android:autofillHints="phone"
+    android:ems="10"
+    android:hint="@string/profile_phone_text"
+    android:inputType="phone"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.495"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/profileEmailEditText" />
 
-    <EditText
-      android:id="@+id/profilePhoneEditText"
-      android:layout_width="@dimen/profile_input_text_width"
-      android:layout_height="@dimen/profile_input_text_height"
-      android:layout_marginTop="@dimen/profile_input_spacing"
-      android:autofillHints="phone"
-      android:ems="10"
-      android:hint="@string/profile_phone_text"
-      android:inputType="phone"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHorizontal_bias="0.495"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@+id/profileEmailEditText" />
-
-    <TextView
-      android:id="@+id/profilePhoneLabel"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="@string/profile_phone_text"
-      android:visibility="visible"
-      app:layout_constraintBottom_toTopOf="@+id/profilePhoneEditText"
-      app:layout_constraintStart_toStartOf="@+id/profilePhoneEditText" />
-
-  </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+  <TextView
+    android:id="@+id/profilePhoneLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/profile_phone_text"
+    android:visibility="visible"
+    app:layout_constraintBottom_toTopOf="@+id/profilePhoneEditText"
+    app:layout_constraintStart_toStartOf="@+id/profilePhoneEditText" />
+</androidx.constraintlayout.widget.ConstraintLayout>
