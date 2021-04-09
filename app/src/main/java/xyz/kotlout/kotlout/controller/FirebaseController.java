@@ -1,6 +1,7 @@
 package xyz.kotlout.kotlout.controller;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import xyz.kotlout.kotlout.BuildConfig;
 
 
 /**
@@ -10,7 +11,7 @@ public class FirebaseController {
 
   public static final String POSTS_COLLECTION = "posts";
 
-  private static final boolean USE_EMU = false;
+  private static final boolean USE_EMU = BuildConfig.DEBUG;
 
   private static final String EMU_HOST = "10.0.2.2";
   private static final String NON_EMU_HOST = "192.168.0.80";
@@ -34,10 +35,11 @@ public class FirebaseController {
     }
   }
 
-  //TODO consider removing this method, since we no longer keep a static instance
 
   /**
-   * Gets an instance of firestore and returns it
+   * Gets an instance of firestore and returns it.
+   * <p>
+   * TODO consider removing this method, since we no longer keep a static instance.
    *
    * @return Firestore instance
    */
