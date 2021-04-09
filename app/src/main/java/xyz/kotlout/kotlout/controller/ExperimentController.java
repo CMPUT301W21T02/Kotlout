@@ -21,7 +21,6 @@ import xyz.kotlout.kotlout.model.experiment.trial.Trial;
  */
 public class ExperimentController {
 
-  public static final String EXPERIMENT_COLLECTION = "experiments";
   private static final String TAG = "EXPERIMENT_CONTROLLER";
 
   private Experiment experimentContext;
@@ -46,7 +45,7 @@ public class ExperimentController {
     FirebaseFirestore db = FirebaseController.getFirestore();
     this.experimentId = experimentId;
 
-    db.collection(EXPERIMENT_COLLECTION).document(experimentId).get()
+    db.collection(FirebaseController.EXPERIMENT_COLLECTION).document(experimentId).get()
         .addOnSuccessListener(documentSnapshot -> {
           if (documentSnapshot != null) {
             type = ExperimentType.valueOf((String) documentSnapshot.get("type"));
@@ -71,7 +70,7 @@ public class ExperimentController {
         });
 
     if (updatedObserver != null) {
-      db.collection(EXPERIMENT_COLLECTION).document(experimentId).addSnapshotListener((documentSnapshot, error) -> {
+      db.collection(FirebaseController.EXPERIMENT_COLLECTION).document(experimentId).addSnapshotListener((documentSnapshot, error) -> {
         if (documentSnapshot != null && type != null) {
           switch (type) {
             case BINOMIAL:
@@ -206,7 +205,7 @@ public class ExperimentController {
     experimentContext.setPublished(true);
 
     FirebaseFirestore db = FirebaseController.getFirestore();
-    db.collection(EXPERIMENT_COLLECTION)
+    db.collection(FirebaseController.EXPERIMENT_COLLECTION)
         .add(experimentContext)
         .addOnSuccessListener(
             documentReference -> {
@@ -301,7 +300,7 @@ public class ExperimentController {
   private void setExperimentPublished(boolean published) {
     experimentContext.setPublished(published);
     FirebaseFirestore db = FirebaseController.getFirestore();
-    db.collection(EXPERIMENT_COLLECTION).document(experimentContext.getId())
+    db.collection(FirebaseController.EXPERIMENT_COLLECTION).document(experimentContext.getId())
         .update("published", experimentContext.isPublished())
         .addOnSuccessListener(aVoid ->
             Log.d(TAG,
@@ -348,7 +347,7 @@ public class ExperimentController {
   private void setExperimentOngoing(boolean ongoing) {
     experimentContext.setOngoing(ongoing);
     FirebaseFirestore db = FirebaseController.getFirestore();
-    db.collection(EXPERIMENT_COLLECTION).document(experimentContext.getId())
+    db.collection(FirebaseController.EXPERIMENT_COLLECTION).document(experimentContext.getId())
         .update("ongoing", experimentContext.isOngoing())
         .addOnSuccessListener(aVoid ->
             Log.d(TAG,
@@ -366,7 +365,7 @@ public class ExperimentController {
    */
   public void addTrial(Trial trial) {
     FirebaseFirestore db = FirebaseController.getFirestore();
-    db.collection(EXPERIMENT_COLLECTION).document(experimentId)
+    db.collection(FirebaseController.EXPERIMENT_COLLECTION).document(experimentId)
         .update("trials", FieldValue.arrayUnion(trial));
   }
 

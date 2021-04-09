@@ -26,6 +26,9 @@ public abstract class Experiment implements Serializable {
   private boolean isOngoing; // True if the experiment hasn't been ended (i.e. is still accepting trials). False otherwise.
   private boolean geolocationRequired;
   private List<String> ignoredUsers;
+  // Note: Experiments are associated with a list of Discussion posts as well,
+  // but this relationship is handled using sub-collections instead of arrays, as such no field exists
+  // within the experiment class.
 
   /**
    * Default constructor.
@@ -38,7 +41,7 @@ public abstract class Experiment implements Serializable {
    *  @param description   Experiment description.
    * @param region        The region the experiment is conducted in.
    * @param minimumTrials The minimum number of trials required for the experiment.
-   * @param geolocationRequired
+   * @param geolocationRequired If geolocations are enforced for this experiment.
    */
   public Experiment(String description, String region, int minimumTrials, boolean geolocationRequired) {
     this.description = description;

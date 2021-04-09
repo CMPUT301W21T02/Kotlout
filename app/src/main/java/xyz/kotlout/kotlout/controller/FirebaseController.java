@@ -9,7 +9,10 @@ import xyz.kotlout.kotlout.BuildConfig;
  */
 public class FirebaseController {
 
+  // Collection Names in Firebase, must be kept in sync.
   public static final String POSTS_COLLECTION = "posts";
+  public static final String USER_COLLECTION = "users";
+  public static final String EXPERIMENT_COLLECTION = "experiments";
 
   private static final boolean USE_EMU = BuildConfig.DEBUG;
 
@@ -24,7 +27,7 @@ public class FirebaseController {
    * Initialize an instance of firestore. The operating is idempotent and multiple calls
    * are ignored.
    *
-   * TODO: Does not need to be public. Initialization checked on first getFireStore call.
+   * TODO: Does not need to be public. Initialization checked on every getFireStore call. Is lazy evaluation ideal?
    */
   public static void initFirestore() {
     if (IS_INITIALIZED) return;
@@ -38,8 +41,6 @@ public class FirebaseController {
 
   /**
    * Gets an instance of firestore and returns it.
-   * <p>
-   * TODO consider removing this method, since we no longer keep a static instance.
    *
    * @return Firestore instance
    */

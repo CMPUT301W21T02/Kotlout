@@ -36,12 +36,12 @@ public class UserControllerFirebaseTest {
   @BeforeClass
   public static void storeOldUser() {
     AtomicBoolean done = new AtomicBoolean();
-    FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid()).get().addOnCompleteListener(task -> oldUser = task.getResult().toObject(User.class));
+    FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(UserHelper.readUuid()).get().addOnCompleteListener(task -> oldUser = task.getResult().toObject(User.class));
   }
 
   @After
   public void restoreOldUser() {
-    DocumentReference userDoc = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid());
+    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(UserHelper.readUuid());
     if(oldUser != null) {
       userDoc.set(oldUser);
     } else {
@@ -52,7 +52,7 @@ public class UserControllerFirebaseTest {
   @Test
   public void testInitUser() {
     AtomicBoolean done = new AtomicBoolean();
-    DocumentReference userDoc = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid());
+    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(UserHelper.readUuid());
     User newUser = new User();
     newUser.setUuid(UserHelper.readUuid());
     userDoc.delete();
@@ -68,7 +68,7 @@ public class UserControllerFirebaseTest {
   @Test
   public void testInitPreexistingUser() {
     AtomicBoolean done = new AtomicBoolean();
-    DocumentReference userDoc = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION).document(UserHelper.readUuid());
+    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION).document(UserHelper.readUuid());
     User newUser = new User();
     newUser.setUuid(UserHelper.readUuid());
     User testUser = new User("FIRST", "LAST", "EMAIL", "PHONE", UserHelper.readUuid());
@@ -99,7 +99,7 @@ public class UserControllerFirebaseTest {
 
     UserController controller = new UserController(testUuid);
     controller.setUpdateCallback(callback);
-    DocumentReference userDoc = FirebaseController.getFirestore().collection(UserHelper.USER_COLLECTION)
+    DocumentReference userDoc = FirebaseController.getFirestore().collection(FirebaseController.USER_COLLECTION)
         .document(testUuid);
 
     long startTime = System.currentTimeMillis();

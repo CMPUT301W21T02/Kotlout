@@ -13,9 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import xyz.kotlout.kotlout.R;
-import xyz.kotlout.kotlout.controller.ExperimentController;
 import xyz.kotlout.kotlout.controller.FirebaseController;
-import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.model.experiment.Post;
 import xyz.kotlout.kotlout.model.user.User;
 
@@ -46,11 +44,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     FirebaseFirestore firebase = FirebaseController.getFirestore();
     postsCollection = firebase
-        .collection(ExperimentController.EXPERIMENT_COLLECTION)
+        .collection(FirebaseController.EXPERIMENT_COLLECTION)
         .document(experimentId).collection(FirebaseController.POSTS_COLLECTION);
 
     userCollection = firebase
-        .collection(UserController.USER_COLLECTION);
+        .collection(FirebaseController.USER_COLLECTION);
   }
 
 

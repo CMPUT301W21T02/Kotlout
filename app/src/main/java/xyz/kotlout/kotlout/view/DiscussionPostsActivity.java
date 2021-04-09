@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import xyz.kotlout.kotlout.R;
-import xyz.kotlout.kotlout.controller.ExperimentController;
 import xyz.kotlout.kotlout.controller.FirebaseController;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.adapter.PostAdapter;
@@ -54,7 +53,7 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
     experimentUUID = intent.getStringExtra(ON_EXPERIMENT_INTENT);
 
     postsCollection = FirebaseController.getFirestore()
-        .collection(ExperimentController.EXPERIMENT_COLLECTION)
+        .collection(FirebaseController.EXPERIMENT_COLLECTION)
         .document(experimentUUID)
         .collection(FirebaseController.POSTS_COLLECTION);
 
@@ -113,7 +112,7 @@ public class DiscussionPostsActivity extends AppCompatActivity implements OnPost
     newPost.setParent(parentUUID);
 
     CollectionReference posts = FirebaseController.getFirestore()
-        .collection(ExperimentController.EXPERIMENT_COLLECTION)
+        .collection(FirebaseController.EXPERIMENT_COLLECTION)
         .document(experimentUUID)
         .collection(FirebaseController.POSTS_COLLECTION);
 
