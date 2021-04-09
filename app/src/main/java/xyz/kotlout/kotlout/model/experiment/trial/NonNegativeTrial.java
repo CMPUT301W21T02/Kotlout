@@ -1,5 +1,7 @@
 package xyz.kotlout.kotlout.model.experiment.trial;
 
+import xyz.kotlout.kotlout.model.geolocation.Geolocation;
+
 /**
  * A trial with a non-negative integer outcome
  */
@@ -13,6 +15,11 @@ public class NonNegativeTrial extends Trial {
 
   public NonNegativeTrial(long result, String experimenterId) {
     super(experimenterId);
+    this.result = result;
+  }
+
+  public NonNegativeTrial(long result, String experimenterId, Geolocation location) {
+    super(experimenterId, location);
     this.result = result;
   }
 

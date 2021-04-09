@@ -24,8 +24,8 @@ public class NonNegativeExperiment extends Experiment {
   /**
    * Creates a new NonNegativeExperiment with basic fields passed on to the base Experiment constructor.
    */
-  public NonNegativeExperiment(String description, String region, int minimumTrials) {
-    super(description, region, minimumTrials);
+  public NonNegativeExperiment(String description, String region, int minimumTrials, boolean geolocationRequired) {
+    super(description, region, minimumTrials, geolocationRequired);
   }
 
   @Override
