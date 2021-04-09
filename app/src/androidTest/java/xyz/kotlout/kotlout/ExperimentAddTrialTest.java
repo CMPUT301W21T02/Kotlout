@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 import xyz.kotlout.kotlout.view.MainActivity;
 
 @RunWith(AndroidJUnit4.class)
-public class ExperimentInfoViewTest {
+public class ExperimentAddTrialTest {
 
   @Rule
   public ActivityScenarioRule<MainActivity> activityRule = new ActivityScenarioRule<>(
