@@ -1,6 +1,7 @@
 package xyz.kotlout.kotlout.model.user;
 
 import com.google.firebase.firestore.Exclude;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import java.util.List;
  * A class representing a single user of the app. As there is no way to make accounts, this also corresponds directly to a
  * device on which the app is installed.
  */
-public class User {
+public class User implements Serializable {
 
   private String firstName;
   private String lastName;
@@ -98,6 +99,7 @@ public class User {
 
   /**
    * Gets a list of IDs for experiments the user has subscribed to.
+   *
    * @return A list of experiment IDs.
    */
   public List<String> getSubscriptions() {
@@ -109,6 +111,7 @@ public class User {
 
   /**
    * Sets the user subscriptions to a new list.
+   *
    * @param subscriptions A list of experiment IDs.
    */
   public void setSubscriptions(List<String> subscriptions) {

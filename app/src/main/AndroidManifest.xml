@@ -3,7 +3,7 @@
   package="xyz.kotlout.kotlout">
 
   <application
-    android:allowBackup="true"
+    android:allowBackup="false"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
     android:name=".controller.ApplicationContextProvider"
@@ -13,9 +13,11 @@
     <activity
       android:label="@string/app_name"
       android:name=".view.MainActivity">
+      <meta-data
+        android:name="android.app.default_searchable"
+        android:value=".view.SearchActivity" />
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
-
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
@@ -35,6 +37,22 @@
     <activity
       android:label="@string/title_activity_trial_new"
       android:name=".view.TrialNewActivity" />
+    <activity
+      android:label="@string/title_activity_search"
+      android:name=".view.SearchActivity"
+      android:parentActivityName=".view.MainActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.SEARCH" />
+      </intent-filter>
+
+      <meta-data
+        android:name="android.support.PARENT_ACTIVITY"
+        android:value=".view.MainActivity" />
+
+      <meta-data
+        android:name="android.app.searchable"
+        android:resource="@xml/searchable" />
+    </activity>
   </application>
   <!--  Permissions since the maps need a lot -->
   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>

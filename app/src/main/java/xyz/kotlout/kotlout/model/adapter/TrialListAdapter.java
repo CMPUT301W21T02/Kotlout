@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import xyz.kotlout.kotlout.R;
 import xyz.kotlout.kotlout.controller.ExperimentController;
+import xyz.kotlout.kotlout.controller.UserController;
 import xyz.kotlout.kotlout.controller.UserHelper;
 import xyz.kotlout.kotlout.model.ExperimentType;
 import xyz.kotlout.kotlout.model.experiment.trial.BinomialTrial;
@@ -28,18 +29,17 @@ import xyz.kotlout.kotlout.model.experiment.trial.Trial;
 
 public class TrialListAdapter extends BaseExpandableListAdapter {
 
-  private List<? extends Trial> trialList;
-  Map<String, ? extends List<? extends Trial>> ByExperimenter;
-
   private final Context context;
 
-  ExperimentType type;
-  String experimentId;
-  ExperimentController controller;
+  private List<? extends Trial> trialList;
+  private Map<String, ? extends List<? extends Trial>> ByExperimenter;
+  private List<String> Experimenters;
 
-  String myUuid;
+  private ExperimentType type;
+  private ExperimentController controller;
 
-  List<String> Experimenters;
+  private String experimentId;
+  private String myUuid;
 
   public TrialListAdapter(Context context, String experimentId, ExperimentType type) {
     this.context = context;
@@ -107,11 +107,14 @@ public class TrialListAdapter extends BaseExpandableListAdapter {
 
     String groupUuid = (String) getGroup(groupPosition);
 
-    if(groupUuid.equals(myUuid)) {
-      tvGroup.setText("Me");
-    } else {
-      tvGroup.setText(UserHelper.fetchUser(groupUuid).getDisplayName());
-    }
+    UserController userController = new UserController(groupUuid);
+    userController.setUpdateCallback(user -> {
+      if (user.getUuid().equals(myUuid)) {
+        tvGroup.setText("Me");
+      } else {
+        tvGroup.setText(user.getDisplayName());
+      }
+    });
 
     return convertView;
   }

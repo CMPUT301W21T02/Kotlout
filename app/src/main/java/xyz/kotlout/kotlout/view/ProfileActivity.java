@@ -174,7 +174,7 @@ public class ProfileActivity extends AppCompatActivity {
   }
 
   private void enableEditMenu(Menu menu) {
-    if(!controller.isCurrentUser()) {
+    if (!controller.isCurrentUser()) {
       MenuItem edit = menu.findItem(R.id.edit_profile_button).setVisible(false);
       MenuItem confirm = menu.findItem(R.id.edit_confirm_button).setVisible(false);
     }

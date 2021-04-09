@@ -11,12 +11,11 @@ import xyz.kotlout.kotlout.model.experiment.trial.Trial;
  */
 public class BinomialExperiment extends Experiment {
 
+  private final List<BinomialTrial> trials = new ArrayList<>();
   /**
    * Type of experiment, can't be static due to Firestore model generation
    */
   public ExperimentType type = ExperimentType.BINOMIAL;
-
-  private final List<BinomialTrial> trials = new ArrayList<>();
 
   /**
    * Default constructor.

@@ -26,16 +26,14 @@
         android:layout_height="wrap_content"
         android:text="Created by: "
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
-      <TextView
+      <xyz.kotlout.kotlout.view.NameView
         android:id="@+id/header_owner"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="showOwner"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        android:textColor="@color/purple_700"/>
+        android:textColor="@color/purple_700" />
     </LinearLayout>
 
     <TextView

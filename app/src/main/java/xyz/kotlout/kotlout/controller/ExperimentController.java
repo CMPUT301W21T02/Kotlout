@@ -23,11 +23,11 @@ public class ExperimentController {
   public static final String EXPERIMENT_COLLECTION = "experiments";
   private static final String TAG = "EXPERIMENT_CONTROLLER";
 
-  Experiment experimentContext;
-  String experimentId;
-  ExperimentType type;
+  private Experiment experimentContext;
+  private String experimentId;
+  private ExperimentType type;
 
-  ExperimentLoadedObserver experimentObserver;
+  private ExperimentLoadedObserver experimentObserver;
 
   /**
    * Default constructor. Disabled, because an empty controller is useless.
@@ -47,7 +47,7 @@ public class ExperimentController {
     this.experimentObserver = loadedObserver;
     db.collection(EXPERIMENT_COLLECTION).document(experimentId).get()
         .addOnSuccessListener(documentSnapshot -> {
-          if(documentSnapshot != null) {
+          if (documentSnapshot != null) {
             type = ExperimentType.valueOf((String) documentSnapshot.get("type"));
             switch (type) {
               case BINOMIAL:

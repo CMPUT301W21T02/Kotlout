@@ -10,8 +10,8 @@ import java.util.Map;
  */
 public class ExperimentStatistics {
 
-  Map<Integer, Double> histogramValues;
-  List<Pair<Date, Number>> timePlot;
+  private Map<Integer, Double> histogramValues;
+  private List<Pair<Date, Number>> timePlot;
   private double mean;
   private double standardDeviation;
   private double[] quartiles;

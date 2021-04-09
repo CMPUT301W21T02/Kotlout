@@ -16,7 +16,12 @@ import xyz.kotlout.kotlout.model.experiment.Post;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
   private final List<Post> postData;
-  Context appContext;
+  private final Context appContext;
+
+  public PostAdapter(List<Post> posts, Context context) {
+    this.postData = posts;
+    this.appContext = context;
+  }
 
   @NonNull
   @Override
@@ -88,11 +93,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     public TextView getReplies() {
       return replies;
     }
-  }
-
-  public PostAdapter(List<Post> posts, Context context) {
-    this.postData = posts;
-    this.appContext = context;
   }
 
 }

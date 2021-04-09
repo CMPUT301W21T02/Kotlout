@@ -10,8 +10,8 @@ import xyz.kotlout.kotlout.model.user.User;
  */
 public class Post {
 
-  private User poster;
   private final List<Post> children = new ArrayList<>();
+  private User poster;
   private Post parent;
   private String text;
   private Date timestamp;
@@ -19,6 +19,10 @@ public class Post {
 
   public User getPoster() {
     return poster;
+  }
+
+  public void setPoster(User poster) {
+    this.poster = poster;
   }
 
   public List<Post> getChildren() {
@@ -29,24 +33,20 @@ public class Post {
     return parent;
   }
 
-  public String getText() {
-    return text;
-  }
-
-  public Date getTimestamp() {
-    return timestamp;
-  }
-
-  public void setPoster(User poster) {
-    this.poster = poster;
-  }
-
   public void setParent(Post parent) {
     this.parent = parent;
   }
 
+  public String getText() {
+    return text;
+  }
+
   public void setText(String text) {
     this.text = text;
+  }
+
+  public Date getTimestamp() {
+    return timestamp;
   }
 
   public void setTimestamp(Date timestamp) {

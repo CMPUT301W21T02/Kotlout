@@ -40,7 +40,7 @@ public class TrialNewActivity extends AppCompatActivity implements SelectLocatio
   public static final String TRIAL_EXTRA = "TRIAL";
   public static final String REQUIRE_LOCATION = "LOCATION";
 
-  ExperimentType type;
+  private ExperimentType type;
 
   private RadioGroup radioButtons;
   private EditText textEntry;

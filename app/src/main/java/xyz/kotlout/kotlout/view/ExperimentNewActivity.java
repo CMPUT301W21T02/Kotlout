@@ -21,8 +21,8 @@ public class ExperimentNewActivity extends AppCompatActivity {
 
   public static final int NEW_EXPERIMENT_REQUEST = 0;
   public static final String EXPERIMENT_EXTRA = "EXPERIMENT";
-  EditText descriptionEditText;
-  Button submitButton;
+  private EditText descriptionEditText;
+  private Button submitButton;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
